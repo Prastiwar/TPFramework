@@ -6,7 +6,7 @@
 ProjectSettings/
 UnityPackageManager/
 Assets/AssetStoreTools*
-
+Assets/
 
 # Visual Studio cache directory
 .vs/
