@@ -19,7 +19,7 @@
 
 ## Before start
 
-- [x] Make sure you have **Unity 2018.02b5**.  
+- [x] Make sure you have **Unity 2017**. (Lower versions wasn't tested)
 
 
 ## Getting Started

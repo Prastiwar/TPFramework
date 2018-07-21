@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace TPFramework
@@ -116,6 +117,7 @@ namespace TPFramework
         public float ModifiersCount { get; private set; }
 
         /// <summary> Adds TPModifier to attribute, recalculates Value </summary>
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public void AddModifier(TPModifier modifier)
         {
             modifiers.Add(modifier);
@@ -123,6 +125,7 @@ namespace TPFramework
         }
 
         /// <summary> Removes TPModifier from attribute, recalculates Value </summary>
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public bool RemoveModifier(TPModifier modifier)
         {
             if (modifiers.Remove(modifier))
@@ -134,6 +137,7 @@ namespace TPFramework
         }
 
         /// <summary> Removes all modifiers in attribute, recalculates Value </summary>
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public void RemoveModifiers()
         {
             modifiers.Clear();
@@ -142,6 +146,7 @@ namespace TPFramework
 
         /// <summary> Removes all modifiers in attribute from source, recalculates Value </summary>
         /// <param name="source"> object declared in constructor of TPModifier </param>
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public void RemoveModifiers(object source)
         {
             for (int i = 0; i < ModifiersCount; i++)
@@ -157,6 +162,7 @@ namespace TPFramework
         }
 
         /// <summary> Get first modifier in attribute from source </summary>
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public TPModifier GetModifier(object source)
         {
             for (int i = 0; i < ModifiersCount; i++)
@@ -171,6 +177,7 @@ namespace TPFramework
         }
 
         /// <summary> Get all modifiers in attribute from source </summary>
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public TPModifier[] GetModifiers(object source)
         {
             List<TPModifier> sourceModifiers = reusableModifiers.CleanList;
@@ -183,11 +190,13 @@ namespace TPFramework
             return sourceModifiers.ToArray();
         }
 
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public bool HasModifier(TPModifier modifier)
         {
             return modifiers.Contains(modifier);
         }
 
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public bool HasModifier(object source)
         {
             for (int i = 0; i < ModifiersCount; i++)
@@ -198,6 +207,7 @@ namespace TPFramework
             return false;
         }
 
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public bool ChangeModifier(TPModifier modifier, TPModifier newModifier)
         {
             for (int i = 0; i < ModifiersCount; i++)

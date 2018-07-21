@@ -7,13 +7,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.UI;
 
 namespace TPFramework
 {
     public static class TPExtensions
     {
-        private static ReusableList<Vector3> reusableVector3 = new ReusableList<Vector3>();
+        private static readonly ReusableList<Vector3> reusableVector3 = new ReusableList<Vector3>();
+        private static readonly char[] resolutionSeparators = new char[] { ' ', 'x', '@', 'H', 'z' };
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static bool IsFrame(int frameModulo)
@@ -145,6 +147,55 @@ namespace TPFramework
             for (int i = 0; i < length; i++)
                 sum += floatings[i];
             return sum;
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static float GetFloat(this AudioMixer audioMixer, string paramName)
+        {
+            float value;
+            bool result = audioMixer.GetFloat(paramName, out value);
+            if (result)
+                return value;
+            else
+                return 0f;
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static string ToStringWithoutHZ(this Resolution resolution)
+        {
+            return resolution.width + " x " + resolution.height;
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static string[] ToStringWithoutHZ(this Resolution[] resolutions)
+        {
+            int length = resolutions.Length;
+            string[] resolutionsString = new string[length];
+            for (int i = 0; i < length; i++)
+                resolutionsString[i] = resolutions[i].ToStringWithoutHZ();
+            return resolutionsString;
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static string[] ToStringWithtHZ(this Resolution[] resolutions)
+        {
+            int length = resolutions.Length;
+            string[] resolutionsString = new string[length];
+            for (int i = 0; i < length; i++)
+                resolutionsString[i] = resolutions[i].ToString();
+            return resolutionsString;
+        }
+
+        /// <summary> resolutionText should be formatted as: "320 x 200 @ 60Hz" or "320 x 200" </summary>
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline        
+        public static Resolution ToResolution(this string resolutionText)
+        {
+            string[] strings = resolutionText.Split(resolutionSeparators, System.StringSplitOptions.RemoveEmptyEntries);
+            return new Resolution() {
+                width = int.Parse(strings[0]),
+                height = int.Parse(strings[1]),
+                refreshRate = strings.Length >= 3 ? int.Parse(strings[2]) : 0
+            };
         }
     }
 }
