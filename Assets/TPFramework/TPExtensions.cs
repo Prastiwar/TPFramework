@@ -49,6 +49,18 @@ namespace TPFramework
                 return true;
             return false;
         }
+        
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static int ToInt(this bool boolean)
+        {
+            return boolean ? 1 : 0;
+        }
+        
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static bool ToBool(this int integer)
+        {
+            return integer > 0;
+        }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void SetAlpha(this Image image, float alpha)

@@ -13,252 +13,50 @@ using UnityEngine.UI;
 
 namespace TPFramework
 {
-    public class TPSettings : MonoBehaviour
+#if UNITY_EDITOR
+    [UnityEditor.InitializeOnLoad]
+#endif 
+    public static class TPSettings
     {
-        //[HideInInspector] public static Dropdown qualityDropdown;
-        //[HideInInspector] public static Dropdown aliasingDropdown;
-        //[HideInInspector] public static Dropdown shadowQualDropdown;
-        //[HideInInspector] public static Dropdown shadowDropdown;
-        //[HideInInspector] public static Dropdown textureDropdown;
-
-        //static int CustomQualityIndex;
-        //static int previousLevel;
-
-        //static List<string> qualityOptions = new List<string>();
-        //static List<string> shadowQualOptions = new List<string>();
-        //static List<string> shadowOptions = new List<string>();
-        //static List<string> aliasingOptions = new List<string>();
-        //static List<string> textureOptions = new List<string>();
-
-
-        //void Awake()
-        //{
-        //    Initialize();
-        //}
-
-        //static void Initialize()
-        //{
-        //    int length = QualitySettings.names.Length;
-        //    for (int i = 0; i < length; i++)
-        //    {
-        //        if (QualitySettings.names[i] == "Custom")
-        //        {
-        //            CustomQualityIndex = i;
-        //            break;
-        //        }
-
-        //        if (i == length - 1)
-        //        {
-        //            Debug.LogError("No 'Custom' quality level found. Create one!");
-        //            return;
-        //        }
-        //    }
-
-        //    InitializeAllDropdowns();
-        //    InitializeAllToggles();
-        //}
-
-        //static void InitializeAllDropdowns()
-        //{
-        //    InitializeDropdown(InitializeShadowsQuality, shadowQualDropdown, shadowQualOptions, currentShadowQualIndex, 4);
-        //    InitializeDropdown(InitializeShadows, shadowDropdown, shadowOptions, currentShadowIndex, 3);
-        //    InitializeDropdown(InitializeAliasingQuality, aliasingDropdown, aliasingOptions, currentAliasingIndex, 4);
-        //    InitializeDropdown(InitializeTextureQuality, textureDropdown, textureOptions, currentTextureIndex, 4);
-
-        //    aliasingDropdown.onValueChanged.AddListener(SetAntiAliasing);
-        //    shadowQualDropdown.onValueChanged.AddListener(SetShadowsQuality);
-        //    shadowDropdown.onValueChanged.AddListener(SetShadows);
-        //    textureDropdown.onValueChanged.AddListener(SetTexture);
-        //}
-
-
-        //// *** Initializers *** //
-
-        //static void InitializeTextureQuality(int i)
-        //{
-        //    switch (i)
-        //    {
-        //        case 0:
-        //            textureOptions.Add("Very High");
-        //            break;
-        //        case 1:
-        //            textureOptions.Add("High");
-        //            break;
-        //        case 2:
-        //            textureOptions.Add("Medium");
-        //            break;
-        //        case 3:
-        //            textureOptions.Add("Low");
-        //            break;
-        //        default:
-        //            break;
-        //    }
-
-        //    if (i == QualitySettings.masterTextureLimit)
-        //        currentTextureIndex = i;
-        //}
-
-        //static void InitializeShadowsQuality(int i)
-        //{
-        //    string option = ((ShadowResolution)i).ToString();
-        //    shadowQualOptions.Add(option);
-
-        //    if (i == (int)QualitySettings.shadowResolution)
-        //        currentShadowQualIndex = i;
-        //}
-
-        //static void InitializeShadows(int i)
-        //{
-        //    string option = ((ShadowQuality)i).ToString();
-        //    shadowOptions.Add(option);
-
-        //    if (i == (int)QualitySettings.shadows)
-        //        currentShadowIndex = i;
-        //}
-
-        //static void InitializeAliasingQuality(int i)
-        //{
-        //    string option = "";
-        //    switch (i)
-        //    {
-        //        case 0:
-        //            option = "Disabled";
-        //            break;
-        //        case 1:
-        //        case 2:
-        //            option = (i * 2).ToString() + "x Multi Sampling";
-        //            break;
-        //        case 3:
-        //            option = "8x Multi Sampling";
-        //            break;
-        //        default:
-        //            break;
-        //    }
-        //    aliasingOptions.Add(option);
-
-        //    if (i == QualitySettings.antiAliasing)
-        //        currentAliasingIndex = i;
-        //}
-
-        //static void InitializeDropdown(Action<int> action, ref Dropdown dropdown, ref List<string> options, ref int currentIndex, int length)
-        //{
-        //    options.Clear();
-        //    for (int i = 0; i < length; i++)
-        //        action(i); // Initialize..()
-        //    dropdown.onValueChanged.RemoveAllListeners();
-        //    dropdown.ClearOptions();
-        //    dropdown.AddOptions(options);
-        //    dropdown.value = currentIndex;
-        //    dropdown.RefreshShownValue();
-        //}
-
-
-        //// *** Setters *** ///
-
-
-
-        //static void SetAntiAliasing(int index)
-        //{
-        //    SetToCustom(() => SetAntiAliasing(index));
-        //    switch (index)
-        //    {
-        //        case 0:
-        //            QualitySettings.antiAliasing = index;
-        //            break;
-        //        case 1:
-        //            QualitySettings.antiAliasing = 2;
-        //            break;
-        //        case 2:
-        //            QualitySettings.antiAliasing = 4;
-        //            break;
-        //        case 3:
-        //            QualitySettings.antiAliasing = 8;
-        //            break;
-        //        default:
-        //            break;
-        //    }
-        //    aliasingDropdown.value = index;
-        //}
-
-        //static void SetShadowsQuality(int index)
-        //{
-        //    SetToCustom(() => SetShadowsQuality(index));
-        //    QualitySettings.shadowResolution = (ShadowResolution)index;
-        //}
-
-        //static void SetShadows(int index)
-        //{
-        //    SetToCustom(() => SetShadows(index));
-        //    QualitySettings.shadows = (ShadowQuality)index;
-        //}
-
-        //static void SetTexture(int index)
-        //{
-        //    SetToCustom(() => SetTexture(index));
-        //    QualitySettings.masterTextureLimit = index;
-        //}
-
-        //[HideInInspector] public static Toggle anisotropicToggle;
-        //static void InitializeAllToggles()
-        //{
-        //    if (anisotropicToggle && anisotropicToggle.isOn != ((int)QualitySettings.anisotropicFiltering == 0 ? false : true))
-        //        anisotropicToggle.isOn = (int)QualitySettings.anisotropicFiltering == 0 ? false : true;
-        //}
-        //static void SetAnisotropic(bool boolean)
-        //{
-        //    SetToCustom(() => SetAnisotropic(boolean));
-        //    QualitySettings.anisotropicFiltering = (AnisotropicFiltering)(boolean ? 2 : 0);
-        //}
-
-        //static void SetToCustom(Action action)
-        //{
-        //    previousLevel = QualitySettings.GetQualityLevel();
-        //    if (previousLevel == CustomQualityIndex)
-        //        return;
-
-        //    int _tex = QualitySettings.masterTextureLimit;
-        //    int _shadRes = (int)QualitySettings.shadowResolution;
-        //    int _shad = (int)QualitySettings.shadows;
-        //    int _ani = (int)QualitySettings.anisotropicFiltering;
-        //    int _anti = QualitySettings.antiAliasing;
-        //    Resolution _res = Screen.currentResolution;
-        //    bool _vsync = QualitySettings.vSyncCount == 0 ? false : true;
-        //    bool _full = Screen.fullScreen;
-
-        //    QualitySettings.SetQualityLevel(CustomQualityIndex);
-        //    Screen.fullScreen = _full;
-        //    Screen.SetResolution(_res.width, _res.height, Screen.fullScreen);
-        //    QualitySettings.masterTextureLimit = _tex;
-        //    QualitySettings.shadowResolution = (ShadowResolution)_shadRes;
-        //    QualitySettings.shadows = (ShadowQuality)_shad;
-        //    QualitySettings.anisotropicFiltering = (AnisotropicFiltering)_ani;
-        //    QualitySettings.antiAliasing = _anti;
-        //    QualitySettings.vSyncCount = _vsync ? 1 : 0;
-
-        //    action();
-        //    Initialize();
-        //}
-
-
-
-
-        // ************************************************************************************* //
-
-
-
-
-
-
-
-
-
-            
-
-        public struct VisualParameters
+#if UNITY_EDITOR
+        static TPSettings()
         {
-
+            string[] qualities = QualitySettings.names;
+            int length = qualities.Length;
+            for (int i = 0; i < length; i++)
+            {
+                if (qualities[i] == "Custom")
+                {
+                    VisualSettings.CustomQualityIndex = i;
+                    break;
+                }
+                else if (i == length - 1)
+                {
+                    Debug.LogError("No 'Custom' quality level found. Create one!");
+                }
+            }
+        }
+#endif
+        [Serializable]
+        public struct QualityLevel
+        {
+            public bool VSync;
+            public bool FullScreen;
+            public int Antialiasing;
+            public int MasterTextureLimit;
+            public ShadowQuality ShadowQuality;
+            public ShadowResolution ShadowResolution;
+            public AnisotropicFiltering AnisotropicFiltering;
+            public Resolution Resolution;
         }
 
+        [Serializable]
+        public struct VisualParameters
+        {
+            public int CustomQualityIndex;
+        }
+
+        [Serializable]
         public struct AudioParameters
         {
             public bool IsMusicOn;
@@ -268,8 +66,23 @@ namespace TPFramework
         }
 
         public static AudioParameters AudioSettings;
-
         public static VisualParameters VisualSettings;
+
+        private static List<string> TextureOptions          = new List<string> { "Very High", "High", "Medium", "Low" };
+        private static List<string> ShadowQualityOptions    = new List<string> { "Disable", "HardOnly", "All" };
+        private static List<string> ShadowResolutionOptions = new List<string> { "Low", "Medium", "High", "VeryHigh" };
+        private static List<string> AntialiasingOptions     = new List<string> { "Disabled", "2x Multi Sampling", "4x Multi Sampling", "8x Multi Sampling" };
+        private static List<string> QualityOptions { get { return QualitySettings.names.ToList(); } }
+        private static List<string> ResolutionOptions { get { return new List<string>(Screen.resolutions.ToStringWithtHZ()); } }
+        //Resolution[] resolutions = Screen.resolutions;
+        //int length = resolutions.Length;
+        //List<string> options = new List<string>(length);
+
+        //for (int i = 0; i < length; i++)
+        //    options.Add(resolutions[i].ToString());
+
+        //return options;
+
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void SetMusicToggler(Toggle toggle, AudioMixer audioMixer, string exposedMusicName)
@@ -359,19 +172,16 @@ namespace TPFramework
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void SetVSyncToggler(Toggle toggle)
         {
-            toggle.isOn = QualitySettings.vSyncCount == 1;
+            toggle.isOn = QualitySettings.vSyncCount > 0;
             toggle.onValueChanged.AddListener((boolean) => {
-                QualitySettings.vSyncCount = boolean ? 1 : 0;
+                QualitySettings.vSyncCount = boolean.ToInt();
             });
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void SetResolutionDropdown(Dropdown dropdown, int setIndex = 0, List<string> options = null)
         {
-            dropdown.ClearOptions();
-            dropdown.AddOptions(options ?? GetResolutionOptions());
-            dropdown.value = setIndex;
-            dropdown.RefreshShownValue();
+            AddDropdownOptions(dropdown, setIndex, options ?? ResolutionOptions);
 
             dropdown.onValueChanged.AddListener((index) => {
                 Resolution resolution = options != null ? options[index].ToResolution() : Screen.resolutions[index];
@@ -382,43 +192,108 @@ namespace TPFramework
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void SetQualityDropdown(Dropdown dropdown, int setIndex = 0)
         {
-            dropdown.ClearOptions();
-            dropdown.AddOptions(GetQualityOptions());
-            dropdown.value = setIndex;
-            dropdown.RefreshShownValue();
-
+            AddDropdownOptions(dropdown, setIndex, QualityOptions);
             dropdown.onValueChanged.AddListener((index) => {
                 bool wasfullScreen = Screen.fullScreen;
                 Resolution wasResolution = Screen.currentResolution;
                 bool wasVSync = QualitySettings.vSyncCount == 0 ? false : true;
 
-                QualitySettings.SetQualityLevel(index);
+                QualitySettings.SetQualityLevel(index, true);
 
                 Screen.SetResolution(wasResolution.width, wasResolution.height, wasfullScreen);
                 QualitySettings.vSyncCount = wasVSync ? 1 : 0;
-                //Initialize();
+                // RefreshOthers();
             });
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static List<string> GetResolutionOptions()
+        public static void SetTextureDropdown(Dropdown dropdown, int setIndex = 0, List<string> options = null)
         {
-            Resolution[] resolutions = Screen.resolutions;
-            int length = resolutions.Length;
-            List<string> options = new List<string>(length);
-
-            for (int i = 0; i < length; i++)
-                options.Add(resolutions[i].ToString());
-
-            return options;
+            AddDropdownOptions(dropdown, setIndex, options ?? TextureOptions);
+            dropdown.onValueChanged.AddListener((index) => {
+                SetToCustomLevel();
+                QualitySettings.masterTextureLimit = index;
+            });
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static List<string> GetQualityOptions()
+        public static void SetShadowQualityDropdown(Dropdown dropdown, int setIndex = 0)
         {
-            return QualitySettings.names.ToList();
+            AddDropdownOptions(dropdown, setIndex, ShadowQualityOptions);
+            dropdown.onValueChanged.AddListener((index) => {
+                SetToCustomLevel();
+                QualitySettings.shadows = (ShadowQuality)index;
+            });
         }
 
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static void SetShadowResolutionDropdown(Dropdown dropdown, int setIndex = 0)
+        {
+            AddDropdownOptions(dropdown, setIndex, ShadowResolutionOptions);
+            dropdown.onValueChanged.AddListener((index) => {
+                SetToCustomLevel();
+                QualitySettings.shadowResolution = (ShadowResolution)index;
+            });
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static void SetAntialiasingDropdown(Dropdown dropdown, int setIndex = 0)
+        {
+            AddDropdownOptions(dropdown, setIndex, AntialiasingOptions);
+            dropdown.onValueChanged.AddListener((index) => {
+                SetToCustomLevel();
+                QualitySettings.antiAliasing = index > 0 ? 1 << index : 0;
+            });
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static void SetAnisotropicToggler(Toggle toggle)
+        {
+            toggle.onValueChanged.AddListener((value) => {
+                SetToCustomLevel();
+                QualitySettings.anisotropicFiltering = (AnisotropicFiltering)(value ? 2 : 0);
+            });
+        }
+
+
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        private static void AddDropdownOptions(Dropdown dropdown, int setIndex, List<string> options)
+        {
+            dropdown.ClearOptions();
+            dropdown.AddOptions(options);
+            dropdown.value = setIndex;
+            dropdown.RefreshShownValue();
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        private static void SetToCustomLevel()
+        {
+            if (QualitySettings.GetQualityLevel() == VisualSettings.CustomQualityIndex)
+                return;
+
+            QualityLevel savedLevel = new QualityLevel() {
+                MasterTextureLimit = QualitySettings.masterTextureLimit,
+                ShadowQuality = QualitySettings.shadows,
+                ShadowResolution = QualitySettings.shadowResolution,
+                AnisotropicFiltering = QualitySettings.anisotropicFiltering,
+                Antialiasing = QualitySettings.antiAliasing,
+                Resolution = Screen.currentResolution,
+                VSync = QualitySettings.vSyncCount.ToBool(),
+                FullScreen = Screen.fullScreen
+            };
+
+            QualitySettings.SetQualityLevel(VisualSettings.CustomQualityIndex, false);
+
+            Screen.fullScreen = savedLevel.FullScreen;
+            Screen.SetResolution(savedLevel.Resolution.width, savedLevel.Resolution.height, Screen.fullScreen);
+            QualitySettings.masterTextureLimit = savedLevel.MasterTextureLimit;
+            QualitySettings.shadowResolution = savedLevel.ShadowResolution;
+            QualitySettings.shadows = savedLevel.ShadowQuality;
+            QualitySettings.anisotropicFiltering = savedLevel.AnisotropicFiltering;
+            QualitySettings.antiAliasing = savedLevel.Antialiasing;
+            QualitySettings.vSyncCount = savedLevel.VSync.ToInt();
+        }
 
     }
 }
