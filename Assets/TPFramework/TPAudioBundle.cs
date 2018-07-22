@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace TPFramework
 {
-    [CreateAssetMenu(menuName = "TPAudioPool/Audio Bundle", fileName = "AudioBundle")]
+    [CreateAssetMenu(menuName = "TP/TPAudioPool/Audio Bundle", fileName = "AudioBundle")]
     public class TPAudioBundle : ScriptableObject
     {
         public TPAudioObject[] AudioObjects;

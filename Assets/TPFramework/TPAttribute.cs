@@ -221,7 +221,9 @@ namespace TPFramework
             return false;
         }
 
-        private void Recalculate()
+        /// <summary> Request recalculating Value with modifiers </summary>
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public void Recalculate()
         {
             Value = BaseValue;
             modifiers.Sort(CompareModifiers);
@@ -246,6 +248,7 @@ namespace TPFramework
         }
 
         /// <summary> Compare modifiers by their priority </summary>
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         private int CompareModifiers(TPModifier modifier1, TPModifier modifier2)
         {
             if (modifier1.Priority > modifier2.Priority)

@@ -17,9 +17,22 @@
 
 [![Made with Unity](https://img.shields.io/badge/Made%20with-Unity-000000.svg?longCache=true&style=for-the-badge&colorA=666677&colorB=222222)](https://unity3d.com/)
 
+## Libraries Included
+
+* ***TPAchievement*** - *Create custom achievements*
+* ***TPPersistence*** &nbsp;&nbsp;&nbsp;- *Save and Load game in few lines*
+* ***TPObjectPool*** &nbsp;&nbsp;&nbsp;- *Increase performance with object pooling*
+* ***TPAudioPool*** &nbsp;&nbsp;&nbsp;- *Manage your audio bundles easily*
+* ***TPInventory*** &nbsp;&nbsp;&nbsp;&nbsp;- *Implement an Inventory system in your game fast*
+* ***TPAttribute*** &nbsp;&nbsp;&nbsp;&nbsp;- *Create attributes and modify them freely*
+* ***TPSettings*** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- *Convenient library to create an options menu*
+* ***TPToolTip*** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- *Implement in-game tooltips*
+* ***TPFade*** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- *Fade between scenes*
+
+
 ## Before start
 
-- [x] Make sure you have **Unity 2017**. (Lower versions wasn't tested)
+- [x] Make sure you have **Unity 2017+** (Lower versions weren't tested)
 
 
 ## Getting Started
@@ -29,12 +42,12 @@ See our wiki for [documentation](https://github.com/Prastiwar/TPFramework/wiki).
 
 ## Using
 
-See our wiki for [documentation](https://github.com/Prastiwar/TPFramework/wiki).  
+See our wiki for [documentation](https://github.com/Prastiwar/TPFramework/wiki) to see API with examples.  
 
 
 ## Contributing
 
-You can freely contribute with us by reporting issues and making pull requests!  
+You can freely contribute with us! Report issues and make pull requests to help us improve this project.  
 Please read [CONTRIBUTING.md](https://github.com/Prastiwar/TPFramework/blob/master/.github/CONTRIBUTING.md) for details on contributing.
 
 ## Authors
