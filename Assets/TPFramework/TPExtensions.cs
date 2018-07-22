@@ -3,6 +3,7 @@
 *   MIT LICENSE: https://github.com/Prastiwar/TPFramework/blob/master/LICENSE
 *   Repository: https://github.com/Prastiwar/TPFramework 
 */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -209,5 +210,61 @@ namespace TPFramework
                 refreshRate = strings.Length >= 3 ? int.Parse(strings[2]) : 0
             };
         }
+
+#if NET_2_0 || NET_2_0_SUBSET
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static System.Collections.IEnumerator DelayAction(float delay, Action action)
+        {
+            while (delay-- >= 0)
+                yield return null;
+            if (action != null)
+                action();
+        }
+#else
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static async void DelayAction(float delay, Action action)
+        {
+            await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(delay));
+            if (action != null)
+                action();
+        }
+#endif
+
+
+
+        /// <summary> Converts GameObject activeSelf to state </summary>
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static TPObjectState GetState(this GameObject poolObject)
+        {
+            return poolObject.activeSelf ? TPObjectState.Active : TPObjectState.Deactive;
+        }
+
+        /// <summary> Converts State to GameObject activeSelf </summary>
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static bool ActiveSelf(this TPObjectState state)
+        {
+            return state == TPObjectState.Active ? true : false;
+        }
+
+        /// <summary> Returns true if poolObject has given state </summary>
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static bool HasState(this GameObject poolObject, TPObjectState state)
+        {
+            return state == GetState(poolObject) || state == TPObjectState.Auto;
+        }
+
+
+
+        //[MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        //public static bool IsClickable(this TPTooltipType tooltipType)
+        //{
+        //    return tooltipType == TPTooltipType.DynamicClick || tooltipType == TPTooltipType.StaticClick;
+        //}
+
+        //[MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        //public static bool IsDynamic(this TPTooltipType tooltipType)
+        //{
+        //    return tooltipType == TPTooltipType.DynamicClick || tooltipType == TPTooltipType.DynamicEnter;
+        //}
     }
 }

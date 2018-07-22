@@ -7,7 +7,7 @@ using TPFramework;
 [Serializable]
 public struct TPSettingsExample
 {
-    public GameObject ExampleCanvas;
+    public GameObject Scene;
 
     [Header("Toggles")]
     public Toggle AniosotropicToggler;
@@ -55,6 +55,7 @@ public struct TPAchievementExample
 [Serializable]
 public struct TPAudioPoolExample
 {
+    public TPAudioBundle AudioBundle;
 }
 
 [Serializable]
@@ -68,6 +69,9 @@ public struct TPObjectPoolExample
 [Serializable]
 public struct TPRandomExample
 {
+    public GameObject Scene;
+    public GameObject[] GameObjects;
+    public ProbabilityElementInt<GameObject>[] ProbabilityElements;
 }
 
 [Serializable]

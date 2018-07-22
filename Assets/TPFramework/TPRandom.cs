@@ -10,6 +10,7 @@ namespace TPFramework
 {
     /// <summary> Struct holds probability of int and element of T which can be returned in PickWithProbability </summary>
     /// <typeparam name="T"> Element can be returned if selected in Pick </typeparam>
+    [System.Serializable]
     public struct ProbabilityElementInt<T>
     {
         public T Element;
@@ -24,6 +25,7 @@ namespace TPFramework
 
     /// <summary> Struct holds probability of float and element of T which can be returned in PickWithProbability </summary>
     /// <typeparam name="T"> Element can be returned if selected in Pick </typeparam>
+    [System.Serializable]
     public struct ProbabilityElementFloat<T>
     {
         public T Element;
@@ -141,6 +143,7 @@ namespace TPFramework
             return chances;
         }
 
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static int[] RandomProbabilities(int length, int total = 100, int min = 1, int max = 100)
         {
             if ((max * length) < total)

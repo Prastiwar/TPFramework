@@ -872,24 +872,6 @@ namespace TPFramework
             return pool.ContainsKey(poolKey);
         }
 
-        /// <summary> Converts GameObject activeSelf to state </summary>
-        public static TPObjectState GetState(this GameObject poolObject)
-        {
-            return poolObject.activeSelf ? TPObjectState.Active : TPObjectState.Deactive;
-        }
-
-        /// <summary> Converts State to GameObject activeSelf </summary>
-        public static bool ActiveSelf(this TPObjectState state)
-        {
-            return state == TPObjectState.Active ? true : false;
-        }
-
-        /// <summary> Returns true if poolObject has given state </summary>
-        public static bool HasState(this GameObject poolObject, TPObjectState state)
-        {
-            return state == GetState(poolObject) || state == TPObjectState.Auto;
-        }
-
         /// <summary> Sets active all objects in array </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void SetAllActive(this GameObject[] poolObjects, bool active)

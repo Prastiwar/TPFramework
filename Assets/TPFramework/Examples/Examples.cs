@@ -15,33 +15,39 @@ public class Examples : MonoBehaviour
     public TPTooltipExample     TPTooltipExample;
     public TPRandomExample      TPRandomExample;
     public TPFaderExample       TPFaderExample;
-    
+
+    private readonly WaitForSeconds waitSecond = new WaitForSeconds(1);
+
     public void ExampleTPAchievement()
     {
-        TPSettingsExample.ExampleCanvas.SetActive(false);
+        DeactiveExamples();
         TPAchievementExample ex = TPAchievementExample;
+
         throw new NotImplementedException();
     }
 
     public void ExampleTPPersistence()
     {
-        TPSettingsExample.ExampleCanvas.SetActive(false);
+        DeactiveExamples();
         TPPersistenceExample ex = TPPersistenceExample;
+
         throw new NotImplementedException();
     }
 
     public void ExampleTPObjectPool()
     {
-        TPSettingsExample.ExampleCanvas.SetActive(false);
+        DeactiveExamples();
         TPObjectPoolExample ex = TPObjectPoolExample;
+
         TPObjectPool.CreatePool(ex.PoolKey, ex.Prefab, ex.PoolCount, 10);
-        StartCoroutine(SpawnObjects(ex, 20));
+        StartCoroutine(TPObjectPoolSpawnObjects(ex, 20));
     }
 
     public void ExampleTPAttribute()
     {
-        TPSettingsExample.ExampleCanvas.SetActive(false);
+        DeactiveExamples();
         TPAttributeExample ex = TPAttributeExample;
+
         ex.Health.Recalculate(); // we need to call this since changes from editor doesnt call it
         object goldenArmor = new object(); // some Item
         ex.HealthIncreaser.Source = goldenArmor;
@@ -55,23 +61,26 @@ public class Examples : MonoBehaviour
 
     public void ExampleTPAudioPool()
     {
-        TPSettingsExample.ExampleCanvas.SetActive(false);
+        DeactiveExamples();
         TPAudioPoolExample ex = TPAudioPoolExample;
-        throw new NotImplementedException();
+
+        TPAudioPool.AddToPool("MyBundle", ex.AudioBundle);
+        StartCoroutine(TPAudioPoolRepeatPlaying(5));
     }
 
     public void ExampleTPInventory()
     {
-        TPSettingsExample.ExampleCanvas.SetActive(false);
+        DeactiveExamples();
         TPInventoryExample ex = TPInventoryExample;
+
         throw new NotImplementedException();
     }
 
     public void ExampleTPSettings()
     {
+        DeactiveExamples();
         TPSettingsExample ex = TPSettingsExample;
-
-        ex.ExampleCanvas.SetActive(true);
+        ex.Scene.SetActive(true);
 
         TPSettings.SetAnisotropicToggler(ex.AniosotropicToggler);
         TPSettings.SetFullScreenToggler(ex.FullScreenToggler);
@@ -92,33 +101,72 @@ public class Examples : MonoBehaviour
 
     public void ExampleTPTooltip()
     {
-        TPSettingsExample.ExampleCanvas.SetActive(false);
+        DeactiveExamples();
         TPTooltipExample ex = TPTooltipExample;
+
         throw new NotImplementedException();
     }
 
     public void ExampleTPRandom()
     {
-        TPSettingsExample.ExampleCanvas.SetActive(false);
+        DeactiveExamples();
         TPRandomExample ex = TPRandomExample;
-        throw new NotImplementedException();
+        ex.Scene.SetActive(true);
+
+        int elLength = ex.GameObjects.Length;
+        ex.ProbabilityElements = new ProbabilityElementInt<GameObject>[elLength];
+        int[] randomProbabilities = TPRandom.RandomProbabilities(elLength);
+
+        DrawLine();
+        for (int i = 0; i < elLength; i++)
+        {
+            ex.ProbabilityElements[i] = new ProbabilityElementInt<GameObject>(ex.GameObjects[i], randomProbabilities[i]);
+            Debug.Log("Random probability: " + ex.ProbabilityElements[i].Probability);
+        }
+        DrawLine();
+
+        StartCoroutine(TPRandomToggleObject(15, ex));
     }
 
     public void ExampleTPFader()
     {
-        TPSettingsExample.ExampleCanvas.SetActive(false);
+        DeactiveExamples();
         TPFaderExample ex = TPFaderExample;
+
         throw new NotImplementedException();
     }
 
 
-    private IEnumerator SpawnObjects(TPObjectPoolExample ex, float last)
+    private IEnumerator TPRandomToggleObject(int repeat, TPRandomExample ex)
+    {
+        while (repeat >= 0)
+        {
+            GameObject selectedObject = TPRandom.PickWithProbability(ex.ProbabilityElements);
+            selectedObject.SetActive(!selectedObject.activeSelf);
+            repeat--;
+            yield return waitSecond;
+        }
+    }
+
+    private IEnumerator TPAudioPoolRepeatPlaying(int repeat)
+    {
+        while (repeat >= 0)
+        {
+            TPAudioPool.Play(this, "MyBundle", "door", () => {
+                MessageWithLines("TPAudioPool Sound 'door' was played by MyBundle");
+            });
+            repeat--;
+            yield return waitSecond;
+        }
+    }
+
+    private IEnumerator TPObjectPoolSpawnObjects(TPObjectPoolExample ex, float last)
     {
         while (last >= 0)
         {
             TPObjectPool.ToggleActive(ex.PoolKey, TPObjectState.Deactive, GetRandomPosition(), true);
             last--;
-            yield return new WaitForSeconds(1);
+            yield return waitSecond;
         }
         // Alternative
         //while (last >= 0)
@@ -127,13 +175,8 @@ public class Examples : MonoBehaviour
         //    obj.transform.position = GetRandomPosition();
         //    TPObjectPool.ToggleActive(ex.PoolKey, obj, true);
         //    last--;
-        //    yield return new WaitForSeconds(1);
+        //    yield return waitSecond;
         //}
-    }
-
-    private void DrawLine()
-    {
-        Debug.Log("-------------------------------------------------------------");
     }
 
     private Vector3 GetRandomPosition()
@@ -141,5 +184,23 @@ public class Examples : MonoBehaviour
         float randX = UnityEngine.Random.Range(-8, 8);
         float randY = UnityEngine.Random.Range(-8, 8);
         return new Vector3(randX, randY, 0);
+    }
+
+    private void MessageWithLines(string message)
+    {
+        DrawLine();
+        Debug.Log(message);
+        DrawLine();
+    }
+
+    private void DrawLine()
+    {
+        Debug.Log("-------------------------------------------------------------");
+    }
+
+    private void DeactiveExamples()
+    {
+        TPRandomExample.Scene.SetActive(false);
+        TPSettingsExample.Scene.SetActive(false);
     }
 }

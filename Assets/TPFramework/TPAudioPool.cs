@@ -17,17 +17,17 @@ namespace TPFramework
         public AudioClip Clip;
     }
 
+    public enum TPAudioSource
+    {
+        SFX,
+        Theme
+    }
+
     public sealed class TPAudioPool
     {
         private static Dictionary<string, TPAudioBundle> audioPool = new Dictionary<string, TPAudioBundle>();
         private static AudioSource sfxSource;
         private static AudioSource themeSource;
-
-        public enum Sources
-        {
-            SFX,
-            Theme
-        }
 
         /// <summary> Gets AudioSource from GameObject named "TPAudioSource"
         /// <para> On Get - returns source - if null, create it </para>
@@ -105,7 +105,7 @@ namespace TPFramework
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static AudioSource SetClip(TPAudioBundle bundle, string audioName, Sources source = Sources.SFX)
+        public static AudioSource SetClip(TPAudioBundle bundle, string audioName, TPAudioSource source = TPAudioSource.SFX)
         {
             AudioClip clip = GetClip(bundle, audioName);
             GetSource(source).clip = clip;
@@ -113,13 +113,13 @@ namespace TPFramework
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static AudioSource SetClip(string bundleName, string audioName, Sources source = Sources.SFX)
+        public static AudioSource SetClip(string bundleName, string audioName, TPAudioSource source = TPAudioSource.SFX)
         {
             return SetClip(GetBundle(bundleName), audioName, source);
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void Play(TPAudioBundle bundle, string audioName, Sources source = Sources.SFX, ulong delay = 0)
+        public static void Play(TPAudioBundle bundle, string audioName, TPAudioSource source = TPAudioSource.SFX, ulong delay = 0)
         {
             AudioClip clip = GetClip(bundle, audioName);
             GetSource(source).clip = clip;
@@ -127,7 +127,7 @@ namespace TPFramework
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void Play(string bundleName, string audioName, Sources source = Sources.SFX, ulong delay = 0)
+        public static void Play(string bundleName, string audioName, TPAudioSource source = TPAudioSource.SFX, ulong delay = 0)
         {
             Play(GetBundle(bundleName), audioName, source, delay);
         }
@@ -150,7 +150,7 @@ namespace TPFramework
         {
             AudioClip clip = GetClip(bundle, audioName);
             SFXSource.PlayOneShot(clip, volumeScale);
-            mono.StartCoroutine(DelayAction(clip.length, onAudioEnd));
+            mono.StartCoroutine(TPExtensions.DelayAction(clip.length, onAudioEnd));
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
@@ -164,7 +164,7 @@ namespace TPFramework
         {
             AudioClip clip = GetClip(bundle, audioName);
             SFXSource.PlayOneShot(clip, volumeScale);
-            DelayAction(clip.length, onAudioEnd);
+            TPExtensions.DelayAction(clip.length, onAudioEnd);
         }
                
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline 
@@ -176,16 +176,16 @@ namespace TPFramework
 
 #if NET_2_0 || NET_2_0_SUBSET
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void Play(MonoBehaviour mono, TPAudioBundle bundle, string audioName, Action onAudioEnd, Sources source = Sources.SFX, ulong delay = 0)
+        public static void Play(MonoBehaviour mono, TPAudioBundle bundle, string audioName, Action onAudioEnd, TPAudioSource source = TPAudioSource.SFX, ulong delay = 0)
         {
             AudioClip clip = GetClip(bundle, audioName);
             GetSource(source).clip = clip;
             GetSource(source).Play(delay);
-            mono.StartCoroutine(DelayAction(clip.length + delay, onAudioEnd));
+            mono.StartCoroutine(TPExtensions.DelayAction(clip.length + delay, onAudioEnd));
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void Play(MonoBehaviour mono, string bundleName, string audioName, Action onAudioEnd, Sources source = Sources.SFX, ulong delay = 0)
+        public static void Play(MonoBehaviour mono, string bundleName, string audioName, Action onAudioEnd, TPAudioSource source = TPAudioSource.SFX, ulong delay = 0)
         {
             Play(mono, GetBundle(bundleName), audioName, onAudioEnd, source, delay);
         }
@@ -196,7 +196,7 @@ namespace TPFramework
             AudioClip clip = GetClip(bundle, audioName);
             GetSource().clip = clip;
             GetSource().Play(delay);
-            DelayAction(clip.length + delay, onAudioEnd);
+            TPExtensions.DelayAction(clip.length + delay, onAudioEnd);
         }
         
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
@@ -234,9 +234,9 @@ namespace TPFramework
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        private static AudioSource GetSource(Sources source)
+        private static AudioSource GetSource(TPAudioSource source)
         {
-            return source == Sources.SFX ? SFXSource : ThemeSource;
+            return source == TPAudioSource.SFX ? SFXSource : ThemeSource;
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
@@ -305,25 +305,6 @@ namespace TPFramework
             source.SetCustomCurve(AudioSourceCurveType.Spread, copySource.GetCustomCurve(AudioSourceCurveType.Spread));
         }
 
-#if NET_2_0 || NET_2_0_SUBSET
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        private static System.Collections.IEnumerator DelayAction(float delay, Action action)
-        {
-            while (delay-- >= 0)
-                yield return null;
-            if (action != null)
-                action();
-        }
-#else
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        private static async void DelayAction(float delay, Action action)
-        {
-            await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(delay));
-            if (action != null)
-                action();
-        }
-#endif
-        
         private static bool SafeKey(string key)
         {
             if (HasKey(key))
