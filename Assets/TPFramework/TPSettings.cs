@@ -21,6 +21,7 @@ namespace TPFramework
 #if UNITY_EDITOR
         static TPSettings()
         {
+            // check if user has "Custom" quality level
             string[] qualities = QualitySettings.names;
             int length = qualities.Length;
             customQuality.CustomOption = new Dropdown.OptionData("Custom");
@@ -34,11 +35,12 @@ namespace TPFramework
                 else if (i == length - 1)
                 {
                     customQuality.CustomQualityIndex = -1;
-                    Debug.LogError("No 'Custom' quality level found. Create one!");
+                    Debug.LogError("No 'Custom' quality level found. Create one in Edit -> Project Settings -> Quality -> Add Quality Level");
                 }
             }
         }
 #endif
+        /// <summary> Struct holds all settings that can be changed </summary>
         [Serializable]
         public struct QualityLevel
         {
@@ -87,6 +89,7 @@ namespace TPFramework
         private static Action onCustomQualitySet = delegate { };
 
 
+        /// <summary> Adds listener to onValueChange that will change exposedParam in audioMixer to un-/mute </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void SetMusicToggler(Toggle toggle, AudioMixer audioMixer, string exposedParam, bool startValue = true)
         {
@@ -101,6 +104,7 @@ namespace TPFramework
             toggle.isOn = startValue;
         }
 
+        /// <summary> Adds listener to onValueChange that will change exposedParam in audioMixer to un-/mute </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void SetSoundFXToggler(Toggle toggle, AudioMixer audioMixer, string exposedParam, bool startValue = true)
         {
@@ -115,6 +119,7 @@ namespace TPFramework
             toggle.isOn = startValue;
         }
 
+        /// <summary> Adds listener to onClick that will change exposedParam in audioMixer to un-/mute and will change image to music-off/on </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void SetMusicToggler(Button button, Image image, Sprite musicOff, Sprite musicOn, AudioMixer audioMixer, string exposedParam, bool startValue = true)
         {
@@ -130,6 +135,7 @@ namespace TPFramework
             });
         }
 
+        /// <summary> Adds listener to onClick that will change exposedParam in audioMixer to un-/mute and will change image to sfx-off/on </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void SetSoundFXToggler(Button button, Image image, Sprite sfxOff, Sprite sfxOn, AudioMixer audioMixer, string exposedParam, bool startValue = true)
         {
@@ -145,6 +151,7 @@ namespace TPFramework
             });
         }
 
+        /// <summary> Adds listener to onValueChanged that will change volume of exposedParam in audioMixer </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void SetMusicVolumeSlider(Slider slider, AudioMixer audioMixer, string exposedParam, float startValue = 1, float minValue = -60, float maxValue = 25)
         {
@@ -155,6 +162,7 @@ namespace TPFramework
             SetSliderValues(slider, startValue, minValue, maxValue);
         }
 
+        /// <summary> Adds listener to onValueChanged that will change volume of exposedParam in audioMixer </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void SetSoundFXVolumeSlider(Slider slider, AudioMixer audioMixer, string exposedParam, float startValue = 1, float minValue = -60, float maxValue = 25)
         {
@@ -165,44 +173,42 @@ namespace TPFramework
             SetSliderValues(slider, startValue, minValue, maxValue);
         }
 
+        /// <summary> Adds listener to onValueChanged that will turn on/off Fullscreen  </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void SetFullScreenToggler(Toggle toggle, bool startValue = false)
         {
-            toggle.onValueChanged.AddListener((boolean) => {
-                Screen.fullScreen = boolean;
-            });
+            toggle.onValueChanged.AddListener(ToggleFullScreen);
             toggle.isOn = startValue;
         }
 
+        /// <summary> Adds listener to onValueChanged that will turn on/off VSync  </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void SetVSyncToggler(Toggle toggle, bool startValue = false)
         {
-            toggle.onValueChanged.AddListener((boolean) => {
-                QualitySettings.vSyncCount = boolean.ToInt();
-            });
+            toggle.onValueChanged.AddListener(ToggleVSync);
             toggle.isOn = startValue;
         }
 
+        /// <summary> Adds listener to onValueChanged that will turn on/off Anisotropic  </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void SetAnisotropicToggler(Toggle toggle, bool startValue = false)
         {
-            toggle.onValueChanged.AddListener((value) => {
-                QualitySettings.anisotropicFiltering = (AnisotropicFiltering)(value ? 2 : 0);
-            });
+            toggle.onValueChanged.AddListener(ToggleAnisotropic);
             toggle.isOn = startValue;
         }
 
+        /// <summary> Adds listener to onValueChanged that will change Screen Resolution  </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void SetResolutionDropdown(Dropdown dropdown, int startIndex = 0, List<string> options = null)
         {
             AddDropdownOptions(dropdown, startIndex, options ?? resolutionOptions);
-
             dropdown.onValueChanged.AddListener((index) => {
                 Resolution resolution = options != null ? options[index].ToResolution() : Screen.resolutions[index];
                 Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
             });
         }
 
+        /// <summary> Adds listener to onValueChanged that will change masterTextureLimit (sets quality to 'Custom') </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void SetTextureDropdown(Dropdown dropdown, int startIndex = 0, List<string> options = null)
         {
@@ -212,6 +218,7 @@ namespace TPFramework
             refreshSettings += () => DropdownRefresher(dropdown, () => dropdown.value = QualitySettings.masterTextureLimit);
         }
 
+        /// <summary> Adds listener to onValueChanged that will change Shadow Quality (sets quality to 'Custom') </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void SetShadowQualityDropdown(Dropdown dropdown, int startIndex = 0)
         {
@@ -221,6 +228,7 @@ namespace TPFramework
             refreshSettings += () => DropdownRefresher(dropdown, () => dropdown.value = (int)QualitySettings.shadows);
         }
 
+        /// <summary> Adds listener to onValueChanged that will change Shadow Resolution (sets quality to 'Custom') </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void SetShadowResolutionDropdown(Dropdown dropdown, int startIndex = 0)
         {
@@ -230,6 +238,7 @@ namespace TPFramework
             refreshSettings += () => DropdownRefresher(dropdown, () => dropdown.value = (int)QualitySettings.shadowResolution);
         }
 
+        /// <summary> Adds listener to onValueChanged that will change AntiAliasing (sets quality to 'Custom') </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void SetAntialiasingDropdown(Dropdown dropdown, int startIndex = 0)
         {
@@ -239,6 +248,7 @@ namespace TPFramework
             refreshSettings += () => DropdownRefresher(dropdown, () => dropdown.value = QualitySettings.antiAliasing == 8 ? 3 : QualitySettings.antiAliasing >> 1);
         }
 
+        /// <summary> Adds listener to onValueChanged that will change Quality Level </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void SetQualityDropdown(Dropdown dropdown, int startIndex = 0)
         {
@@ -272,6 +282,7 @@ namespace TPFramework
             };
         }
 
+        /// <summary> Change Quality Level and refresh affected settings </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void SetQualityLevel(QualityLevel level)
         {
@@ -286,11 +297,12 @@ namespace TPFramework
             refreshSettings();
         }
 
+        /// <summary> Change to Custom Quality Level, changes Qualit yDropdown value and saves other setting values </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         private static void SetToCustomLevel(int unusedParam)
         {
             if (customQuality.CustomQualityIndex < 0)
-                throw new Exception("You have to set 'Custom' quality level!");
+                throw new Exception("No 'Custom' quality level found. Create one in Edit -> Project Settings -> Quality -> Add Quality Level");
             if (QualitySettings.GetQualityLevel() == customQuality.CustomQualityIndex)
                 return;
 
@@ -327,6 +339,24 @@ namespace TPFramework
 
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        private static void ToggleFullScreen(bool boolean)
+        {
+            Screen.fullScreen = boolean;
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        private static void ToggleVSync(bool boolean)
+        {
+            QualitySettings.vSyncCount = boolean.ToInt();
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        private static void ToggleAnisotropic(bool value)
+        {
+            QualitySettings.anisotropicFiltering = (AnisotropicFiltering)(value ? 2 : 0);
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         private static void SetTexture(int index)
         {
             QualitySettings.masterTextureLimit = index;
@@ -347,6 +377,8 @@ namespace TPFramework
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         private static void SetAntialiasing(int index)
         {
+            // antiAliasing is 0, 2, 4, 8
+            //        index is 0, 1, 2, 3
             QualitySettings.antiAliasing = index > 0 ? 1 << index : 0;
         }
 
