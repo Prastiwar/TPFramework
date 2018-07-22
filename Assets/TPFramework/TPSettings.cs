@@ -23,15 +23,17 @@ namespace TPFramework
         {
             string[] qualities = QualitySettings.names;
             int length = qualities.Length;
+            customQuality.CustomOption = new Dropdown.OptionData("Custom");
             for (int i = 0; i < length; i++)
             {
-                if (qualities[i] == "Custom")
+                if (qualities[i] == customQuality.CustomOption.text)
                 {
-                    VisualSettings.CustomQualityIndex = i;
+                    customQuality.CustomQualityIndex = i;
                     break;
                 }
                 else if (i == length - 1)
                 {
+                    customQuality.CustomQualityIndex = -1;
                     Debug.LogError("No 'Custom' quality level found. Create one!");
                 }
             }
@@ -51,12 +53,6 @@ namespace TPFramework
         }
 
         [Serializable]
-        public struct VisualParameters
-        {
-            public int CustomQualityIndex;
-        }
-
-        [Serializable]
         public struct AudioParameters
         {
             public bool IsMusicOn;
@@ -65,123 +61,141 @@ namespace TPFramework
             public float SfxMixerFloat;
         }
 
+        [Serializable]
+        private struct CustomQuality
+        {
+            public int CustomQualityIndex;
+            public Dropdown.OptionData CustomOption;
+        }
+
         public static AudioParameters AudioSettings;
-        public static VisualParameters VisualSettings;
 
-        private static List<string> TextureOptions          = new List<string> { "Very High", "High", "Medium", "Low" };
-        private static List<string> ShadowQualityOptions    = new List<string> { "Disable", "HardOnly", "All" };
-        private static List<string> ShadowResolutionOptions = new List<string> { "Low", "Medium", "High", "VeryHigh" };
-        private static List<string> AntialiasingOptions     = new List<string> { "Disabled", "2x Multi Sampling", "4x Multi Sampling", "8x Multi Sampling" };
-        private static List<string> QualityOptions { get { return QualitySettings.names.ToList(); } }
-        private static List<string> ResolutionOptions { get { return new List<string>(Screen.resolutions.ToStringWithtHZ()); } }
-        //Resolution[] resolutions = Screen.resolutions;
-        //int length = resolutions.Length;
-        //List<string> options = new List<string>(length);
-
-        //for (int i = 0; i < length; i++)
-        //    options.Add(resolutions[i].ToString());
-
-        //return options;
+        private static readonly CustomQuality customQuality;
+        private static readonly List<string> textureOptions          = new List<string> { "Very High", "High", "Medium", "Low" };
+        private static readonly List<string> shadowQualityOptions    = new List<string> { "Disable", "HardOnly", "All" };
+        private static readonly List<string> shadowResolutionOptions = new List<string> { "Low", "Medium", "High", "VeryHigh" };
+        private static readonly List<string> antialiasingOptions     = new List<string> { "Disabled", "2x Multi Sampling", "4x Multi Sampling", "8x Multi Sampling" };
+        private static readonly List<string> resolutionOptions       = new List<string>(Screen.resolutions.ToStringWithtHZ());
+        private static List<string> qualityOptions {
+            get {
+                List<string> list = QualitySettings.names.ToList();
+                list.Remove("Custom");
+                return list;
+            }
+        }
+        private static Action refreshSettings = delegate { };
+        private static Action onCustomQualitySet = delegate { };
 
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void SetMusicToggler(Toggle toggle, AudioMixer audioMixer, string exposedMusicName)
+        public static void SetMusicToggler(Toggle toggle, AudioMixer audioMixer, string exposedParam, bool startValue = true)
         {
             toggle.onValueChanged.AddListener((value) => {
                 AudioSettings.IsMusicOn = value;
 
                 if (!AudioSettings.IsMusicOn) // cache float value before setting new value
-                    AudioSettings.MusicMixerFloat = audioMixer.GetFloat(exposedMusicName);
+                    AudioSettings.MusicMixerFloat = audioMixer.GetFloat(exposedParam);
 
-                audioMixer.SetFloat(exposedMusicName, AudioSettings.IsMusicOn ? AudioSettings.MusicMixerFloat : -80);
+                audioMixer.SetFloat(exposedParam, AudioSettings.IsMusicOn ? AudioSettings.MusicMixerFloat : -80);
             });
+            toggle.isOn = startValue;
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void SetSoundFXToggler(Toggle toggle, AudioMixer audioMixer, string exposedSfxName)
+        public static void SetSoundFXToggler(Toggle toggle, AudioMixer audioMixer, string exposedParam, bool startValue = true)
         {
             toggle.onValueChanged.AddListener((value) => {
                 AudioSettings.IsSfxOn = value;
 
                 if (!AudioSettings.IsSfxOn) // cache float value before setting new value
-                    AudioSettings.SfxMixerFloat = audioMixer.GetFloat(exposedSfxName);
+                    AudioSettings.SfxMixerFloat = audioMixer.GetFloat(exposedParam);
 
-                audioMixer.SetFloat(exposedSfxName, AudioSettings.IsSfxOn ? AudioSettings.SfxMixerFloat : -80);
+                audioMixer.SetFloat(exposedParam, AudioSettings.IsSfxOn ? AudioSettings.SfxMixerFloat : -80);
             });
+            toggle.isOn = startValue;
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void SetMusicToggler(Button button, Image image, Sprite musicOff, Sprite musicOn, AudioMixer audioMixer, string exposedMusicName)
+        public static void SetMusicToggler(Button button, Image image, Sprite musicOff, Sprite musicOn, AudioMixer audioMixer, string exposedParam, bool startValue = true)
         {
+            AudioSettings.IsMusicOn = !startValue;
             button.onClick.AddListener(() => {
                 AudioSettings.IsMusicOn = !AudioSettings.IsMusicOn;
-                image.sprite = !AudioSettings.IsMusicOn ? musicOff : musicOn;
+                image.sprite = AudioSettings.IsMusicOn ? musicOn : musicOff;
 
                 if (!AudioSettings.IsMusicOn) // cache float value before setting new value
-                    AudioSettings.MusicMixerFloat = audioMixer.GetFloat(exposedMusicName);
+                    AudioSettings.MusicMixerFloat = audioMixer.GetFloat(exposedParam);
 
-                audioMixer.SetFloat(exposedMusicName, AudioSettings.IsMusicOn ? AudioSettings.MusicMixerFloat : -80);
+                audioMixer.SetFloat(exposedParam, AudioSettings.IsMusicOn ? AudioSettings.MusicMixerFloat : -80);
             });
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void SetSoundFXToggler(Button button, Image image, Sprite sfxOff, Sprite sfxOn, AudioMixer audioMixer, string exposedSfxName)
+        public static void SetSoundFXToggler(Button button, Image image, Sprite sfxOff, Sprite sfxOn, AudioMixer audioMixer, string exposedParam, bool startValue = true)
         {
+            AudioSettings.IsSfxOn = !startValue;
             button.onClick.AddListener(() => {
                 AudioSettings.IsSfxOn = !AudioSettings.IsSfxOn;
-                image.sprite = !AudioSettings.IsSfxOn ? sfxOff : sfxOn;
+                image.sprite = AudioSettings.IsSfxOn ? sfxOn : sfxOff;
 
                 if (!AudioSettings.IsSfxOn) // cache float value before setting new value
-                    AudioSettings.SfxMixerFloat = audioMixer.GetFloat(exposedSfxName);
+                    AudioSettings.SfxMixerFloat = audioMixer.GetFloat(exposedParam);
 
-                audioMixer.SetFloat(exposedSfxName, AudioSettings.IsSfxOn ? AudioSettings.SfxMixerFloat : -80);
+                audioMixer.SetFloat(exposedParam, AudioSettings.IsSfxOn ? AudioSettings.SfxMixerFloat : -80);
             });
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void SetMusicVolumeSlider(Slider slider, AudioMixer audioMixer, string exposedMusicName)
+        public static void SetMusicVolumeSlider(Slider slider, AudioMixer audioMixer, string exposedParam, float startValue = 1, float minValue = -60, float maxValue = 25)
         {
             slider.onValueChanged.AddListener((value) => {
-                audioMixer.SetFloat(exposedMusicName, value);
-                if (value <= -30)
-                    audioMixer.SetFloat(exposedMusicName, -80);
-                AudioSettings.MusicMixerFloat = audioMixer.GetFloat(exposedMusicName);
+                audioMixer.SetFloat(exposedParam, value);
+                AudioSettings.MusicMixerFloat = audioMixer.GetFloat(exposedParam);
             });
+            SetSliderValues(slider, startValue, minValue, maxValue);
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void SetSoundFXSlider(Slider slider, AudioMixer audioMixer, string exposedSfxName)
+        public static void SetSoundFXVolumeSlider(Slider slider, AudioMixer audioMixer, string exposedParam, float startValue = 1, float minValue = -60, float maxValue = 25)
         {
             slider.onValueChanged.AddListener((value) => {
-                audioMixer.SetFloat(exposedSfxName, value);
-                if (value <= -30)
-                    audioMixer.SetFloat(exposedSfxName, -80);
-                AudioSettings.SfxMixerFloat = audioMixer.GetFloat(exposedSfxName);
+                audioMixer.SetFloat(exposedParam, value);
+                AudioSettings.SfxMixerFloat = audioMixer.GetFloat(exposedParam);
             });
+            SetSliderValues(slider, startValue, minValue, maxValue);
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void SetFullScreenToggler(Toggle toggle)
+        public static void SetFullScreenToggler(Toggle toggle, bool startValue = false)
         {
-            toggle.isOn = Screen.fullScreen;
             toggle.onValueChanged.AddListener((boolean) => {
                 Screen.fullScreen = boolean;
             });
+            toggle.isOn = startValue;
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void SetVSyncToggler(Toggle toggle)
+        public static void SetVSyncToggler(Toggle toggle, bool startValue = false)
         {
-            toggle.isOn = QualitySettings.vSyncCount > 0;
             toggle.onValueChanged.AddListener((boolean) => {
                 QualitySettings.vSyncCount = boolean.ToInt();
             });
+            toggle.isOn = startValue;
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void SetResolutionDropdown(Dropdown dropdown, int setIndex = 0, List<string> options = null)
+        public static void SetAnisotropicToggler(Toggle toggle, bool startValue = false)
         {
-            AddDropdownOptions(dropdown, setIndex, options ?? ResolutionOptions);
+            toggle.onValueChanged.AddListener((value) => {
+                QualitySettings.anisotropicFiltering = (AnisotropicFiltering)(value ? 2 : 0);
+            });
+            toggle.isOn = startValue;
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static void SetResolutionDropdown(Dropdown dropdown, int startIndex = 0, List<string> options = null)
+        {
+            AddDropdownOptions(dropdown, startIndex, options ?? resolutionOptions);
 
             dropdown.onValueChanged.AddListener((index) => {
                 Resolution resolution = options != null ? options[index].ToResolution() : Screen.resolutions[index];
@@ -190,89 +204,63 @@ namespace TPFramework
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void SetQualityDropdown(Dropdown dropdown, int setIndex = 0)
+        public static void SetTextureDropdown(Dropdown dropdown, int startIndex = 0, List<string> options = null)
         {
-            AddDropdownOptions(dropdown, setIndex, QualityOptions);
+            AddDropdownOptions(dropdown, startIndex, options ?? textureOptions);
+            dropdown.onValueChanged.AddListener(SetToCustomLevel);
+            dropdown.onValueChanged.AddListener(SetTexture);
+            refreshSettings += () => DropdownRefresher(dropdown, () => dropdown.value = QualitySettings.masterTextureLimit);
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static void SetShadowQualityDropdown(Dropdown dropdown, int startIndex = 0)
+        {
+            AddDropdownOptions(dropdown, startIndex, shadowQualityOptions);
+            dropdown.onValueChanged.AddListener(SetToCustomLevel);
+            dropdown.onValueChanged.AddListener(SetShadowQuality);
+            refreshSettings += () => DropdownRefresher(dropdown, () => dropdown.value = (int)QualitySettings.shadows);
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static void SetShadowResolutionDropdown(Dropdown dropdown, int startIndex = 0)
+        {
+            AddDropdownOptions(dropdown, startIndex, shadowResolutionOptions);
+            dropdown.onValueChanged.AddListener(SetToCustomLevel);
+            dropdown.onValueChanged.AddListener(SetShadowResolution);
+            refreshSettings += () => DropdownRefresher(dropdown, () => dropdown.value = (int)QualitySettings.shadowResolution);
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static void SetAntialiasingDropdown(Dropdown dropdown, int startIndex = 0)
+        {
+            AddDropdownOptions(dropdown, startIndex, antialiasingOptions);
+            dropdown.onValueChanged.AddListener(SetToCustomLevel);
+            dropdown.onValueChanged.AddListener(SetAntialiasing);
+            refreshSettings += () => DropdownRefresher(dropdown, () => dropdown.value = QualitySettings.antiAliasing == 8 ? 3 : QualitySettings.antiAliasing >> 1);
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static void SetQualityDropdown(Dropdown dropdown, int startIndex = 0)
+        {
+            AddDropdownOptions(dropdown, startIndex, qualityOptions);
             dropdown.onValueChanged.AddListener((index) => {
-                bool wasfullScreen = Screen.fullScreen;
-                Resolution wasResolution = Screen.currentResolution;
-                bool wasVSync = QualitySettings.vSyncCount == 0 ? false : true;
-
-                QualitySettings.SetQualityLevel(index, true);
-
-                Screen.SetResolution(wasResolution.width, wasResolution.height, wasfullScreen);
-                QualitySettings.vSyncCount = wasVSync ? 1 : 0;
-                // RefreshOthers();
+                SetQuality(index);
+                refreshSettings();
             });
+
+            onCustomQualitySet = () => {
+                dropdown.options.Add(customQuality.CustomOption);
+                dropdown.value = customQuality.CustomQualityIndex;
+                dropdown.options.Remove(customQuality.CustomOption);
+            };
+
+            refreshSettings();
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void SetTextureDropdown(Dropdown dropdown, int setIndex = 0, List<string> options = null)
+        public static QualityLevel GetCurrentQualityLevel()
         {
-            AddDropdownOptions(dropdown, setIndex, options ?? TextureOptions);
-            dropdown.onValueChanged.AddListener((index) => {
-                SetToCustomLevel();
-                QualitySettings.masterTextureLimit = index;
-            });
-        }
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void SetShadowQualityDropdown(Dropdown dropdown, int setIndex = 0)
-        {
-            AddDropdownOptions(dropdown, setIndex, ShadowQualityOptions);
-            dropdown.onValueChanged.AddListener((index) => {
-                SetToCustomLevel();
-                QualitySettings.shadows = (ShadowQuality)index;
-            });
-        }
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void SetShadowResolutionDropdown(Dropdown dropdown, int setIndex = 0)
-        {
-            AddDropdownOptions(dropdown, setIndex, ShadowResolutionOptions);
-            dropdown.onValueChanged.AddListener((index) => {
-                SetToCustomLevel();
-                QualitySettings.shadowResolution = (ShadowResolution)index;
-            });
-        }
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void SetAntialiasingDropdown(Dropdown dropdown, int setIndex = 0)
-        {
-            AddDropdownOptions(dropdown, setIndex, AntialiasingOptions);
-            dropdown.onValueChanged.AddListener((index) => {
-                SetToCustomLevel();
-                QualitySettings.antiAliasing = index > 0 ? 1 << index : 0;
-            });
-        }
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void SetAnisotropicToggler(Toggle toggle)
-        {
-            toggle.onValueChanged.AddListener((value) => {
-                SetToCustomLevel();
-                QualitySettings.anisotropicFiltering = (AnisotropicFiltering)(value ? 2 : 0);
-            });
-        }
-
-
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        private static void AddDropdownOptions(Dropdown dropdown, int setIndex, List<string> options)
-        {
-            dropdown.ClearOptions();
-            dropdown.AddOptions(options);
-            dropdown.value = setIndex;
-            dropdown.RefreshShownValue();
-        }
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        private static void SetToCustomLevel()
-        {
-            if (QualitySettings.GetQualityLevel() == VisualSettings.CustomQualityIndex)
-                return;
-
-            QualityLevel savedLevel = new QualityLevel() {
+            return new QualityLevel() {
                 MasterTextureLimit = QualitySettings.masterTextureLimit,
                 ShadowQuality = QualitySettings.shadows,
                 ShadowResolution = QualitySettings.shadowResolution,
@@ -282,18 +270,96 @@ namespace TPFramework
                 VSync = QualitySettings.vSyncCount.ToBool(),
                 FullScreen = Screen.fullScreen
             };
-
-            QualitySettings.SetQualityLevel(VisualSettings.CustomQualityIndex, false);
-
-            Screen.fullScreen = savedLevel.FullScreen;
-            Screen.SetResolution(savedLevel.Resolution.width, savedLevel.Resolution.height, Screen.fullScreen);
-            QualitySettings.masterTextureLimit = savedLevel.MasterTextureLimit;
-            QualitySettings.shadowResolution = savedLevel.ShadowResolution;
-            QualitySettings.shadows = savedLevel.ShadowQuality;
-            QualitySettings.anisotropicFiltering = savedLevel.AnisotropicFiltering;
-            QualitySettings.antiAliasing = savedLevel.Antialiasing;
-            QualitySettings.vSyncCount = savedLevel.VSync.ToInt();
         }
 
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static void SetQualityLevel(QualityLevel level)
+        {
+            QualitySettings.masterTextureLimit = level.MasterTextureLimit;
+            QualitySettings.shadowResolution = level.ShadowResolution;
+            QualitySettings.shadows = level.ShadowQuality;
+            QualitySettings.anisotropicFiltering = level.AnisotropicFiltering;
+            QualitySettings.antiAliasing = level.Antialiasing;
+            QualitySettings.vSyncCount = level.VSync.ToInt();
+            Screen.fullScreen = level.FullScreen;
+            Screen.SetResolution(level.Resolution.width, level.Resolution.height, Screen.fullScreen);
+            refreshSettings();
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        private static void SetToCustomLevel(int unusedParam)
+        {
+            if (customQuality.CustomQualityIndex < 0)
+                throw new Exception("You have to set 'Custom' quality level!");
+            if (QualitySettings.GetQualityLevel() == customQuality.CustomQualityIndex)
+                return;
+
+            QualityLevel savedLevel = GetCurrentQualityLevel();
+            QualitySettings.SetQualityLevel(customQuality.CustomQualityIndex, true);
+            SetQualityLevel(savedLevel);
+            onCustomQualitySet();
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        private static void AddDropdownOptions(Dropdown dropdown, int startIndex, List<string> options)
+        {
+            dropdown.ClearOptions();
+            dropdown.AddOptions(options);
+            dropdown.value = startIndex;
+            dropdown.RefreshShownValue();
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        private static void DropdownRefresher(Dropdown dropdown, Action action)
+        {
+            dropdown.onValueChanged.RemoveListener(SetToCustomLevel);
+            action();
+            dropdown.onValueChanged.AddListener(SetToCustomLevel);
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        private static void SetSliderValues(Slider slider, float startValue, float minValue, float maxValue)
+        {
+            slider.minValue = minValue;
+            slider.maxValue = maxValue;
+            slider.value = startValue;
+        }
+
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        private static void SetTexture(int index)
+        {
+            QualitySettings.masterTextureLimit = index;
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        private static void SetShadowQuality(int index)
+        {
+            QualitySettings.shadows = (ShadowQuality)index;
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        private static void SetShadowResolution(int index)
+        {
+            QualitySettings.shadowResolution = (ShadowResolution)index;
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        private static void SetAntialiasing(int index)
+        {
+            QualitySettings.antiAliasing = index > 0 ? 1 << index : 0;
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        private static void SetQuality(int index)
+        {
+            int wasVSync = QualitySettings.vSyncCount;
+            AnisotropicFiltering wasAnisotropic = QualitySettings.anisotropicFiltering;
+
+            QualitySettings.SetQualityLevel(index, true);
+
+            QualitySettings.anisotropicFiltering = wasAnisotropic;
+            QualitySettings.vSyncCount = wasVSync;
+        }
     }
 }
