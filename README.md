@@ -17,16 +17,19 @@
 
 [![Made with Unity](https://img.shields.io/badge/Made%20with-Unity-000000.svg?longCache=true&style=for-the-badge&colorA=666677&colorB=222222)](https://unity3d.com/)
 
-## Libraries Included
+## Packages Included
 
 * ***TPAchievement*** - *Create custom achievements*
 * ***TPPersistence*** &nbsp;&nbsp;&nbsp;- *Save and Load game in few lines*
+* ***TPExtensions*** &nbsp;&nbsp;&nbsp;- *Library contains a lot common methods*
 * ***TPObjectPool*** &nbsp;&nbsp;&nbsp;- *Increase performance with object pooling*
 * ***TPAudioPool*** &nbsp;&nbsp;&nbsp;- *Manage your audio bundles easily*
 * ***TPInventory*** &nbsp;&nbsp;&nbsp;&nbsp;- *Implement an Inventory system in your game fast*
 * ***TPAttribute*** &nbsp;&nbsp;&nbsp;&nbsp;- *Create attributes and modify them freely*
 * ***TPSettings*** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- *Convenient library to create an options menu*
+* ***TPReusable*** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- *Performant temporary collections*
 * ***TPToolTip*** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- *Implement in-game tooltips*
+* ***TPRandom*** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - *Probability, random functions*
 * ***TPFade*** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- *Fade between scenes*
 
 

@@ -50,13 +50,13 @@ namespace TPFramework
                 return true;
             return false;
         }
-        
+
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static int ToInt(this bool boolean)
         {
             return boolean ? 1 : 0;
         }
-        
+
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static bool ToBool(this int integer)
         {
@@ -72,16 +72,61 @@ namespace TPFramework
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void SortHighToLow(this List<int> list)
+        public static void SortReverse(this List<int> integers)
         {
-            int count = list.Count;
+            int count = integers.Count;
             int shouldIndex = count - 1;
             int halfLength = count / 2;
             for (int i = 0; i < halfLength; i++)
             {
-                int tempShuffle = list[i];
-                list[i] = list[shouldIndex];
-                list[shouldIndex] = tempShuffle;
+                int tempShuffle = integers[i];
+                integers[i] = integers[shouldIndex];
+                integers[shouldIndex] = tempShuffle;
+                shouldIndex--;
+            }
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static void SortReverse(this int[] integers)
+        {
+            int count = integers.Length;
+            int shouldIndex = count - 1;
+            int halfLength = count / 2;
+            for (int i = 0; i < halfLength; i++)
+            {
+                int tempShuffle = integers[i];
+                integers[i] = integers[shouldIndex];
+                integers[shouldIndex] = tempShuffle;
+                shouldIndex--;
+            }
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static void SortReverse(this List<float> floats)
+        {
+            int count = floats.Count;
+            int shouldIndex = count - 1;
+            int halfLength = count / 2;
+            for (int i = 0; i < halfLength; i++)
+            {
+                float tempShuffle = floats[i];
+                floats[i] = floats[shouldIndex];
+                floats[shouldIndex] = tempShuffle;
+                shouldIndex--;
+            }
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static void SortReverse(this float[] floats)
+        {
+            int count = floats.Length;
+            int shouldIndex = count - 1;
+            int halfLength = count / 2;
+            for (int i = 0; i < halfLength; i++)
+            {
+                float tempShuffle = floats[i];
+                floats[i] = floats[shouldIndex];
+                floats[shouldIndex] = tempShuffle;
                 shouldIndex--;
             }
         }
@@ -254,17 +299,18 @@ namespace TPFramework
         }
 
 
+#if TPTooltip
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static bool IsClickable(this TPTooltipType tooltipType)
+        {
+            return tooltipType == TPTooltipType.DynamicClick || tooltipType == TPTooltipType.StaticClick;
+        }
 
-        //[MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        //public static bool IsClickable(this TPTooltipType tooltipType)
-        //{
-        //    return tooltipType == TPTooltipType.DynamicClick || tooltipType == TPTooltipType.StaticClick;
-        //}
-
-        //[MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        //public static bool IsDynamic(this TPTooltipType tooltipType)
-        //{
-        //    return tooltipType == TPTooltipType.DynamicClick || tooltipType == TPTooltipType.DynamicEnter;
-        //}
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static bool IsDynamic(this TPTooltipType tooltipType)
+        {
+            return tooltipType == TPTooltipType.DynamicClick || tooltipType == TPTooltipType.DynamicEnter;
+        }
+#endif
     }
 }

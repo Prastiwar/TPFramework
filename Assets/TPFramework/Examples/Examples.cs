@@ -26,6 +26,7 @@ public class Examples : MonoBehaviour
         throw new NotImplementedException();
     }
 
+
     public void ExampleTPPersistence()
     {
         DeactiveExamples();
@@ -33,6 +34,7 @@ public class Examples : MonoBehaviour
 
         throw new NotImplementedException();
     }
+
 
     public void ExampleTPObjectPool()
     {
@@ -42,6 +44,7 @@ public class Examples : MonoBehaviour
         TPObjectPool.CreatePool(ex.PoolKey, ex.Prefab, ex.PoolCount, 10);
         StartCoroutine(TPObjectPoolSpawnObjects(ex, 20));
     }
+
 
     public void ExampleTPAttribute()
     {
@@ -59,6 +62,7 @@ public class Examples : MonoBehaviour
         DrawLine();
     }
 
+
     public void ExampleTPAudioPool()
     {
         DeactiveExamples();
@@ -68,6 +72,7 @@ public class Examples : MonoBehaviour
         StartCoroutine(TPAudioPoolRepeatPlaying(5));
     }
 
+
     public void ExampleTPInventory()
     {
         DeactiveExamples();
@@ -75,6 +80,7 @@ public class Examples : MonoBehaviour
 
         throw new NotImplementedException();
     }
+
 
     public void ExampleTPSettings()
     {
@@ -99,6 +105,7 @@ public class Examples : MonoBehaviour
         TPSettings.SetQualityDropdown(ex.Quality);
     }
 
+
     public void ExampleTPTooltip()
     {
         DeactiveExamples();
@@ -106,6 +113,7 @@ public class Examples : MonoBehaviour
 
         throw new NotImplementedException();
     }
+
 
     public void ExampleTPRandom()
     {
@@ -128,6 +136,7 @@ public class Examples : MonoBehaviour
         StartCoroutine(TPRandomToggleObject(15, ex));
     }
 
+
     public void ExampleTPFader()
     {
         DeactiveExamples();
@@ -135,6 +144,7 @@ public class Examples : MonoBehaviour
 
         throw new NotImplementedException();
     }
+
 
 
     private IEnumerator TPRandomToggleObject(int repeat, TPRandomExample ex)

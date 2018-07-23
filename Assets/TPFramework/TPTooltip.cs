@@ -21,6 +21,12 @@
 //        StaticClick   // doesn't move with cursor - show on click
 //    }
 
+//    [UnityEditor.InitializeOnLoad]
+//    internal class TPTooltipEditor
+//    {
+
+//    }
+
 //    public class TPTooltip : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 //    {
 //        public TPTooltipType TooltipType;
@@ -32,7 +38,7 @@
 //                return;
 
 //            if (TooltipType.IsClickable())
-//                tooltipCreator.OnPointerEnter(eventData);
+//                TooltipManager.OnPointerEnter(eventData);
 //        }
 
 //        public void OnPointerEnter(PointerEventData eventData)
@@ -41,7 +47,7 @@
 //                return;
 
 //            if (!TooltipType.IsClickable())
-//                tooltipCreator.OnPointerEnter(eventData);
+//                TooltipManager.OnPointerEnter(eventData);
 //        }
 
 //        public void OnPointerExit(PointerEventData eventData)
@@ -50,25 +56,19 @@
 //                return;
 
 //            if (TooltipType != TPTooltipType.StaticClick)
-//                tooltipCreator.OnPointerExit(eventData);
+//                TooltipManager.OnPointerExit(eventData);
 //        }
+//    }
 
+   
 
-
-
-
-
-//        // **********************************************************************************************//
-//        // **********************************************************************************************//
-//        // **********************************************************************************************//
-
-
-
+//    public class TooltipManager : MonoBehaviour
+//    {
 //        public TPTooltipLayout TooltipLayout;
 //        public Transform StaticTransform;
 //        public Vector2 Offset;
 
-//        private TPTooltipObserver observer;
+//        private TPTooltip observer;
 //        private PointerEventData _eventData;
 //        private WaitWhile waitWhileOnPos;
 //        private GameObject tooltipLayoutCanvas;
@@ -105,7 +105,7 @@
 //            if (eventData == null)
 //                return;
 
-//            observer = eventData.pointerEnter.GetComponent<TPTooltipObserver>();
+//            observer = eventData.pointerEnter.GetComponent<TPTooltip>();
 //            _eventData = eventData;
 
 //            if (observer == null)
@@ -114,7 +114,7 @@
 //            OnObserverEnter(observer);
 //            SetActive(true);
 
-//            if (observer.SetType.IsDynamicTooltip())
+//            if (observer.TooltipType.IsDynamic())
 //                StartCoroutine(ToolTipPositioning());
 //            else
 //                TooltipLayout.PanelTransform.position = StaticTransform.position;
