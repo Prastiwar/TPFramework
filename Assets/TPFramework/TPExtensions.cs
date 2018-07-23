@@ -274,43 +274,6 @@ namespace TPFramework
                 action();
         }
 #endif
-
-
-
-        /// <summary> Converts GameObject activeSelf to state </summary>
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static TPObjectState GetState(this GameObject poolObject)
-        {
-            return poolObject.activeSelf ? TPObjectState.Active : TPObjectState.Deactive;
-        }
-
-        /// <summary> Converts State to GameObject activeSelf </summary>
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static bool ActiveSelf(this TPObjectState state)
-        {
-            return state == TPObjectState.Active ? true : false;
-        }
-
-        /// <summary> Returns true if poolObject has given state </summary>
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static bool HasState(this GameObject poolObject, TPObjectState state)
-        {
-            return state == GetState(poolObject) || state == TPObjectState.Auto;
-        }
-
-
-#if TPTooltip
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static bool IsClickable(this TPTooltipType tooltipType)
-        {
-            return tooltipType == TPTooltipType.DynamicClick || tooltipType == TPTooltipType.StaticClick;
-        }
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static bool IsDynamic(this TPTooltipType tooltipType)
-        {
-            return tooltipType == TPTooltipType.DynamicClick || tooltipType == TPTooltipType.DynamicEnter;
-        }
-#endif
+                    
     }
 }

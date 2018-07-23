@@ -13,33 +13,14 @@ using UnityEngine.UI;
 
 namespace TPFramework
 {
-#if UNITY_EDITOR
-    [UnityEditor.InitializeOnLoad]
-#endif 
     public static class TPSettings
     {
-#if UNITY_EDITOR
         static TPSettings()
         {
-            // check if user has "Custom" quality level
-            string[] qualities = QualitySettings.names;
-            int length = qualities.Length;
             customQuality.CustomOption = new Dropdown.OptionData("Custom");
-            for (int i = 0; i < length; i++)
-            {
-                if (qualities[i] == customQuality.CustomOption.text)
-                {
-                    customQuality.CustomQualityIndex = i;
-                    break;
-                }
-                else if (i == length - 1)
-                {
-                    customQuality.CustomQualityIndex = -1;
-                    Debug.LogError("No 'Custom' quality level found. Create one in Edit -> Project Settings -> Quality -> Add Quality Level");
-                }
-            }
+            customQuality.CustomQualityIndex = QualitySettings.names.ToList().IndexOf(customQuality.CustomOption.text);
         }
-#endif
+
         /// <summary> Struct holds all settings that can be changed </summary>
         [Serializable]
         public struct QualityLevel
