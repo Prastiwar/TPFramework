@@ -4568,8 +4568,12 @@ MonoBehaviour:
   TooltipType: 1
   IsObserving: 1
   TooltipLayout:
-    prefab: {fileID: 1727425051679720, guid: 98ba957ac58abd74b872856f7b15c185, type: 2}
-    staticPosition: {fileID: 0}
+    normalLayout: {fileID: 1727425051679720, guid: 98ba957ac58abd74b872856f7b15c185,
+      type: 2}
+    sharedLayout: {fileID: 1727425051679720, guid: 98ba957ac58abd74b872856f7b15c185,
+      type: 2}
+    staticPosition: {fileID: 2121683396}
+    useSharedLayout: 1
     DynamicOffset: {x: 0, y: 0}
 --- !u!114 &847686707
 MonoBehaviour:
@@ -7414,8 +7418,12 @@ MonoBehaviour:
   TooltipType: 2
   IsObserving: 1
   TooltipLayout:
-    prefab: {fileID: 1727425051679720, guid: 98ba957ac58abd74b872856f7b15c185, type: 2}
-    staticPosition: {fileID: 0}
+    normalLayout: {fileID: 1727425051679720, guid: 98ba957ac58abd74b872856f7b15c185,
+      type: 2}
+    sharedLayout: {fileID: 1727425051679720, guid: 98ba957ac58abd74b872856f7b15c185,
+      type: 2}
+    staticPosition: {fileID: 2121683396}
+    useSharedLayout: 1
     DynamicOffset: {x: 0, y: 0}
 --- !u!114 &1205958551
 MonoBehaviour:
@@ -9139,8 +9147,12 @@ MonoBehaviour:
   TooltipType: 0
   IsObserving: 1
   TooltipLayout:
-    prefab: {fileID: 1727425051679720, guid: 98ba957ac58abd74b872856f7b15c185, type: 2}
-    staticPosition: {fileID: 0}
+    normalLayout: {fileID: 1727425051679720, guid: 98ba957ac58abd74b872856f7b15c185,
+      type: 2}
+    sharedLayout: {fileID: 1727425051679720, guid: 98ba957ac58abd74b872856f7b15c185,
+      type: 2}
+    staticPosition: {fileID: 2121683396}
+    useSharedLayout: 1
     DynamicOffset: {x: 0, y: 0}
 --- !u!114 &1505785288
 MonoBehaviour:
@@ -10463,8 +10475,12 @@ MonoBehaviour:
   TooltipType: 3
   IsObserving: 1
   TooltipLayout:
-    prefab: {fileID: 1727425051679720, guid: 98ba957ac58abd74b872856f7b15c185, type: 2}
-    staticPosition: {fileID: 0}
+    normalLayout: {fileID: 1727425051679720, guid: 98ba957ac58abd74b872856f7b15c185,
+      type: 2}
+    sharedLayout: {fileID: 1727425051679720, guid: 98ba957ac58abd74b872856f7b15c185,
+      type: 2}
+    staticPosition: {fileID: 2121683396}
+    useSharedLayout: 1
     DynamicOffset: {x: 0, y: 0}
 --- !u!114 &1766844923
 MonoBehaviour:

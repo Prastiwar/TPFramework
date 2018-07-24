@@ -3,13 +3,14 @@
 *   MIT LICENSE: https://github.com/Prastiwar/TPFramework/blob/master/LICENSE
 *   Repository: https://github.com/Prastiwar/TPFramework 
 */
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
-using System;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 namespace TPFramework
 {
@@ -38,9 +39,8 @@ namespace TPFramework
 
             if (TooltipType.IsClickable())
             {
-                if (!TooltipLayout.IsInitialized)
-                    TooltipLayout.Initialize();
-                TooltipManager.OnPointerEnter(eventData);
+                TooltipLayout.Initialize(TooltipType);
+                TPTooltipManager.OnPointerClick(eventData);
             }
         }
 
@@ -52,9 +52,8 @@ namespace TPFramework
 
             if (!TooltipType.IsClickable())
             {
-                if (!TooltipLayout.IsInitialized)
-                    TooltipLayout.Initialize();
-                TooltipManager.OnPointerEnter(eventData);
+                TooltipLayout.Initialize(TooltipType);
+                TPTooltipManager.OnPointerEnter(eventData);
             }
         }
 
@@ -65,9 +64,10 @@ namespace TPFramework
                 return;
 
             if (TooltipType != TPTooltipType.StaticClick)
-                TooltipManager.OnPointerExit(eventData);
+                TPTooltipManager.OnPointerExit(eventData);
         }
 
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         private bool CanRaycast(PointerEventData eventData)
         {
             return IsObserving && eventData != null;
@@ -77,20 +77,49 @@ namespace TPFramework
 
     // ---------------------------------------------------------------- TooltipManager ---------------------------------------------------------------- //
 
-    public static class TooltipManager
+    public static class TPTooltipManager
     {
         private static TPTooltip observer;
         private static PointerEventData _eventData;
+        private static readonly Dictionary<int, GameObject> sharedLayouts = new Dictionary<int, GameObject>(2);
 
         public static Action<TPTooltip> OnObserverEnter = delegate { observer.TooltipLayout.SetActive(true); };
         public static Action<TPTooltip> OnObserverExit = delegate { observer.TooltipLayout.SetActive(false); };
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static GameObject ShareLayout(GameObject layout)
+        {
+            int id = layout.GetInstanceID();
+            if (!sharedLayouts.ContainsKey(id))
+                return sharedLayouts[id] = UnityEngine.Object.Instantiate(layout);
+            return sharedLayouts[id];
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static void OnPointerClick(PointerEventData eventData)
+        {
+            observer = eventData.pointerEnter.GetComponent<TPTooltip>();
+            _eventData = eventData;
+
+
+            if (!observer.TooltipLayout.IsActive())
+            {
+                OnObserverEnter(observer);
+                if (observer.TooltipType.IsDynamic())
+                    observer.StartCoroutine(ToolTipPositioning());
+            }
+            else
+            {
+                OnObserverExit(observer);
+            }
+        }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void OnPointerEnter(PointerEventData eventData)
         {
             observer = eventData.pointerEnter.GetComponent<TPTooltip>();
             _eventData = eventData;
-            
+
             OnObserverEnter(observer);
 
             if (observer.TooltipType.IsDynamic())
@@ -152,24 +181,55 @@ namespace TPFramework
         internal float panelHalfHeight;
         internal float panelHalfWidth;
 
-        [SerializeField] private GameObject prefab;
+        [SerializeField] private GameObject normalLayout;
+        [SerializeField] private GameObject sharedLayout;
         [SerializeField] private Transform staticPosition;
+        [SerializeField] private bool useSharedLayout;
+
         public Vector2 DynamicOffset;
+
+        public GameObject Layout { get; private set; }
         public bool IsInitialized { get; set; }
 
+        public bool UseSharedLayout {
+            get { return useSharedLayout; }
+            set {
+                useSharedLayout = value;
+                IsInitialized = false;
+            }
+        }
+
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public void Initialize()
+        public void Initialize(TPTooltipType type)
+        {
+            if (!IsInitialized)
+            {
+                Layout = UseSharedLayout ? TPTooltipManager.ShareLayout(sharedLayout) : UnityEngine.Object.Instantiate(normalLayout);
+                Initialize(Layout);
+            }
+            if (!type.IsDynamic())
+            {
+                panelCanvasGroup.blocksRaycasts = true;
+                SetPositionToStatic();
+            }
+            else
+            {
+                panelCanvasGroup.blocksRaycasts = false;
+            }
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        private void Initialize(GameObject layout)
         {
 #if TPTooltipSafeChecks
-            SafeCheck();
+            SafeCheck(layout);
 #endif
             IsInitialized = true;
-            prefab = UnityEngine.Object.Instantiate(prefab);
-            panelTransform = prefab.transform.GetChild(0);
+            panelTransform = layout.transform.GetChild(0);
 
-            panelCanvasGroup = prefab.transform.GetComponent<CanvasGroup>();
+            panelCanvasGroup = layout.transform.GetComponent<CanvasGroup>();
             panelCanvasGroup.alpha = 0;
-            panelCanvasGroup.blocksRaycasts = false;
+            panelCanvasGroup.blocksRaycasts = true;
 
             images = panelTransform.GetChild(0).GetComponentsInChildren<Image>();
             buttons = panelTransform.GetChild(1).GetComponentsInChildren<Button>();
@@ -182,18 +242,25 @@ namespace TPFramework
         }
 
 #if TPTooltipSafeChecks
-        private void SafeCheck()
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        private void SafeCheck(GameObject layout)
         {
-            if (prefab.transform.childCount < 1)
+            if (layout.transform.childCount < 1)
                 throw new Exception("Invalid Tooltip Layout! Prefab needs to be canvas parent with panel as child");
-            else if (!prefab.transform.GetComponent<CanvasGroup>())
+            else if (!layout.transform.GetComponent<CanvasGroup>())
                 throw new Exception("Invalid Tooltip Layout! Prefab needs to have CanvasGroup component");
-            else if (!prefab.transform.GetChild(0).GetComponent<Image>())
+            else if (!layout.transform.GetChild(0).GetComponent<Image>())
                 throw new Exception("Invalid Tooltip Layout! PanelTransform(child of canvas) needs to have Image component");
-            else if (prefab.transform.GetChild(0).childCount < 3)
+            else if (layout.transform.GetChild(0).childCount < 3)
                 throw new Exception("Invalid Tooltip Layout! PanelTransform(child of canvas) needs to have at least 3 children (images parent, buttons parent, texts parent)");
         }
 #endif
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public bool IsActive()
+        {
+            return panelCanvasGroup.alpha == 1;
+        }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public void SetActive(bool active)
@@ -303,7 +370,7 @@ namespace TPFramework
         {
             return buttons[index];
         }
-        
+
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         private void Set<T, U>(int index, T obj, U[] collection)
