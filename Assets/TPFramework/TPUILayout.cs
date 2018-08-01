@@ -29,7 +29,7 @@ namespace TPFramework
             if (IsInitialized)
                 return;
 
-            if (!LayoutSpawned(parent))
+            if (!LayoutSpawn(parent))
             {
                 TPLayout = UnityEngine.Object.Instantiate(LayoutPrefab, parent);
             }
@@ -41,7 +41,7 @@ namespace TPFramework
         protected virtual void OnInitialized() { }
 
         /// <summary> Returns if TPLayout is already spawned </summary>
-        protected virtual bool LayoutSpawned(Transform parent = null) { return false; }
+        protected virtual bool LayoutSpawn(Transform parent = null) { return false; }
 
         private void Initialize()
         {

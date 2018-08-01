@@ -173,6 +173,25 @@ namespace TPFramework
             return chances;
         }
 
+        /// <summary> Returns a random point inside a box with radius 1 </summary>
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static Vector3 InsideUnitBox()
+        {
+            float randX = Random.Range(-1, 1);
+            float randY = Random.Range(-1, 1);
+            float randZ = Random.Range(-1, 1);
+            return new Vector3(randX, randY, randZ);
+        }
+
+        /// <summary> Returns a random point inside a square with radius 1 </summary>
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static Vector2 InsideUnitSquare()
+        {
+            float randX = Random.Range(-1, 1);
+            float randY = Random.Range(-1, 1);
+            return new Vector2(randX, randY);
+        }
+
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static bool RandomBool(float probability = 0.5f)
         {

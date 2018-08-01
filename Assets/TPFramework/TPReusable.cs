@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace TPFramework
@@ -47,18 +48,23 @@ namespace TPFramework
     }
 
     [Serializable]
-    public class SharedObjectsCollection
+    public class SharedObjectCollection
     {
         public readonly Dictionary<int, GameObject> SharedObjects;
 
-        public SharedObjectsCollection(int capacity = 10)
+        public SharedObjectCollection(int capacity = 10)
         {
             SharedObjects = new Dictionary<int, GameObject>(capacity);
         }
-
-        public GameObject ShareObject(GameObject gameObject)
+        
+        /// <summary> Returns shared object if exists, if no, instantiate it and return </summary>
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public GameObject ShareObject(GameObject gameObject, Transform parent = null)
         {
-
+            int id = gameObject.GetInstanceID();
+            if (!SharedObjects.ContainsKey(id))
+                return SharedObjects[id] = UnityEngine.Object.Instantiate(gameObject, parent);
+            return SharedObjects[id];
         }
     }
 }

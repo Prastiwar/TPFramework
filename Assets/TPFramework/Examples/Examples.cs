@@ -22,11 +22,10 @@ public class Examples : MonoBehaviour
     {
         DeactiveExamples();
         TPAchievementExample ex = TPAchievementExample;
-        ex.Achievement.Points = 0;
-        ex.Achievement.IsCompleted = false;
-        TPAchievementManager.InitAchievement(ex.Achievement);
+        ex.Achievement.Info.Points = 0;
+        ex.Achievement.Info.IsCompleted = false;
 
-        for (int i = 0; i < ex.Achievement.ReachPoints; i++)
+        for (int i = 0; i < ex.Achievement.Info.ReachPoints; i++)
         {
             ex.Achievement.AddPoints(1);
         }

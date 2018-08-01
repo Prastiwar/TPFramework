@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 33848682347788388}
   - component: {fileID: 23418337779620340}
   m_Layer: 0
-  m_Name: CubeObjectPool
+  m_Name: TPObjectPoolCubePrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

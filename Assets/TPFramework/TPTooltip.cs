@@ -82,18 +82,15 @@ namespace TPFramework
     {
         private static TPTooltip observer;
         private static PointerEventData _eventData;
-        private static readonly Dictionary<int, GameObject> sharedLayouts = new Dictionary<int, GameObject>(2);
+        private static readonly SharedObjectCollection sharedLayouts = new SharedObjectCollection(2);
 
         public static Action<TPTooltip> OnObserverEnter = delegate { observer.TooltipLayout.SetActive(true); };
         public static Action<TPTooltip> OnObserverExit = delegate { observer.TooltipLayout.SetActive(false); };
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static GameObject ShareLayout(GameObject layout)
+        public static GameObject ShareLayout(GameObject layout, Transform parent = null)
         {
-            int id = layout.GetInstanceID();
-            if (!sharedLayouts.ContainsKey(id))
-                return sharedLayouts[id] = UnityEngine.Object.Instantiate(layout);
-            return sharedLayouts[id];
+            return sharedLayouts.ShareObject(layout, parent);
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
@@ -191,11 +188,11 @@ namespace TPFramework
             panelHalfHeight = panelRect.height / 2;
         }
 
-        protected override bool LayoutSpawned()
+        protected override bool LayoutSpawn(Transform parent = null)
         {
             if (UseSharedLayout)
             {
-                TPLayout = TPTooltipManager.ShareLayout(LayoutPrefab);
+                TPLayout = TPTooltipManager.ShareLayout(LayoutPrefab, parent);
                 return true;
             }
             return false;

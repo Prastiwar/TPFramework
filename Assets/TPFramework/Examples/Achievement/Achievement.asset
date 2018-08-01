@@ -11,15 +11,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc818e48231b0c04b98afba3ad9e6f23, type: 3}
   m_Name: Achievement
   m_EditorClassIdentifier: 
-  Title: First Achievement
-  Description: Gratulations! You've made your first achievement
-  IsCompleted: 0
   Icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  Points: 1
-  ReachPoints: 5
+  Info:
+    Title: First Achievement
+    Description: Congratulations! You've made your first achievement
+    IsCompleted: 0
+    Points: 0
+    ReachPoints: 5
   ShowNotifyOnComplete: 1
   ShowNotifyOnProgress: 1
   TPNotify:
-    layoutPrefab: {fileID: 1706478286941376, guid: 6171133b4537cae43ad27d8347166b46,
+    LayoutPrefab: {fileID: 1706478286941376, guid: 6171133b4537cae43ad27d8347166b46,
       type: 2}
-    NotifyLong: 2
+    NotifyTransitionLong: 0.9
