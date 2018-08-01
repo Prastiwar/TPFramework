@@ -77,7 +77,7 @@ namespace TPFramework
         private Text descriptionText;
 #endif
 
-        protected override void OnInitialize()
+        protected override void OnInitialized()
         {
             iconImage = Images[0];
             pointsText = Texts[0];
@@ -88,7 +88,7 @@ namespace TPFramework
 
         public void Show(TPAchievement achievement)
         {
-            Initialize();
+            InitializeIfIsNot();
             iconImage.sprite = achievement.Icon;
             titleText.text = achievement.Title;
             descriptionText.text = achievement.Description;

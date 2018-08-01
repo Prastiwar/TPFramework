@@ -13,9 +13,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: First Achievement
   Description: Gratulations! You've made your first achievement
-  IsCompleted: 1
+  IsCompleted: 0
   Icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  Points: 5
+  Points: 1
   ReachPoints: 5
   ShowNotifyOnComplete: 1
   ShowNotifyOnProgress: 1

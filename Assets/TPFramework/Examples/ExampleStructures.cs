@@ -35,6 +35,7 @@ public struct TPSettingsExample
 [Serializable]
 public struct TPTooltipExample
 {
+    public GameObject Scene;
 }
 
 [Serializable]

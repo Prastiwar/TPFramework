@@ -51,11 +51,17 @@ namespace TPFramework.Editor
             new TPUIPackage(),          // 12
         };
 
+        static TPPackageManager()
+        {
+            ReloadPackages();
+            CheckFirstRun();
+        }
+
 #if TPFrameworkLogs
 
         [MenuItem(Menu + "/Disable Package Logs", priority = 1)]
 #else
-        [MenuItem("TPFramework/Enable Package Logs", priority = 1)]
+        [MenuItem(Menu + "/Enable Package Logs", priority = 1)]
 #endif
         private static void ToggleMessages() { ToggleDefine(TPDefines.TPEditorMessages); }
 
@@ -63,8 +69,15 @@ namespace TPFramework.Editor
         private static void ReloadPackages()
         {
             SetDefine(TPDefines.HasTMPRO, Assembly.GetExecutingAssembly().GetTypes().Any(a => a.IsClass && a.Namespace != null && a.Namespace.Contains("TMPro")));
-
             List<Type> tpPackages = Assembly.GetExecutingAssembly().GetTypes().Where(a => a.IsClass && a.Namespace != null && a.Namespace.Contains(_TPNamespace)).ToList();
+            ReloadPackages(tpPackages);
+#if TPFrameworkLogs
+            CheckLoadedPackages();
+#endif
+        }
+
+        private static void ReloadPackages(List<Type> tpPackages)
+        {
             for (int i = 0; i < packagesLength; i++)
             {
                 if (tpPackages.Any(x => x.Name == _TPPackages[i].Name))
@@ -72,20 +85,16 @@ namespace TPFramework.Editor
                     _TPPackages[i].Reload();
                 }
             }
-#if TPFrameworkLogs
+        }
+
+        private static void CheckLoadedPackages()
+        {
             for (int i = 0; i < packagesLength; i++)
             {
                 if (!_TPPackages[i].IsLoaded)
                     Debug.Log(_TPPackages[i].Name + "<color=red> was not found</color>");
             }
             Debug.Log("You can disable Package Logs in " + Menu + "/Disable Package Logs");
-#endif
-        }
-
-        static TPPackageManager()
-        {
-            ReloadPackages();
-            CheckFirstRun();
         }
 
         internal static void CheckFirstRun()
@@ -95,6 +104,7 @@ namespace TPFramework.Editor
                 SetDefine(TPDefines.TPEditorMessages, true);
                 SetDefine(TPDefines.TPObjectPoolSafeChecks, true);
                 SetDefine(TPDefines.TPTooltipSafeChecks, true);
+                SetDefine(TPDefines.TPUISafeChecks, true);
                 EditorPrefs.SetBool("TP_IsFirstRun", false);
             }
         }

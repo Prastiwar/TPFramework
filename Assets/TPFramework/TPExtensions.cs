@@ -17,6 +17,7 @@ namespace TPFramework
     public static class TPExtensions
     {
         private static readonly ReusableList<Vector3> reusableVector3 = new ReusableList<Vector3>();
+        private static readonly ReusableList<Transform> reusableTransform = new ReusableList<Transform>();
         private static readonly char[] resolutionSeparators = new char[] { ' ', 'x', '@', 'H', 'z' };
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
@@ -105,6 +106,16 @@ namespace TPFramework
             for (int i = 0; i < length; i++)
                 positions.Add(parent.GetChild(i).position);
             return positions.ToArray();
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static Transform[] GetChilds(this Transform parent)
+        {
+            int length = parent.childCount;
+            List<Transform> transforms = reusableTransform.CleanList;
+            for (int i = 0; i < length; i++)
+                transforms.Add(parent.GetChild(i));
+            return transforms.ToArray();
         }
 
         /* --------------------------------------------------------------- Vectors --------------------------------------------------------------- */

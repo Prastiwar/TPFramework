@@ -22,6 +22,8 @@ public class Examples : MonoBehaviour
     {
         DeactiveExamples();
         TPAchievementExample ex = TPAchievementExample;
+        ex.Achievement.Points = 0;
+        ex.Achievement.IsCompleted = false;
         TPAchievementManager.InitAchievement(ex.Achievement);
 
         for (int i = 0; i < ex.Achievement.ReachPoints; i++)
@@ -114,8 +116,7 @@ public class Examples : MonoBehaviour
     {
         DeactiveExamples();
         TPTooltipExample ex = TPTooltipExample;
-
-        throw new NotImplementedException();
+        TPTooltipExample.Scene.SetActive(true);
     }
 
 
@@ -222,5 +223,6 @@ public class Examples : MonoBehaviour
     {
         TPRandomExample.Scene.SetActive(false);
         TPSettingsExample.Scene.SetActive(false);
+        TPTooltipExample.Scene.SetActive(false);
     }
 }

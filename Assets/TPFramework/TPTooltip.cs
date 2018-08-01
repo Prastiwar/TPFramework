@@ -9,7 +9,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 #if HAS_TMPRO
@@ -42,7 +41,7 @@ namespace TPFramework
 
             if (TooltipType.IsClickable())
             {
-                TooltipLayout.Initialize(TooltipType);
+                TooltipLayout.Boot(TooltipType);
                 TPTooltipManager.OnPointerClick(eventData);
             }
         }
@@ -55,7 +54,7 @@ namespace TPFramework
 
             if (!TooltipType.IsClickable())
             {
-                TooltipLayout.Initialize(TooltipType);
+                TooltipLayout.Boot(TooltipType);
                 TPTooltipManager.OnPointerEnter(eventData);
             }
         }
@@ -167,46 +166,45 @@ namespace TPFramework
     // ---------------------------------------------------------------- UI Layout of Tooltip ---------------------------------------------------------------- //
 
     [Serializable]
-    public struct TPTooltipLayout
+    public class TPTooltipLayout : TPUILayout
     {
         private CanvasGroup panelCanvasGroup;
-        private Transform panelTransform;
-        private Image[] images;
-        private Button[] buttons;
-#if HAS_TMPRO
-        private List<TextMeshProUGUI> Texts;
-#else
-        private Text[] texts;
-#endif
+
         internal float panelHalfHeight;
         internal float panelHalfWidth;
 
-        [SerializeField] private GameObject normalLayout;
-        [SerializeField] private GameObject sharedLayout;
-        [SerializeField] private Transform staticPosition;
-        [SerializeField] private bool useSharedLayout;
-
         public Vector2 DynamicOffset;
+        public bool UseSharedLayout;
+        [SerializeField] private Transform staticPosition;
 
-        public GameObject Layout { get; private set; }
-        public bool IsInitialized { get; set; }
+        protected override void OnInitialized()
+        {
+#if TPTooltipSafeChecks
+            SafeCheck(TPLayout);
+#endif
+            panelCanvasGroup = TPLayout.GetComponent<CanvasGroup>();
+            panelCanvasGroup.alpha = 0;
+            panelCanvasGroup.blocksRaycasts = true;
 
-        public bool UseSharedLayout {
-            get { return useSharedLayout; }
-            set {
-                useSharedLayout = value;
-                IsInitialized = false;
-            }
+            Rect panelRect = LayoutTransform.GetComponent<Image>().rectTransform.rect;
+            panelHalfWidth = panelRect.width / 2;
+            panelHalfHeight = panelRect.height / 2;
         }
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public void Initialize(TPTooltipType type)
+        protected override bool LayoutSpawned()
         {
-            if (!IsInitialized)
+            if (UseSharedLayout)
             {
-                Layout = UseSharedLayout ? TPTooltipManager.ShareLayout(sharedLayout) : UnityEngine.Object.Instantiate(normalLayout);
-                Initialize(Layout);
+                TPLayout = TPTooltipManager.ShareLayout(LayoutPrefab);
+                return true;
             }
+            return false;
+        }
+
+        public void Boot(TPTooltipType type)
+        {
+            InitializeIfIsNot();
+
             if (!type.IsDynamic())
             {
                 panelCanvasGroup.blocksRaycasts = true;
@@ -218,41 +216,14 @@ namespace TPFramework
             }
         }
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        private void Initialize(GameObject layout)
-        {
-#if TPTooltipSafeChecks
-            SafeCheck(layout);
-#endif
-            IsInitialized = true;
-            panelTransform = layout.transform.GetChild(0);
-
-            panelCanvasGroup = layout.transform.GetComponent<CanvasGroup>();
-            panelCanvasGroup.alpha = 0;
-            panelCanvasGroup.blocksRaycasts = true;
-
-            images = panelTransform.GetChild(0).GetComponentsInChildren<Image>();
-            buttons = panelTransform.GetChild(1).GetComponentsInChildren<Button>();
-            texts = panelTransform.GetChild(2).GetComponentsInChildren<Text>();
-
-            Image panelImage = panelTransform.GetComponent<Image>();
-            Rect panelRect = panelImage.rectTransform.rect;
-            panelHalfWidth = panelRect.width / 2;
-            panelHalfHeight = panelRect.height / 2;
-        }
-
 #if TPTooltipSafeChecks
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         private void SafeCheck(GameObject layout)
         {
-            if (layout.transform.childCount < 1)
-                throw new Exception("Invalid Tooltip Layout! Prefab needs to be canvas parent with panel as child");
-            else if (!layout.transform.GetComponent<CanvasGroup>())
+            if (!layout.transform.GetComponent<CanvasGroup>())
                 throw new Exception("Invalid Tooltip Layout! Prefab needs to have CanvasGroup component");
-            else if (!layout.transform.GetChild(0).GetComponent<Image>())
-                throw new Exception("Invalid Tooltip Layout! PanelTransform(child of canvas) needs to have Image component");
-            else if (layout.transform.GetChild(0).childCount < 3)
-                throw new Exception("Invalid Tooltip Layout! PanelTransform(child of canvas) needs to have at least 3 children (images parent, buttons parent, texts parent)");
+            else if (!LayoutTransform.GetComponent<Image>())
+                throw new Exception("Invalid Tooltip Layout! LayoutTransform(child of canvas) needs to have Image component");
         }
 #endif
 
@@ -271,162 +242,13 @@ namespace TPFramework
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public void SetPosition(Vector2 position)
         {
-            panelTransform.position = position;
+            LayoutTransform.position = position;
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public void SetPositionToStatic()
         {
-            panelTransform.position = staticPosition.position;
-        }
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public void SetText(string text, int index) { Set(index, text, texts); }
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public void SetText(string text, params int[] indexes) { Set(indexes, text, texts); }
-
-#if HAS_TMPRO
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public void SetText(string text, TextMeshProUGUI Text) { Set(Text, text, Texts); }
-#else
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public void SetText(string text, Text Text) { Set(Text, text, texts); }
-
-#endif
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public void SetImage(Sprite sprite, int index) { Set(index, sprite, images); }
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public void SetImage(Sprite sprite, params int[] indexes) { Set(indexes, sprite, images); }
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public void SetImage(Sprite sprite, Image image) { Set(image, sprite, images); }
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public void SetButtonClick(UnityAction action, int index) { Set(index, action, buttons); }
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public void SetButtonClick(UnityAction action, params int[] indexes) { Set(indexes, action, buttons); }
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public void SetButtonClick(UnityAction action, Button button) { Set(button, action, buttons); }
-
-#if HAS_TMPRO
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public TextMeshProUGUI[] GetTexts(params int[] indexes)
-        {
-            int length = indexes.Length;
-            TextMeshProUGUI[] _texts = new TextMeshProUGUI[length];
-            for (int i = 0; i < length; i++)
-                _texts[i] = Texts[indexes[i]];
-            return _texts;
-        }
-#else
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public Text[] GetTexts(params int[] indexes)
-        {
-            int length = indexes.Length;
-            Text[] _texts = new Text[length];
-            for (int i = 0; i < length; i++)
-                _texts[i] = texts[indexes[i]];
-            return _texts;
-        }
-
-#endif
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public Image[] GetImages(params int[] indexes)
-        {
-            int length = indexes.Length;
-            Image[] _images = new Image[length];
-            for (int i = 0; i < length; i++)
-                _images[i] = images[indexes[i]];
-            return _images;
-        }
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public Button[] GetButtons(params int[] indexes)
-        {
-            int length = indexes.Length;
-            Button[] _buttons = new Button[length];
-            for (int i = 0; i < length; i++)
-                _buttons[i] = buttons[indexes[i]];
-            return _buttons;
-        }
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-#if HAS_TMPRO
-        public TextMeshProUGUI GetText(int index)
-#else
-        public Text GetText(int index)
-#endif
-        {
-            return texts[index];
-        }
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public Image GetImage(int index)
-        {
-            return images[index];
-        }
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public Button GetButton(int index)
-        {
-            return buttons[index];
-        }
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        private void Set<T, U>(int index, T obj, U[] collection)
-        {
-#if HAS_TMPRO
-            if (collection is TextMeshProUGUI[])
-            {
-                (collection[index] as TextMeshProUGUI).text = obj as string;
-            }
-#else
-            if (collection is Text[])
-            {
-                (collection[index] as Text).text = obj as string;
-            }
-#endif
-            else if (collection is Image[])
-            {
-                (collection[index] as Image).sprite = obj as Sprite;
-            }
-            else if (collection is Button[])
-            {
-                (collection[index] as Button).onClick.AddListener(obj as UnityAction);
-            }
-        }
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        private void Set<T, D, U>(D type, T obj, U[] collection)
-        {
-            int length = texts.Length;
-            for (int i = 0; i < length; i++)
-            {
-                if (collection[i].Equals(type))
-                {
-                    Set(i, obj, collection);
-                    break;
-                }
-            }
-        }
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        private void Set<T, U>(int[] indexes, T obj, U[] collection)
-        {
-            int indexesLength = indexes.Length;
-            int length = texts.Length;
-            for (int i = 0; i < length && i < indexesLength; i++)
-            {
-                Set(indexes[i], obj, collection);
-            }
+            LayoutTransform.position = staticPosition.position;
         }
     }
 }

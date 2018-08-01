@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 #if HAS_TMPRO
@@ -7,13 +8,13 @@ using TMPro;
 
 namespace TPFramework
 {
-    [System.Serializable]
+    [Serializable]
     public class TPUILayout
     {
-        [SerializeField] private GameObject layoutPrefab;
+        public GameObject LayoutPrefab;
+        public GameObject TPLayout { get; set; }
 
-        public GameObject TPLayout { get; private set; }
-
+        protected Transform LayoutTransform { get; private set; }
         protected Image[] Images { get; private set; }
         protected Button[] Buttons { get; private set; }
 #if HAS_TMPRO
@@ -23,32 +24,51 @@ namespace TPFramework
 #endif
         protected bool IsInitialized { get { return TPLayout; } }
 
-        protected void Initialize(Transform parent = null)
+        protected void InitializeIfIsNot(Transform parent = null)
         {
             if (IsInitialized)
                 return;
-            Spawn(parent);
-            OnInitialize();
+
+            if (!LayoutSpawned(parent))
+            {
+                TPLayout = UnityEngine.Object.Instantiate(LayoutPrefab, parent);
+            }
+            Initialize();
+            OnInitialized();
         }
 
-        protected virtual void OnInitialize() { }
+        /// <summary> Is called after Initialize </summary>
+        protected virtual void OnInitialized() { }
 
-        private void Spawn(Transform parent = null)
+        /// <summary> Returns if TPLayout is already spawned </summary>
+        protected virtual bool LayoutSpawned(Transform parent = null) { return false; }
+
+        private void Initialize()
         {
-            TPLayout = UnityEngine.Object.Instantiate(layoutPrefab, parent);
-            Transform transform = layoutPrefab.transform;
+            LayoutTransform = TPLayout.transform.GetChild(0);
 #if TPUISafeChecks
-            SafeCheck(transform);
+            SafeCheck(LayoutTransform);
 #endif
-            Images = Initialize(transform.GetChild(0), Images);
-            Buttons = Initialize(transform.GetChild(1), Buttons);
-            Texts = Initialize(transform.GetChild(2), Texts);
+            Images = Initialize(LayoutTransform.GetChild(0), Images);
+            Buttons = Initialize(LayoutTransform.GetChild(1), Buttons);
+            Texts = Initialize(LayoutTransform.GetChild(2), Texts);
         }
 
 #if TPUISafeChecks
         private void SafeCheck(Transform transform)
         {
-            throw new NotImplementedException();
+            if (transform.childCount < 3)
+                throw new Exception("Invalid TPUILayout! LayoutTransform needs to have Child 0: Parent of Images, Child 1: Parent of Buttons, Child 2: Parent of Texts");
+            else if (transform.GetChild(0).GetChilds().Any(x => x.GetComponent<Image>() == null))
+                throw new Exception("Invalid TPUILayout! Child 0: Parent of Images must contain only Images as childs");
+            else if (transform.GetChild(1).GetChilds().Any(x => x.GetComponent<Button>() == null))
+                throw new Exception("Invalid TPUILayout! Child 1: Parent of Buttons must contain only Buttons as childs");
+#if HAS_TMPRO
+            else if(transform.GetChild(0).GetChildrens().Any(x => x.GetComponent<TextMeshProUGUI>() == null))
+#else
+            else if (transform.GetChild(2).GetChilds().Any(x => x.GetComponent<Text>() == null))
+#endif
+                throw new Exception("Invalid TPUILayout! Child 2: Parent of Texts must contain only Texts as childs");
         }
 #endif
 
@@ -64,6 +84,6 @@ namespace TPFramework
         }
     }
 
-    [System.Serializable]
+    [Serializable]
     public class TPModalWindow { }
 }

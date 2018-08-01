@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace TPFramework
 {
@@ -42,6 +43,22 @@ namespace TPFramework
         public ReusableDictionary(int capacity = 10)
         {
             _dictionary = new Dictionary<TKey, TValue>(capacity);
+        }
+    }
+
+    [Serializable]
+    public class SharedObjectsCollection
+    {
+        public readonly Dictionary<int, GameObject> SharedObjects;
+
+        public SharedObjectsCollection(int capacity = 10)
+        {
+            SharedObjects = new Dictionary<int, GameObject>(capacity);
+        }
+
+        public GameObject ShareObject(GameObject gameObject)
+        {
+
         }
     }
 }

@@ -4568,13 +4568,11 @@ MonoBehaviour:
   TooltipType: 1
   IsObserving: 1
   TooltipLayout:
-    normalLayout: {fileID: 1727425051679720, guid: 98ba957ac58abd74b872856f7b15c185,
+    LayoutPrefab: {fileID: 1068468929922102, guid: e7d9d5499e1596647ba13d3270528228,
       type: 2}
-    sharedLayout: {fileID: 1727425051679720, guid: 98ba957ac58abd74b872856f7b15c185,
-      type: 2}
-    staticPosition: {fileID: 2121683396}
-    useSharedLayout: 1
     DynamicOffset: {x: 0, y: 0}
+    UseSharedLayout: 1
+    staticPosition: {fileID: 2121683396}
 --- !u!114 &847686707
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7418,13 +7416,11 @@ MonoBehaviour:
   TooltipType: 2
   IsObserving: 1
   TooltipLayout:
-    normalLayout: {fileID: 1727425051679720, guid: 98ba957ac58abd74b872856f7b15c185,
+    LayoutPrefab: {fileID: 1068468929922102, guid: e7d9d5499e1596647ba13d3270528228,
       type: 2}
-    sharedLayout: {fileID: 1727425051679720, guid: 98ba957ac58abd74b872856f7b15c185,
-      type: 2}
-    staticPosition: {fileID: 2121683396}
-    useSharedLayout: 1
     DynamicOffset: {x: 0, y: 0}
+    UseSharedLayout: 1
+    staticPosition: {fileID: 2121683396}
 --- !u!114 &1205958551
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9147,13 +9143,11 @@ MonoBehaviour:
   TooltipType: 0
   IsObserving: 1
   TooltipLayout:
-    normalLayout: {fileID: 1727425051679720, guid: 98ba957ac58abd74b872856f7b15c185,
+    LayoutPrefab: {fileID: 1068468929922102, guid: e7d9d5499e1596647ba13d3270528228,
       type: 2}
-    sharedLayout: {fileID: 1727425051679720, guid: 98ba957ac58abd74b872856f7b15c185,
-      type: 2}
-    staticPosition: {fileID: 2121683396}
-    useSharedLayout: 1
     DynamicOffset: {x: 0, y: 0}
+    UseSharedLayout: 1
+    staticPosition: {fileID: 2121683396}
 --- !u!114 &1505785288
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9645,6 +9639,8 @@ MonoBehaviour:
     ShadowQuality: {fileID: 1235376172}
     ShadowResolution: {fileID: 606825552}
     Texture: {fileID: 340476831}
+  TPTooltipExample:
+    Scene: {fileID: 549195816}
   TPRandomExample:
     Scene: {fileID: 338526261}
     GameObjects:
@@ -10477,13 +10473,11 @@ MonoBehaviour:
   TooltipType: 3
   IsObserving: 1
   TooltipLayout:
-    normalLayout: {fileID: 1727425051679720, guid: 98ba957ac58abd74b872856f7b15c185,
+    LayoutPrefab: {fileID: 1068468929922102, guid: e7d9d5499e1596647ba13d3270528228,
       type: 2}
-    sharedLayout: {fileID: 1727425051679720, guid: 98ba957ac58abd74b872856f7b15c185,
-      type: 2}
-    staticPosition: {fileID: 2121683396}
-    useSharedLayout: 1
     DynamicOffset: {x: 0, y: 0}
+    UseSharedLayout: 1
+    staticPosition: {fileID: 2121683396}
 --- !u!114 &1766844923
 MonoBehaviour:
   m_ObjectHideFlags: 0
