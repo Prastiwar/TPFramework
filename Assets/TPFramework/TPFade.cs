@@ -12,7 +12,7 @@
 
 //namespace TPFramework
 //{
-//    public class TPFader : MonoBehaviour, IPointerClickHandler
+//    public class TPFade : MonoBehaviour, IPointerClickHandler
 //    {
 //        public enum FaderType
 //        {

@@ -8,6 +8,8 @@ using TMPro;
 
 namespace TPFramework
 {
+    internal class TPUI { } // marker to find this script
+
     [Serializable]
     public class TPUILayout
     {

@@ -25,17 +25,22 @@ public class Examples : MonoBehaviour
         ex.Achievement.Info.Points = 0;
         ex.Achievement.Info.IsCompleted = false;
 
+        ex.Achievement.OnComplete += (achievement) => {
+            Debug.Log("Achievement completed!");
+        };
+
+        TPAchievementManager.OnNotifyActive = CustomNotifyActive;
+
         for (int i = 0; i < ex.Achievement.Info.ReachPoints; i++)
         {
             ex.Achievement.AddPoints(1);
         }
     }
 
-
     public void ExampleTPPersistence()
     {
         DeactiveExamples();
-        TPPersistenceExample ex = TPPersistenceExample;
+        //TPPersistenceExample ex = TPPersistenceExample;
 
         throw new NotImplementedException();
     }
@@ -81,7 +86,7 @@ public class Examples : MonoBehaviour
     public void ExampleTPInventory()
     {
         DeactiveExamples();
-        TPInventoryExample ex = TPInventoryExample;
+        //TPInventoryExample ex = TPInventoryExample;
 
         throw new NotImplementedException();
     }
@@ -115,7 +120,7 @@ public class Examples : MonoBehaviour
     {
         DeactiveExamples();
         TPTooltipExample ex = TPTooltipExample;
-        TPTooltipExample.Scene.SetActive(true);
+        ex.Scene.SetActive(true);
     }
 
 
@@ -144,7 +149,7 @@ public class Examples : MonoBehaviour
     public void ExampleTPFader()
     {
         DeactiveExamples();
-        TPFaderExample ex = TPFaderExample;
+        //TPFaderExample ex = TPFaderExample;
 
         throw new NotImplementedException();
     }
@@ -197,6 +202,14 @@ public class Examples : MonoBehaviour
         //    last--;
         //    yield return waitSecond;
         //}
+    }
+
+    private void CustomNotifyActive(GameObject notifyObj, float evaluatedTime, bool toActive)
+    {
+        var obj = notifyObj.transform.GetChild(0).gameObject.transform;
+        obj.localScale = obj.localScale.Equal(toActive
+            ? (2 * evaluatedTime)         // grow from 0 to 1 when evaluate is from 0 to 0.5f 
+            : (2 - (2 * evaluatedTime))); // decrease from 1 to 0 when evaluate is from 0.5f to 1f
     }
 
     private Vector3 GetRandomPosition()

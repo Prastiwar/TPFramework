@@ -30,6 +30,7 @@
 * ***TPReusable*** &nbsp;&nbsp;&nbsp;&nbsp;- *Performant temporary collections*
 * ***TPToolTip*** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - *Implement in-game tooltips*
 * ***TPRandom*** &nbsp;&nbsp;&nbsp;&nbsp;- *Probability, random functions*
+* ***TPEditor*** &nbsp;&nbsp;&nbsp;&nbsp;- *Helpful library for extending editor*
 * ***TPFade*** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- *Fade between scenes*
 * ***TPUI*** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- *Generic UI Layout and much more*
 

@@ -1,5 +1,4 @@
 ﻿#if UNITY_EDITOR
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +6,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-namespace TPFramework.Editor
+namespace TPFramework.Internal
 {
     internal interface ITPPackage
     {
@@ -29,13 +28,13 @@ namespace TPFramework.Editor
     [InitializeOnLoad]
     internal class TPPackageManager
     {
-        internal const string Menu = "TPFramework";
+        public const string MENU = "TPFramework";
+
         private static BuildTargetGroup _targetGroup { get { return EditorUserBuildSettings.selectedBuildTargetGroup; } }
-
         private static readonly string _TPNamespace = "TPFramework";
-        private static readonly int packagesLength = 12;
+        private const int packagesLength = 14;
 
-        private static readonly ITPPackage[] _TPPackages = new ITPPackage[] {
+        private static readonly ITPPackage[] _TPPackages = new ITPPackage[packagesLength] {
             new TPAchievementPackage(), // 0
             new TPPersistencePackage(), // 1
             new TPExtensionsPackage(),  // 2
@@ -47,8 +46,9 @@ namespace TPFramework.Editor
             new TPReusablePackage(),    // 8
             new TPTooltipPackage(),     // 9
             new TPRandomPackage(),      // 10
-            new TPFadePackage(),        // 11
-            new TPUIPackage(),          // 12
+            new TPEditorPackage(),      // 11
+            new TPFadePackage(),        // 12
+            new TPUIPackage(),          // 13
         };
 
         static TPPackageManager()
@@ -59,13 +59,13 @@ namespace TPFramework.Editor
 
 #if TPFrameworkLogs
 
-        [MenuItem(Menu + "/Disable Package Logs", priority = 1)]
+        [MenuItem(MENU + "/Disable Package Logs", priority = 1)]
 #else
         [MenuItem(Menu + "/Enable Package Logs", priority = 1)]
 #endif
         private static void ToggleMessages() { ToggleDefine(TPDefines.TPEditorMessages); }
 
-        [MenuItem(Menu + "/Reload Packages", priority = 0)]
+        [MenuItem(MENU + "/Reload Packages", priority = 0)]
         private static void ReloadPackages()
         {
             SetDefine(TPDefines.HasTMPRO, Assembly.GetExecutingAssembly().GetTypes().Any(a => a.IsClass && a.Namespace != null && a.Namespace.Contains("TMPro")));
@@ -94,7 +94,7 @@ namespace TPFramework.Editor
                 if (!_TPPackages[i].IsLoaded)
                     Debug.Log(_TPPackages[i].Name + "<color=red> was not found</color>");
             }
-            Debug.Log("You can disable Package Logs in " + Menu + "/Disable Package Logs");
+            Debug.Log("You can disable Package Logs in " + MENU + "/Disable Package Logs");
         }
 
         internal static void CheckFirstRun()
@@ -168,6 +168,7 @@ namespace TPFramework.Editor
         }
     }
 
+
     internal struct TPAchievementPackage : ITPPackage
     {
         public string Name { get { return "TPAchievement"; } }
@@ -179,6 +180,7 @@ namespace TPFramework.Editor
             return IsLoaded;
         }
     }
+
 
     internal struct TPPersistencePackage : ITPPackage
     {
@@ -192,6 +194,7 @@ namespace TPFramework.Editor
         }
     }
 
+
     internal struct TPExtensionsPackage : ITPPackage
     {
         public string Name { get { return "TPExtensions"; } }
@@ -204,6 +207,7 @@ namespace TPFramework.Editor
         }
     }
 
+
     internal struct TPObjectPoolPackage : ITPPackage
     {
         public string Name { get { return "TPObjectPool"; } }
@@ -211,7 +215,7 @@ namespace TPFramework.Editor
 
 #if TPObjectPoolSafeChecks
 
-        [MenuItem(TPPackageManager.Menu + "/Disable TPObjectPool SafeChecks", priority = 60)]
+        [MenuItem(TPPackageManager.MENU + "/Disable TPObjectPool SafeChecks", priority = 60)]
 #else
         [MenuItem(TPPackageManager.Menu + "/Enable TPObjectPool SafeChecks", priority = 60)]
 #endif
@@ -223,6 +227,7 @@ namespace TPFramework.Editor
             return IsLoaded;
         }
     }
+
 
     internal struct TPAudioPoolPackage : ITPPackage
     {
@@ -236,6 +241,7 @@ namespace TPFramework.Editor
         }
     }
 
+
     internal struct TPInventoryPackage : ITPPackage
     {
         public string Name { get { return "TPInventory"; } }
@@ -248,6 +254,7 @@ namespace TPFramework.Editor
         }
     }
 
+
     internal struct TPAttributePackage : ITPPackage
     {
         public string Name { get { return "TPAttribute"; } }
@@ -259,6 +266,7 @@ namespace TPFramework.Editor
             return IsLoaded;
         }
     }
+
 
     internal struct TPSettingsPackage : ITPPackage
     {
@@ -278,6 +286,7 @@ namespace TPFramework.Editor
         }
     }
 
+
     internal struct TPReusablePackage : ITPPackage
     {
         public string Name { get { return "TPReusable"; } }
@@ -290,13 +299,14 @@ namespace TPFramework.Editor
         }
     }
 
+
     internal struct TPTooltipPackage : ITPPackage
     {
         public string Name { get { return "TPTooltip"; } }
         public bool IsLoaded { get; private set; }
 
 #if TPTooltipSafeChecks
-        [MenuItem(TPPackageManager.Menu + "/Disable TPTooltip SafeChecks", priority = 120)]
+        [MenuItem(TPPackageManager.MENU + "/Disable TPTooltip SafeChecks", priority = 120)]
 #else
         [MenuItem(TPPackageManager.Menu + "/Enable TPTooltip SafeChecks", priority = 120)]
 #endif
@@ -308,6 +318,7 @@ namespace TPFramework.Editor
             return IsLoaded;
         }
     }
+
 
     internal struct TPRandomPackage : ITPPackage
     {
@@ -321,6 +332,20 @@ namespace TPFramework.Editor
         }
     }
 
+
+    internal struct TPEditorPackage : ITPPackage
+    {
+        public string Name { get { return "TPEditor"; } }
+        public bool IsLoaded { get; private set; }
+
+        public bool Reload()
+        {
+            IsLoaded = true;
+            return IsLoaded;
+        }
+    }
+
+
     internal struct TPFadePackage : ITPPackage
     {
         public string Name { get { return "TPFade"; } }
@@ -333,15 +358,16 @@ namespace TPFramework.Editor
         }
     }
 
+
     internal class TPUIPackage : ITPPackage
     {
         public string Name { get { return "TPUI"; } }
         public bool IsLoaded { get; private set; }
 
 #if TPUISafeChecks
-        [MenuItem(TPPackageManager.Menu + "/Disable TPUI SafeChecks", priority = 120)]
+        [MenuItem(TPPackageManager.MENU + "/Disable TPUI SafeChecks", priority = 160)]
 #else
-        [MenuItem(TPPackageManager.Menu + "/Enable TPUI SafeChecks", priority = 120)]
+        [MenuItem(TPPackageManager.Menu + "/Enable TPUI SafeChecks", priority = 160)]
 #endif
         private static void ToggleSafeChecks() { TPPackageManager.ToggleDefine(TPDefines.TPUISafeChecks); }
 
@@ -352,5 +378,4 @@ namespace TPFramework.Editor
         }
     }
 }
-
 #endif

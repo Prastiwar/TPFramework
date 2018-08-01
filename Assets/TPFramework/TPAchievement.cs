@@ -31,8 +31,7 @@ namespace TPFramework
     [CreateAssetMenu(menuName = "TP/TPAchievement/Achievement", fileName = "Achievement")]
     public class TPAchievement : ScriptableObject
     {
-        public static Action<TPAchievement> OnComplete = delegate { };
-
+        public Action<TPAchievement> OnComplete = delegate { };
         public Sprite Icon;
         public TPAchievementNotifyInfo Info;
         [Space]
@@ -72,7 +71,9 @@ namespace TPFramework
     [Serializable]
     public sealed class TPAchievementNotify : TPUILayout
     {
-        public float NotifyTransitionLong;
+        public float AnimateSpeed;
+        public AnimationCurve NotifyAnimatedWait;
+
         private Image iconImage;
 #if HAS_TMPRO
         private TextMeshProUGUI pointsText;
@@ -135,6 +136,8 @@ namespace TPFramework
 #if NET_2_0 || NET_2_0_SUBSET
         private static WaitForSeconds waitNotifyLong;
         private static float secondsToWait;
+        private static WaitForSeconds waitShow;
+        private static float showSeconds;
 #endif
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
@@ -167,20 +170,16 @@ namespace TPFramework
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         private static IEnumerator IEShowNotification(GameObject sharedObj, TPAchievementNotify notification)
         {
-            OnNotifyActive(sharedObj, notification.NotifyTransitionLong, true);
-
-            if (secondsToWait != notification.NotifyTransitionLong)
-            {
-                secondsToWait = notification.NotifyTransitionLong;
-                waitNotifyLong = new WaitForSeconds(notification.NotifyTransitionLong);
-            }
-
-            yield return waitNotifyLong;
             sharedObj.SetActive(true);
-
-            OnNotifyActive(sharedObj, notification.NotifyTransitionLong, false);
-
-            yield return waitNotifyLong;
+            float percentage = 0.0f;
+            float evaluate = notification.NotifyAnimatedWait.Evaluate(percentage);
+            while (evaluate < 1.0f)
+            {
+                OnNotifyActive(sharedObj, evaluate, evaluate <= 0.5f);
+                percentage += Time.deltaTime * notification.AnimateSpeed;
+                evaluate = notification.NotifyAnimatedWait.Evaluate(percentage);
+                yield return null;
+            }
             sharedObj.SetActive(false);
 
             isBusy = false;

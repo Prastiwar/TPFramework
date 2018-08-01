@@ -78,6 +78,23 @@ namespace TPFramework
                 && thisRect.yMax >= rect.yMax;
         }
 
+        /* --------------------------------------------------------------- Object --------------------------------------------------------------- */
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static GameObject FindObjectWithLayer(this UnityEngine.Object obj, int layer)
+        {
+            GameObject[] objects = UnityEngine.Object.FindObjectsOfType(typeof(GameObject)) as GameObject[];
+            int length = objects.Length;
+            for (int i = 0; i < length; i++)
+            {
+                if (objects[i].layer == layer)
+                {
+                    return objects[i];
+                }
+            }
+            return null;
+        }
+
         /* --------------------------------------------------------------- Transform --------------------------------------------------------------- */
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
@@ -124,7 +141,8 @@ namespace TPFramework
         public static bool IsEqualTo(this Vector3 vector, Vector3 equalVector)
         {
             return vector.x == equalVector.x
-                && vector.y == equalVector.y;
+                && vector.y == equalVector.y
+                && vector.z == equalVector.z;
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
@@ -139,6 +157,122 @@ namespace TPFramework
         {
             return vector.x == equalVector.x
                 && vector.y == equalVector.y;
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static bool IsGreaterThan(this Vector3 vector, Vector3 equalVector)
+        {
+            return vector.x > equalVector.x
+                && vector.y > equalVector.y
+                && vector.z > equalVector.z;
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static bool IsGreaterThan(this Vector3 vector, Vector2 equalVector)
+        {
+            return vector.x > equalVector.x
+                && vector.y > equalVector.y;
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static bool IsGreaterThan(this Vector2 vector, Vector3 equalVector)
+        {
+            return vector.x > equalVector.x
+                && vector.y > equalVector.y;
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static bool IsLessThan(this Vector3 vector, Vector3 equalVector)
+        {
+            return vector.x < equalVector.x
+                && vector.y < equalVector.y
+                && vector.z < equalVector.z;
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static bool IsLessThan(this Vector3 vector, Vector2 equalVector)
+        {
+            return vector.x < equalVector.x
+                && vector.y < equalVector.y;
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static bool IsLessThan(this Vector2 vector, Vector3 equalVector)
+        {
+            return vector.x < equalVector.x
+                && vector.y < equalVector.y;
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static bool IsLessEqualThan(this Vector3 vector, Vector3 equalVector)
+        {
+            return vector.IsEqualTo(equalVector) || vector.IsLessThan(equalVector);
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static bool IsLessEqualThan(this Vector3 vector, Vector2 equalVector)
+        {
+            return vector.IsEqualTo(equalVector) || vector.IsLessThan(equalVector);
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static bool IsLessEqualThan(this Vector2 vector, Vector3 equalVector)
+        {
+            return vector.IsEqualTo(equalVector) || vector.IsLessThan(equalVector);
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static bool IsGreaterEqualThan(this Vector3 vector, Vector3 equalVector)
+        {
+            return vector.IsEqualTo(equalVector) || vector.IsGreaterThan(equalVector);
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static bool IsGreaterEqualThan(this Vector3 vector, Vector2 equalVector)
+        {
+            return vector.IsEqualTo(equalVector) || vector.IsGreaterThan(equalVector);
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static bool IsGreaterEqualThan(this Vector2 vector, Vector3 equalVector)
+        {
+            return vector.IsEqualTo(equalVector) || vector.IsGreaterThan(equalVector);
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static Vector2 Subtraction(this Vector2 vector, float subtraction)
+        {
+            return new Vector3(vector.x - subtraction, vector.y - subtraction);
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static Vector3 Subtraction(this Vector3 vector, float subtraction)
+        {
+            return new Vector3(vector.x - subtraction, vector.y - subtraction, vector.z - subtraction);
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static Vector2 Addition(this Vector2 vector, float addition)
+        {
+            return new Vector3(vector.x + addition, vector.y + addition);
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static Vector3 Addition(this Vector3 vector, float addition)
+        {
+            return new Vector3(vector.x + addition, vector.y + addition, vector.z + addition);
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static Vector3 Equal(this Vector2 vector, float equal)
+        {
+            return new Vector3(equal, equal);
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static Vector3 Equal(this Vector3 vector, float equal)
+        {
+            return new Vector3(equal, equal, equal);
         }
 
         /* --------------------------------------------------------------- Collection --------------------------------------------------------------- */
