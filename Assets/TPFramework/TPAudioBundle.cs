@@ -3,6 +3,7 @@
 *   MIT LICENSE: https://github.com/Prastiwar/TPAudioPool/blob/master/LICENSE
 *   Repository: https://github.com/Prastiwar/TPAudioPool 
 */
+
 using UnityEngine;
 
 namespace TPFramework
@@ -14,6 +15,7 @@ namespace TPFramework
     }
 
 #if UNITY_EDITOR
+
     [UnityEditor.CustomEditor(typeof(TPAudioBundle))]
     internal class TPAudioBundleEditor : UnityEditor.Editor
     {
@@ -22,8 +24,7 @@ namespace TPFramework
 
         private void OnEnable()
         {
-            list = new UnityEditorInternal.ReorderableList(serializedObject, serializedObject.FindProperty("AudioObjects"), true, true, true, true)
-            {
+            list = new UnityEditorInternal.ReorderableList(serializedObject, serializedObject.FindProperty("AudioObjects"), true, true, true, true) {
                 drawElementCallback = DrawElement,
                 onAddCallback = OnAdd,
                 drawHeaderCallback = (Rect rect) => { UnityEditor.EditorGUI.LabelField(rect, "Audio Objects in this bundle"); }
@@ -87,7 +88,7 @@ namespace TPFramework
             }
             serializedObject.ApplyModifiedProperties();
         }
-        
     }
+
 #endif
 }

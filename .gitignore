@@ -8,6 +8,7 @@ UnityPackageManager/
 Assets/AssetStoreTools*
 Test.cs
 TestScene.unity
+CodeMaid.*
 
 
 # Visual Studio cache directory

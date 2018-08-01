@@ -3,6 +3,7 @@
 *   MIT LICENSE: https://github.com/Prastiwar/TPAudioPool/blob/master/LICENSE
 *   Repository: https://github.com/Prastiwar/TPAudioPool 
 */
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -145,6 +146,7 @@ namespace TPFramework
         }
 
 #if NET_2_0 || NET_2_0_SUBSET
+
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void PlayOneShot(MonoBehaviour mono, TPAudioBundle bundle, string audioName, Action onAudioEnd, float volumeScale = 1.0f)
         {
@@ -158,6 +160,7 @@ namespace TPFramework
         {
             PlayOneShot(mono, GetBundle(bundleName), audioName, onAudioEnd, volumeScale);
         }
+
 #else
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void PlayOneShot(TPAudioBundle bundle, string audioName, Action onAudioEnd, float volumeScale = 1.0f)
@@ -170,11 +173,12 @@ namespace TPFramework
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline 
         public static void PlayOneShot(string bundleName, string audioName, Action onAudioEnd, float volumeScale = 1.0f)
         {
-            PlayOneShot(GetBundle(bundleName), audioName, volumeScale, onAudioEnd);
+            PlayOneShot(GetBundle(bundleName), audioName, onAudioEnd, volumeScale);
         }
 #endif
 
 #if NET_2_0 || NET_2_0_SUBSET
+
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void Play(MonoBehaviour mono, TPAudioBundle bundle, string audioName, Action onAudioEnd, TPAudioSource source = TPAudioSource.SFX, ulong delay = 0)
         {
@@ -189,20 +193,21 @@ namespace TPFramework
         {
             Play(mono, GetBundle(bundleName), audioName, onAudioEnd, source, delay);
         }
+
 #else
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void Play(TPAudioBundle bundle, string audioName, Sources source = Sources.Source, ulong delay = 0, Action onAudioEnd = null)
+        public static void Play(TPAudioBundle bundle, string audioName, Action onAudioEnd, TPAudioSource source = TPAudioSource.SFX, ulong delay = 0)
         {
             AudioClip clip = GetClip(bundle, audioName);
-            GetSource().clip = clip;
-            GetSource().Play(delay);
+            GetSource(source).clip = clip;
+            GetSource(source).Play(delay);
             TPExtensions.DelayAction(clip.length + delay, onAudioEnd);
         }
         
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void Play(string bundleName, string audioName, Sources source = Sources.Source, ulong delay = 0, Action onAudioEnd = null)
+        public static void Play(string bundleName, string audioName, Action onAudioEnd, TPAudioSource source = TPAudioSource.SFX, ulong delay = 0)
         {
-            Play(GetBundle(bundleName), audioName, source, delay, onAudioEnd);
+            Play(GetBundle(bundleName), audioName, onAudioEnd, source, delay);
         }
 #endif
 
@@ -314,7 +319,5 @@ namespace TPFramework
             Debug.LogError("This key doesn't exist: " + key);
             return false;
         }
-
     }
-
 }

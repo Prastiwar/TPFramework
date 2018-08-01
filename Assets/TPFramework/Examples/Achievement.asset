@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc818e48231b0c04b98afba3ad9e6f23, type: 3}
+  m_Name: Achievement
+  m_EditorClassIdentifier: 
+  Title: First Achievement
+  Description: Gratulations! You've made your first achievement
+  IsCompleted: 1
+  Icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  Points: 5
+  ReachPoints: 5
+  ShowNotifyOnComplete: 1
+  ShowNotifyOnProgress: 1
+  TPNotify:
+    layoutPrefab: {fileID: 1706478286941376, guid: 6171133b4537cae43ad27d8347166b46,
+      type: 2}
+    NotifyLong: 2

@@ -22,8 +22,12 @@ public class Examples : MonoBehaviour
     {
         DeactiveExamples();
         TPAchievementExample ex = TPAchievementExample;
+        TPAchievementManager.InitAchievement(ex.Achievement);
 
-        throw new NotImplementedException();
+        for (int i = 0; i < ex.Achievement.ReachPoints; i++)
+        {
+            ex.Achievement.AddPoints(1);
+        }
     }
 
 
@@ -162,9 +166,15 @@ public class Examples : MonoBehaviour
     {
         while (repeat >= 0)
         {
+#if NET_2_0 || NET_2_0_SUBSET
             TPAudioPool.Play(this, "MyBundle", "door", () => {
                 MessageWithLines("TPAudioPool Sound 'door' was played by MyBundle");
             });
+#else
+            TPAudioPool.Play("MyBundle", "door", () => {
+                MessageWithLines("TPAudioPool Sound 'door' was played by MyBundle");
+            });
+#endif
             repeat--;
             yield return waitSecond;
         }

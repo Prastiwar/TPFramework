@@ -2,9 +2,9 @@
 *   Authored by Tomasz Piowczyk
 *   MIT LICENSE (https://github.com/Prastiwar/TPObjectPool/blob/master/LICENSE)
 */
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
@@ -17,8 +17,7 @@ namespace TPFramework
         Active = 4
     }
 
-
-    // ------------------------------------------- Monobehaviour with more effective coroutines ---------------------------------------------------------------- //
+    /* ------------------------------------------- Monobehaviour with more effective coroutines ---------------------------------------------------------------- */
 
     /// <summary> Class that allows to effectively create garbage free coroutines </summary>
     internal class TPObjectPooler : MonoBehaviour
@@ -111,9 +110,8 @@ namespace TPFramework
             }
         }
     }
-    
 
-    // ---------------------------------------------- Collection of pooled objects ------------------------------------------------------------------------- //
+    /* ---------------------------------------------- Collection of pooled objects ------------------------------------------------------------------------- */
 
     /// <summary> "Collection" of pooled objects </summary>
     public class TPPoolContainer
@@ -217,8 +215,10 @@ namespace TPFramework
             {
                 case TPObjectState.Deactive:
                     return DeactiveLength > 0 ? deactiveObjects.Peek() : null;
+
                 case TPObjectState.Active:
                     return ActiveLength > 0 ? activeObjects.Peek() : null;
+
                 case TPObjectState.Auto:
                     var freeObj = Peek(TPObjectState.Deactive);
                     return freeObj ?? Peek(TPObjectState.Active);
@@ -283,11 +283,10 @@ namespace TPFramework
             activeObjects.TrimExcess();
         }
     }
-    
 
-    // ---------------------------------------------- Static Class Object Pool Manager ---------------------------------------------------------------------------//
+    /* ---------------------------------------------- Static Class Object Pool Manager ---------------------------------------------------------------------------*/
 
-    /// <summary> This class allows you to manage TPPoolContainer collection with its pooled objects. </summary>  
+    /// <summary> This class allows you to manage TPPoolContainer collection with its pooled objects. </summary>
     public static class TPObjectPool
     {
         /// <summary> Lookup holds pooled object collections </summary>
@@ -298,7 +297,7 @@ namespace TPFramework
 
         /// <summary> Persistant allocated list to prevent creating GC runtime </summary>
         private static ReusableList<GameObject> reusableList = new ReusableList<GameObject>(64);
-        
+
         /// <summary> Reference to coroutine manager </summary>
         private static TPObjectPooler MonoCoroutineManager {
             get {
@@ -309,7 +308,7 @@ namespace TPFramework
         }
 
         /// <summary> Creates pool with its unique key with pool objects </summary>
-        /// <param name="capacity"> Additional capacity to stack (final is capacity + objects length) </param>
+        /// <param name="capacity">    Additional capacity to stack (final is capacity + objects length) </param>
         /// <param name="poolObjects"> All pool objects which should be in one pool </param>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void CreatePool(int poolKey, int capacity = 10, params GameObject[] poolObjects)
@@ -334,8 +333,8 @@ namespace TPFramework
 
         /// <summary> Creates pool with its unique key with pool objects </summary>
         /// <param name="poolObject"> Pool object which should multiplied in pool </param>
-        /// <param name="length"> Length of pool - how many copies of GameObject should be in pool </param>
-        /// <param name="capacity"> Additional capacity to stack (final is capacity + length) </param>
+        /// <param name="length">     Length of pool - how many copies of GameObject should be in pool </param>
+        /// <param name="capacity">   Additional capacity to stack (final is capacity + length) </param>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void CreatePool(int poolKey, GameObject poolObject, int length, int capacity = 10)
         {
@@ -500,7 +499,7 @@ namespace TPFramework
         }
 
         /// <summary> Toggles active of first found object with given state </summary>
-        /// <param name="state"> State of searched object to be toggled </param>
+        /// <param name="state">     State of searched object to be toggled </param>
         /// <param name="createNew"> Should create new object if none found? </param>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void ToggleActive(int poolKey, TPObjectState state, bool createNew = false)
@@ -519,7 +518,7 @@ namespace TPFramework
         }
 
         /// <summary> Toggles active of first found object with given state </summary>
-        /// <param name="state"> State of searched object to be toggled </param>
+        /// <param name="state">     State of searched object to be toggled </param>
         /// <param name="createNew"> Should create new object if none found? </param>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void ToggleActive(int poolKey, TPObjectState state, Vector3 position, Quaternion rotation, bool createNew = false)
@@ -538,7 +537,7 @@ namespace TPFramework
         }
 
         /// <summary> Toggles active of first found object with given state </summary>
-        /// <param name="state"> State of searched object to be toggled </param>
+        /// <param name="state">     State of searched object to be toggled </param>
         /// <param name="createNew"> Should create new object if none found? </param>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void ToggleActive(int poolKey, TPObjectState state, Vector3 position, bool createNew = false)
@@ -557,7 +556,7 @@ namespace TPFramework
         }
 
         /// <summary> Toggles active of first found object with given state </summary>
-        /// <param name="state"> State of searched object to be toggled </param>
+        /// <param name="state">     State of searched object to be toggled </param>
         /// <param name="createNew"> Should create new object if none found? </param>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void ToggleActive(int poolKey, TPObjectState state, Quaternion rotation, bool createNew = false)
@@ -632,6 +631,7 @@ namespace TPFramework
         }
 
 #if NET_2_0 || NET_2_0_SUBSET
+
         /// <param name="pushObject"> Should push object after toggling it? </param>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void ToggleActive(int poolKey, float delay, GameObject poolObject, bool pushObject = false)
@@ -712,6 +712,7 @@ namespace TPFramework
         {
             ToggleActiveAll(poolKey, delay, state, Vector3.zero, rotation);
         }
+
 #else
 
         /// <param name="createNew"> Should create new object if none found? </param>
@@ -819,8 +820,10 @@ namespace TPFramework
             {
                 case TPObjectState.Deactive:
                     return pool[poolKey].DeactiveLength;
+
                 case TPObjectState.Active:
                     return pool[poolKey].ActiveLength;
+
                 case TPObjectState.Auto:
                     return pool[poolKey].ObjectsLength;
             }
@@ -903,7 +906,8 @@ namespace TPFramework
         }
 
 #if TPObjectPoolSafeChecks
-        /// <summary> This checks for existing key. Returns true if is safe </summary>  
+
+        /// <summary> This checks for existing key. Returns true if is safe </summary>
         private static bool SafeKey(int poolKey)
         {
             if (!HasKey(poolKey))
@@ -914,7 +918,7 @@ namespace TPFramework
             return true;
         }
 
-        /// <summary> This checks for existing key. Returns true if is safe </summary>  
+        /// <summary> This checks for existing key. Returns true if is safe </summary>
         private static bool SafeObject(GameObject poolObject)
         {
             if (poolObject == null)
@@ -925,7 +929,7 @@ namespace TPFramework
             return true;
         }
 
-        /// <summary> This checks for existing key. Returns true if is safe </summary>  
+        /// <summary> This checks for existing key. Returns true if is safe </summary>
         private static bool SafeObject(int poolKey, TPObjectState state, GameObject poolObject)
         {
             if (poolObject == null)
@@ -935,6 +939,7 @@ namespace TPFramework
             }
             return true;
         }
+
 #endif
     }
 }

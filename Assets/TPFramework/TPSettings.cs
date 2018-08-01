@@ -1,8 +1,9 @@
 ﻿/**
 *   Authored by Tomasz Piowczyk
 *   MIT LICENSE: https://github.com/Prastiwar/TPFramework/blob/master/LICENSE
-*   Repository: https://github.com/Prastiwar/TPFramework 
+*   Repository: https://github.com/Prastiwar/TPFramework
 */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,6 +60,7 @@ namespace TPFramework
         private static readonly List<string> shadowResolutionOptions = new List<string> { "Low", "Medium", "High", "VeryHigh" };
         private static readonly List<string> antialiasingOptions     = new List<string> { "Disabled", "2x Multi Sampling", "4x Multi Sampling", "8x Multi Sampling" };
         private static readonly List<string> resolutionOptions       = new List<string>(Screen.resolutions.ToStringWithtHZ());
+
         private static List<string> qualityOptions {
             get {
                 List<string> list = QualitySettings.names.ToList();
@@ -66,9 +68,9 @@ namespace TPFramework
                 return list;
             }
         }
+
         private static Action refreshSettings = delegate { };
         private static Action onCustomQualitySet = delegate { };
-
 
         /// <summary> Adds listener to onValueChange that will change exposedParam in audioMixer to un-/mute </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
@@ -317,7 +319,6 @@ namespace TPFramework
             slider.maxValue = maxValue;
             slider.value = startValue;
         }
-
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         private static void ToggleFullScreen(bool boolean)

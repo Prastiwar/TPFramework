@@ -50,6 +50,7 @@ public struct TPInventoryExample
 [Serializable]
 public struct TPAchievementExample
 {
+    public TPAchievement Achievement;
 }
 
 [Serializable]

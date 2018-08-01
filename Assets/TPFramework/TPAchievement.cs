@@ -1,229 +1,231 @@
-﻿///**
-//*   Authored by Tomasz Piowczyk
-//*   MIT LICENSE: https://github.com/Prastiwar/TPFramework/blob/master/LICENSE
-//*   Repository: https://github.com/Prastiwar/TPFramework 
-//*/
-//using System.Collections;
-//using System.Collections.Generic;
-//using UnityEngine;
-//using UnityEngine.UI;
+﻿/**
+*   Authored by Tomasz Piowczyk
+*   MIT LICENSE: https://github.com/Prastiwar/TPFramework/blob/master/LICENSE
+*   Repository: https://github.com/Prastiwar/TPFramework
+*/
 
-//namespace TPFramework
-//{
-//    public class TPAchievement : ScriptableObject
-//    {
-//        public string Title;
-//        [Multiline]
-//        public string Description;
-//        public bool IsCompleted;
-//        public Sprite Icon;
-//        public float Points;
-//        public float MaxPoints;
-//        [Space]
-//        public TPNotification Notification;
-//        public float NotifyLong;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using UnityEngine;
+using UnityEngine.UI;
+#if HAS_TMPRO
+using TMPro;
+#endif
 
-//        public class TPNotification : MonoBehaviour
-//        {
-//            public Image iconImage;
-//            public TextMeshProUGUI pointsText;
-//            public TextMeshProUGUI maxPointsText;
-//            public TextMeshProUGUI titleText;
-//            public TextMeshProUGUI descriptionText;
-//            public TPAchievement OnAchievement { get; private set; }
+namespace TPFramework
+{
+    /* ---------------------------------------------------------------------- Achievement ---------------------------------------------------------------------- */
 
-//            public void SetNotification(TPAchievement achievement)
-//            {
-//                OnAchievement = achievement;
-//                iconImage.sprite = achievement.Icon;
-//                titleText.text = achievement.Title;
-//                descriptionText.text = achievement.Description;
-//                pointsText.text = achievement.Points.ToString();
-//                maxPointsText.text = achievement.MaxPoints.ToString();
-//            }
-//        }
+    [CreateAssetMenu(menuName = "TP/TPAchievement/Achievement", fileName = "Achievement")]
+    public class TPAchievement : ScriptableObject
+    {
+        public string Title;
+        [Multiline] public string Description;
+        public bool IsCompleted;
+        public Sprite Icon;
+        public float Points;
+        public float ReachPoints;
+        [Space]
+        public bool ShowNotifyOnComplete;
+        public bool ShowNotifyOnProgress;
+        public TPAchievementNotify TPNotify;
 
-//        public class TPAchievementCreator : MonoBehaviour
-//        {
-//            public static bool DebugMode;
+        public void AddPoints(float points)
+        {
+            if (IsCompleted)
+                return;
+            Points += points;
 
-//            public List<TPAchievement> Achievements = new List<TPAchievement>();
-//            Dictionary<string, GameObject> _NotifyGO = new Dictionary<string, GameObject>();
-//            Queue<TPAchievement> AchievementQueue = new Queue<TPAchievement>();
+            if (Points >= ReachPoints)
+            {
+                Points = ReachPoints;
+                Complete(ShowNotifyOnComplete);
+            }
+            else if (ShowNotifyOnProgress)
+            {
+                TPNotify.Show(this);
+            }
+        }
 
-//            WaitForSeconds Waiter;
-//            WaitUntil Until;
-//            float WaitSeconds;
-//            [SerializeField] bool IsNotify;
+        public void Complete(bool showNotification = false)
+        {
+            IsCompleted = true;
+            Points = ReachPoints;
+            if (showNotification)
+                TPNotify.Show(this);
+        }
+    }
 
-//            public delegate void NotifyActivationEventHandler(GameObject notification, bool toActive);
-//            public delegate void NotifySettingEventHandler(TPNotification notification, TPAchievement achievement);
-//            NotifySettingEventHandler _onNotifySet;
-//            NotifyActivationEventHandler _onNotifyActive;
+    /* ---------------------------------------------------------------------- Notification ---------------------------------------------------------------------- */
 
-//            NotifyActivationEventHandler OnNotifyActive {
-//                get {
-//                    if (_onNotifyActive == null)
-//                        _onNotifyActive = SetActive;
-//                    return _onNotifyActive;
-//                }
-//                set { _onNotifyActive = value; }
-//            }
-//            NotifySettingEventHandler OnNotifySet {
-//                get {
-//                    if (_onNotifySet == null)
-//                        _onNotifySet = SetNotification;
-//                    return _onNotifySet;
-//                }
+    [Serializable]
+    public class TPAchievementNotify : TPUILayout
+    {
+        public float NotifyLong;
+        private Image iconImage;
+#if HAS_TMPRO
+        private TextMeshProUGUI pointsText;
+        private TextMeshProUGUI reachPointsText;
+        private TextMeshProUGUI titleText;
+        private TextMeshProUGUI descriptionText;
+#else
+        private Text pointsText;
+        private Text reachPointsText;
+        private Text titleText;
+        private Text descriptionText;
+#endif
 
-//                set { _onNotifySet = value; }
-//            }
+        protected override void OnInitialize()
+        {
+            iconImage = Images[0];
+            pointsText = Texts[0];
+            reachPointsText = Texts[1];
+            titleText = Texts[2];
+            descriptionText = Texts[3];
+        }
 
+        public void Show(TPAchievement achievement)
+        {
+            Initialize();
+            iconImage.sprite = achievement.Icon;
+            titleText.text = achievement.Title;
+            descriptionText.text = achievement.Description;
+            pointsText.text = achievement.Points.ToString();
+            reachPointsText.text = achievement.ReachPoints.ToString();
+            TPAchievementManager.ShowNotification(this);
+        }
+    }
 
-//            public TPAchievement GetAchievement(string name)
-//            {
-//                int length = Achievements.Count;
-//                for (int i = 0; i < length; i++)
-//                {
-//                    if (name == Achievements[i].name)
-//                        return Achievements[i];
-//                }
-//                return null;
-//            }
+    /* ---------------------------------------------------------------------- Manager ---------------------------------------------------------------------- */
 
-//            GameObject GetNotificationObject(TPAchievement achievement)
-//            {
-//                int length = _NotifyGO.Count;
-//                string _name = achievement.Notification.gameObject.name;
+    public static class TPAchievementManager
+    {
+        public static Action<GameObject, float, bool> OnNotifyActive = delegate { };
 
-//                if (_NotifyGO.ContainsKey(_name))
-//                {
-//                    return _NotifyGO[_name];
-//                }
+        private static bool isBusy;
+        private static List<TPAchievement> achievements = new List<TPAchievement>(4);
+        private static Dictionary<int, GameObject> sharedNotifications = new Dictionary<int, GameObject>(2);
+        private static Queue<TPAchievementNotify> notificationQueue = new Queue<TPAchievementNotify>(4);
 
-//                return null;
-//            }
+#if NET_2_0 || NET_2_0_SUBSET
+        private static WaitForSeconds waitNotifyLong;
+        private static WaitUntil waitUntilDeactive;
+        private static float secondsToWait;
+#endif
 
-//            void SetActive(GameObject notification, bool toActive)
-//            {
-//                notification.SetActive(toActive);
-//            }
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static void InitAchievement(TPAchievement achievement)
+        {
+            achievements.Add(achievement);
+        }
 
-//            void ShowNotification()
-//            {
-//                IsNotify = true;
-//                TPAchievement achievement = AchievementQueue.Dequeue();
-//                GameObject GO = achievement.Notification.gameObject;
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static void ShowNotification(TPAchievementNotify notification)
+        {
+            if (!notificationQueue.Contains(notification))
+            {
+                if (!isBusy)
+                {
+                    isBusy = true;
+                    GameObject notifyObj = ShareNotificationObject(notification.TPLayout);
+#if NET_2_0 || NET_2_0_SUBSET
+                    TPCoroutine.Instance.StartCoroutine(IEShowNotification(notifyObj, notification));
+#else
+                    IEShowNotification(notifyObj, notification);
+#endif
+                }
+                else
+                {
+                    notificationQueue.Enqueue(notification);
+                }
+            }
+        }
 
-//                if (!_NotifyGO.ContainsKey(GO.name))
-//                {
-//                    string _GOName = GO.name;
-//                    GO = Instantiate(GO);
-//                    GO.SetActive(false);
-//                    _NotifyGO.Add(_GOName, GO);
-//                }
-//                else
-//                {
-//                    GO = GetNotificationObject(achievement);
-//                }
-//                TPNotification notification = GO.GetComponent<TPNotification>();
-//                OnNotifySet(notification, achievement);
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static TPAchievement GetAchievement(string name)
+        {
+            int length = achievements.Count;
+            for (int i = 0; i < length; i++)
+            {
+                if (name == achievements[i].name)
+                    return achievements[i];
+            }
+            return null;
+        }
 
-//                StartCoroutine(IEShowNotification(GO, achievement));
-//            }
+#if NET_2_0 || NET_2_0_SUBSET    
 
-//            void SetNotification(TPNotification notification, TPAchievement achievement)
-//            {
-//                notification.SetNotification(achievement);
-//            }
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline    
+        private static WaitUntil WaitUntilDeactive(GameObject go)
+        {
+            if (waitUntilDeactive == null)
+                waitUntilDeactive = new WaitUntil(() => !go.activeSelf);
+            return waitUntilDeactive;
+        }
 
-//            IEnumerator IEShowNotification(GameObject go, TPAchievement achievement)
-//            {
-//                OnNotifyActive(go, true);
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        private static IEnumerator IEShowNotification(GameObject sharedObj, TPAchievementNotify notification)
+        {
+            OnNotifyActive(sharedObj, notification.NotifyLong, true);
 
-//                if (WaitSeconds != achievement.NotifyLong)
-//                {
-//                    WaitSeconds = achievement.NotifyLong;
-//                    Waiter = new WaitForSeconds(achievement.NotifyLong);
-//                }
+            if (secondsToWait != notification.NotifyLong)
+            {
+                secondsToWait = notification.NotifyLong;
+                waitNotifyLong = new WaitForSeconds(notification.NotifyLong);
+            }
 
-//                yield return Waiter;
+            yield return waitNotifyLong;
 
-//                OnNotifyActive(go, false);
+            OnNotifyActive(sharedObj, notification.NotifyLong, false);
 
-//                yield return Waiter;
+            yield return waitNotifyLong;
 
-//                if (Until == null)
-//                {
-//                    Until = new WaitUntil(() => !go.activeSelf);
-//                }
+            if (waitUntilDeactive == null)
+                waitUntilDeactive = new WaitUntil(() => !sharedObj.activeSelf);
 
-//                yield return Until;
+            yield return waitUntilDeactive;
 
-//                if (AchievementQueue.Count > 0)
-//                {
-//                    ShowNotification();
-//                }
-//                else
-//                {
-//                    IsNotify = false;
-//                }
-//            }
+            if (notificationQueue.Count > 0)
+                ShowNotification(notificationQueue.Dequeue());
+            else
+                isBusy = false;
+        }
 
-//            public void ShowNotification(TPAchievement achievement)
-//            {
-//                if (!AchievementQueue.Contains(achievement))
-//                {
-//                    AchievementQueue.Enqueue(achievement);
-//                    if (!IsNotify)
-//                        ShowNotification();
-//                }
-//            }
+#else
+        
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        private static async void IEShowNotification(GameObject sharedObj, TPNotification notification)
+        {
+            OnNotifyActive(sharedObj, notification.NotifyLong, true);
 
-//            /// <param name="achievement"></param>
-//            /// <param name="value">How many points add to achievement?</param>
-//            /// <param name="showProgressNotify">Should show notification with progress?</param>
-//            /// <param name="showNotifyAfterCompleted">Should show notification if achievement will'be completed after adding points?</param>
-//            public void AddPointTo(TPAchievement achievement, float value, bool showProgressNotify, bool showNotifyAfterCompleted)
-//            {
-//                if (achievement.IsCompleted)
-//                    return;
+            await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(notification.NotifyLong));
+            sharedObj.SetActive(true);
 
-//                achievement.Points += value;
-//                if (achievement.Points >= achievement.MaxPoints)
-//                {
-//                    CompleteAchievement(achievement, showNotifyAfterCompleted);
-//                    return;
-//                }
+            OnNotifyActive(sharedObj, notification.NotifyLong, false);
 
-//                if (showProgressNotify)
-//                    ShowNotification(achievement);
-//            }
+            await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(notification.NotifyLong));
+            sharedObj.SetActive(false);
 
-//            public void CompleteAchievement(TPAchievement achievement, bool showNotification)
-//            {
-//                achievement.Points = achievement.MaxPoints;
-//                achievement.IsCompleted = true;
-//                if (showNotification)
-//                    ShowNotification(achievement);
-//            }
+            if (notificationQueue.Count > 0)
+                ShowNotification(notificationQueue.Dequeue());
+            else
+                isBusy = false;
+        }
 
-//            public void SetOnNotifySet(NotifySettingEventHandler _NotifySettingEventHandler)
-//            {
-//                OnNotifySet = _NotifySettingEventHandler;
-//            }
+#endif
 
-//            public void SetOnNotifyActive(NotifyActivationEventHandler _NotifyActivationEventHandler)
-//            {
-//                OnNotifyActive = _NotifyActivationEventHandler;
-//            }
-
-//#if UNITY_EDITOR
-//            public void Refresh()
-//            {
-//                //Achievements = Utilities.TPFind.FindAssetsByType<TPAchievement>();
-//            }
-//#endif
-//        }
-//}
-//}
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        private static GameObject ShareNotificationObject(GameObject notificationObject)
+        {
+            int id = notificationObject.GetInstanceID();
+            if (!sharedNotifications.ContainsKey(id))
+            {
+                notificationObject.SetActive(false);
+                sharedNotifications[id] = UnityEngine.Object.Instantiate(notificationObject);
+            }
+            return sharedNotifications[id];
+        }
+    }
+}

@@ -1,16 +1,20 @@
 ﻿/**
 *   Authored by Tomasz Piowczyk
 *   MIT LICENSE: https://github.com/Prastiwar/TPFramework/blob/master/LICENSE
-*   Repository: https://github.com/Prastiwar/TPFramework 
+*   Repository: https://github.com/Prastiwar/TPFramework
 */
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
+#if HAS_TMPRO
+using TMPro;
+#endif
 
 namespace TPFramework
 {
@@ -21,7 +25,6 @@ namespace TPFramework
         StaticEnter,  // doesn't move with cursor - show on pointer enter
         StaticClick   // doesn't move with cursor - show on click
     }
-
 
     // ---------------------------------------------------------------- Tooltip Component ---------------------------------------------------------------- //
 
@@ -74,7 +77,6 @@ namespace TPFramework
         }
     }
 
-
     // ---------------------------------------------------------------- TooltipManager ---------------------------------------------------------------- //
 
     public static class TPTooltipManager
@@ -100,7 +102,6 @@ namespace TPFramework
         {
             observer = eventData.pointerEnter.GetComponent<TPTooltip>();
             _eventData = eventData;
-
 
             if (!observer.TooltipLayout.IsActive())
             {
@@ -162,7 +163,6 @@ namespace TPFramework
             return tooltipType == TPTooltipType.DynamicClick || tooltipType == TPTooltipType.DynamicEnter;
         }
     }
-
 
     // ---------------------------------------------------------------- UI Layout of Tooltip ---------------------------------------------------------------- //
 
@@ -282,30 +282,37 @@ namespace TPFramework
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public void SetText(string text, int index) { Set(index, text, texts); }
+
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public void SetText(string text, params int[] indexes) { Set(indexes, text, texts); }
+
 #if HAS_TMPRO
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public void SetText(string text, TextMeshProUGUI Text) { Set(Text, text, Texts); }
 #else
+
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public void SetText(string text, Text Text) { Set(Text, text, texts); }
+
 #endif
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public void SetImage(Sprite sprite, int index) { Set(index, sprite, images); }
+
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public void SetImage(Sprite sprite, params int[] indexes) { Set(indexes, sprite, images); }
+
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public void SetImage(Sprite sprite, Image image) { Set(image, sprite, images); }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public void SetButtonClick(UnityAction action, int index) { Set(index, action, buttons); }
+
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public void SetButtonClick(UnityAction action, params int[] indexes) { Set(indexes, action, buttons); }
+
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public void SetButtonClick(UnityAction action, Button button) { Set(button, action, buttons); }
-
 
 #if HAS_TMPRO
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
@@ -318,6 +325,7 @@ namespace TPFramework
             return _texts;
         }
 #else
+
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public Text[] GetTexts(params int[] indexes)
         {
@@ -327,6 +335,7 @@ namespace TPFramework
                 _texts[i] = texts[indexes[i]];
             return _texts;
         }
+
 #endif
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
@@ -370,7 +379,6 @@ namespace TPFramework
         {
             return buttons[index];
         }
-
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         private void Set<T, U>(int index, T obj, U[] collection)

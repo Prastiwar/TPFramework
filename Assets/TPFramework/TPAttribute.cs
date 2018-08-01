@@ -3,6 +3,7 @@
 *   MIT LICENSE: https://github.com/Prastiwar/TPFramework/blob/master/LICENSE
 *   Repository: https://github.com/Prastiwar/TPFramework 
 */
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,8 +19,7 @@ namespace TPFramework
         Percentage = 1
     }
 
-
-    // ---------------------------------------------------------------- Modifier ---------------------------------------------------------------- //
+    /* ---------------------------------------------------------------- Modifier ---------------------------------------------------------------- */
 
     [Serializable]
     public struct TPModifier
@@ -34,8 +34,11 @@ namespace TPFramework
         public int Priority { get { return priority; } }
 
         public TPModifier(ModifierType type, float value, object source) : this(type, value, (int)type, source) { }
+
         public TPModifier(ModifierType tye, float value, int priority) : this(tye, value, priority, null) { }
+
         public TPModifier(ModifierType type, float value) : this(type, value, (int)type, null) { }
+
         public TPModifier(ModifierType type, float value, int priority, object source)
         {
             this.type = type;
@@ -75,11 +78,13 @@ namespace TPFramework
             return (TPModifier)obj == this;
         }
 
-        public override int GetHashCode() { return base.GetHashCode(); }
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 
-
-    // ---------------------------------------------------------------- Attribute ---------------------------------------------------------------- //
+    /* ---------------------------------------------------------------- Attribute ---------------------------------------------------------------- */
 
     [Serializable]
     public class TPAttribute
@@ -236,9 +241,11 @@ namespace TPFramework
                     case ModifierType.FlatIncrease:
                         Value += modifiers[i].Value;
                         break;
+
                     case ModifierType.FlatMultiply:
                         Value *= modifiers[i].Value;
                         break;
+
                     case ModifierType.Percentage:
                         Value *= (1 + (modifiers[i].Value > 1.0f ? (modifiers[i].Value / 100) : modifiers[i].Value));
                         break;
@@ -257,7 +264,5 @@ namespace TPFramework
                 return -1;
             return 0;
         }
-
     }
-
 }

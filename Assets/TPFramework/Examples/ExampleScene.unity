@@ -3379,7 +3379,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &549195817
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9608,6 +9608,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32faaf3c5671414199d840cf29407ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TPAchievementExample:
+    Achievement: {fileID: 11400000, guid: e3439c39bd2ef774dab3475280e02eb8, type: 2}
   TPObjectPoolExample:
     PoolKey: 0
     Prefab: {fileID: 1023094823439678, guid: 10f9add3b0989884d8855fa7982ff701, type: 2}

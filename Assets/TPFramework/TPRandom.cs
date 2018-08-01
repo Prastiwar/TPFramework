@@ -1,8 +1,10 @@
 ﻿/**
 *   Authored by Tomasz Piowczyk
 *   MIT LICENSE: https://github.com/Prastiwar/TPFramework/blob/master/LICENSE
-*   Repository: https://github.com/Prastiwar/TPFramework 
+*   Repository: https://github.com/Prastiwar/TPFramework
 */
+
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
@@ -92,7 +94,7 @@ namespace TPFramework
         /// <summary> Returns selected index of probability </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static int PickWithProbability(params int[] probabilities)
-        {            
+        {
             int length = probabilities.Length;
             int dice = Random.Range(0, probabilities.Sum(length));
 
@@ -169,6 +171,24 @@ namespace TPFramework
                 sum += chances[index];
             }
             return chances;
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static bool RandomBool(float probability = 0.5f)
+        {
+            return Random.Range(0f, 1f) < probability;
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static T RandomElement<T>(List<T> collection)
+        {
+            return collection[Random.Range(0, collection.Count)];
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static T RandomElement<T>(T[] collection)
+        {
+            return collection[Random.Range(0, collection.Length)];
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
