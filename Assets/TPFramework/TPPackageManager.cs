@@ -32,7 +32,7 @@ namespace TPFramework.Internal
 
         private static BuildTargetGroup _targetGroup { get { return EditorUserBuildSettings.selectedBuildTargetGroup; } }
         private static readonly string _TPNamespace = "TPFramework";
-        private const int packagesLength = 14;
+        private const int packagesLength = 15;
 
         private static readonly ITPPackage[] _TPPackages = new ITPPackage[packagesLength] {
             new TPAchievementPackage(), // 0
@@ -47,8 +47,9 @@ namespace TPFramework.Internal
             new TPTooltipPackage(),     // 9
             new TPRandomPackage(),      // 10
             new TPEditorPackage(),      // 11
-            new TPFadePackage(),        // 12
-            new TPUIPackage(),          // 13
+            new TPAnimPackage(),        // 12
+            new TPFadePackage(),        // 13
+            new TPUIPackage(),          // 14
         };
 
         static TPPackageManager()
@@ -336,6 +337,19 @@ namespace TPFramework.Internal
     internal struct TPEditorPackage : ITPPackage
     {
         public string Name { get { return "TPEditor"; } }
+        public bool IsLoaded { get; private set; }
+
+        public bool Reload()
+        {
+            IsLoaded = true;
+            return IsLoaded;
+        }
+    }
+
+
+    internal struct TPAnimPackage : ITPPackage
+    {
+        public string Name { get { return "TPAnim"; } }
         public bool IsLoaded { get; private set; }
 
         public bool Reload()

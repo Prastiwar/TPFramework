@@ -1,326 +1,260 @@
-﻿///**
-//*   Authored by Tomasz Piowczyk
-//*   MIT LICENSE: https://github.com/Prastiwar/TPFramework/blob/master/LICENSE
-//*   Repository: https://github.com/Prastiwar/TPFramework 
-//*/
-//using System.Collections;
-//using System.Collections.Generic;
-//using UnityEngine;
-//using UnityEngine.EventSystems;
-//using UnityEngine.SceneManagement;
-//using UnityEngine.UI;
+﻿/**
+*   Authored by Tomasz Piowczyk
+*   MIT LICENSE: https://github.com/Prastiwar/TPFramework/blob/master/LICENSE
+*   Repository: https://github.com/Prastiwar/TPFramework 
+*/
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
-//namespace TPFramework
-//{
-//    public class TPFade : MonoBehaviour, IPointerClickHandler
-//    {
-//        public enum FaderType
-//        {
-//            Alpha,
-//            Progress
-//        }
+namespace TPFramework
+{
+    public interface ITPFade
+    {
+        void InitializeFade(TPFadeState state);
+        void Fade(TPFadeInfo fadeInfo, TPFadeState state);
+    }
 
-//        public FaderType FadeType;
-//        public string FadeToScene;
+    [Serializable]
+    public struct TPFadeInfo
+    {
+        public string FadeToScene;
+        public TPAnimation FadeAnim;
+        public ITPFade ITPFade;
+    }
 
-//        public delegate void OnFade();
-//        OnFade Fade;
+    [Serializable]
+    public struct TPFadeState
+    {
+        public float Time;
+        public Image Image;
+        public CanvasGroup CanvasGrouup;
+    }
 
-//        TPFaderCreator creator;
 
-//        void Awake()
-//        {
-//            creator = FindObjectOfType<TPFaderCreator>();
-//            if (Fade == null)
-//                Fade = () => creator.Fade(FadeToScene, FadeType);
-//        }
+    [Serializable]
+    public struct TPProgressFade : ITPFade
+    {
+        public GameObject ProgressPrefab;
+        public Slider LoadingBar;
+        public Image LoadingImage;
+        public Text LoadingText;
+        public Text LoadingProgressText;
+        public string LoadingTextString;
 
-//        public void SetOnFade(OnFade _onFade)
-//        {
-//            Fade = _onFade;
-//        }
+        public float ProgressFadeSpeed;
 
-//        public void OnPointerClick(PointerEventData eventData)
-//        {
-//            Fade();
-//        }
-//    }
+        public bool MustKeyToStart;
+        public bool LoadingAnyKeyToStart;
+        public KeyCode LoadingKeyToStart;
 
-//    [RequireComponent(typeof(Image))]
-//    [RequireComponent(typeof(Canvas))]
-//    [RequireComponent(typeof(CanvasGroup))]
-//    public class TPFaderCreator : MonoBehaviour
-//    {
-//        private static TPFaderCreator instance;
-//        public static bool DebugMode;
-//        [System.Serializable]
-//        public struct TP_ProgressFade
-//        {
-//            public GameObject ProgressPrefab;
-//            public Slider LoadingBar;
-//            public Image LoadingImage;
-//            public Text LoadingText;
-//            public Text LoadingProgressText;
-//            public string LoadingTextString;
-//            public float ProgressFadeSpeed;
-//            public bool MustKeyToStart;
-//            public bool LoadingAnyKeyToStart;
-//            public KeyCode LoadingKeyToStart;
-//        }
-//        [System.Serializable]
-//        public struct TP_AlphaFade
-//        {
-//            public float FadeSpeed;
-//            public Sprite FadeTexture;
-//            public Color FadeColor;
-//        }
+        public void InitializeFade(TPFadeState state)
+        {
+        }
 
-//        public TP_ProgressFade ProgressFader;
-//        public TP_AlphaFade AlphaFader;
-//        public bool IsFading = false;
-//        public List<GameObject> Faders;
+        public void Fade(TPFadeInfo fadeInfo, TPFadeState state)
+        {
+        }
+    }
 
-//        public delegate void OnFading();
-//        OnFading BeforeSceneIsLoaded;
-//        OnFading OnFade;
+    [Serializable]
+    public struct TPAlphaFade : ITPFade
+    {
+        public Sprite FadeTexture;
+        public Color FadeColor;
 
-//        [HideInInspector] [SerializeField] Image FadeImage;
-//        CanvasGroup Alpha;
-//        Canvas canvas;
-//        string FadeScene;
+        public void InitializeFade(TPFadeState state)
+        {
+            state.Image.sprite = FadeTexture;
+            state.Image.color = FadeColor;
+        }
 
-//        GameObject layout = null;
-//        Transform layTrans = null;
-//        CanvasGroup ProgressAlpha = null;
-//        Slider bar = null;
-//        Text progress = null;
-//        Text text = null;
-//        Image image = null;
+        public void Fade(TPFadeInfo fadeInfo, TPFadeState state)
+        {
+            state.CanvasGrouup.alpha = TPAnim.NormalizedCurveTime(state.Time);
 
-//        WaitForSeconds update = new WaitForSeconds(0.049f);
-//        WaitForEndOfFrame waitForEnd = new WaitForEndOfFrame();
+            if (state.Time >= 0.5f && !string.IsNullOrEmpty(fadeInfo.FadeToScene))
+            {
+                SceneManager.LoadScene(fadeInfo.FadeToScene);
+            }
+        }
+    }
 
-//        void Awake()
-//        {
-//            if (instance == null)
-//            {
-//                instance = this;
-//            }
-//            else
-//            {
-//                Destroy(this.gameObject);
-//                return;
-//            }
-//            DontDestroyOnLoad(gameObject);
-//            Refresh();
-//        }
+    public static class TPFade
+    {
+        private static TPFadeState fadeLayout;
+        private static bool isFading;
 
-//        public void Refresh()
-//        {
-//            if (Alpha == null)
-//                Alpha = GetComponent<CanvasGroup>();
-//            if (FadeImage == null)
-//                FadeImage = GetComponent<Image>();
-//            if (canvas == null)
-//                canvas = GetComponent<Canvas>();
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        private static void OnSceneLoad()
+        {
+            GameObject fader = new GameObject("TPFader");
+            Canvas canvas = fader.AddComponent<Canvas>();
 
-//            FadeImage.rectTransform.sizeDelta = new Vector2(Screen.width, Screen.height);
-//            FadeImage.sprite = AlphaFader.FadeTexture;
-//            FadeImage.color = AlphaFader.FadeColor;
-//            FadeImage.raycastTarget = false;
+            fadeLayout.Image = fader.AddComponent<Image>();
+            fadeLayout.Image.rectTransform.sizeDelta = new Vector2(Screen.width, Screen.height);
+            fadeLayout.Image.raycastTarget = false;
 
-//            Alpha.interactable = false;
-//            Alpha.blocksRaycasts = false;
-//            Alpha.ignoreParentGroups = true;
+            fadeLayout.CanvasGrouup = fader.AddComponent<CanvasGroup>();
+            fadeLayout.CanvasGrouup.interactable = false;
+            fadeLayout.CanvasGrouup.blocksRaycasts = false;
+            fadeLayout.CanvasGrouup.ignoreParentGroups = true;
+            fadeLayout.CanvasGrouup.alpha = 0;
 
-//            canvas.enabled = false;
-//            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-//            if (canvas.sortingOrder <= 1)
-//                canvas.sortingOrder = 16;
-//        }
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            if (canvas.sortingOrder <= 1)
+                canvas.sortingOrder = 16;
+            UnityEngine.Object.DontDestroyOnLoad(fader);
+        }
 
-//        public void Fade()
-//        {
-//            Fade("", TPFader.FaderType.Alpha);
-//        }
-//        public void Fade(string sceneName, TPFader.FaderType FadeType)
-//        {
-//            if (IsFading)
-//                return;
+        public static void Fade(TPFadeInfo info)
+        {
+            TPCoroutine.RunCoroutine(IEFade(info, fadeLayout));
+        }
 
-//            IsFading = true;
-//            FadeScene = sceneName;
+        private static IEnumerator IEFade(TPFadeInfo fadeInfo, TPFadeState state)
+        {
+            isFading = true;
+            float percentage = 0.0f;
+            state.Time = fadeInfo.FadeAnim.Curve.Evaluate(percentage);
+            while (state.Time < 1.0f)
+            {
+                fadeInfo.ITPFade.Fade(fadeInfo, state);
 
-//            switch (FadeType)
-//            {
-//                case TPFader.FaderType.Alpha:
-//                    StartCoroutine(Fade(true, Alpha, AlphaFader.FadeSpeed));
-//                    break;
+                percentage += Time.deltaTime * fadeInfo.FadeAnim.Speed;
+                state.Time = fadeInfo.FadeAnim.Curve.Evaluate(percentage);
+                yield return null;
+            }
+            isFading = false;
+        }
 
-//                case TPFader.FaderType.Progress:
-//                    if (FadeScene == "")
-//                    {
-//                        Debug.Log("Progress loading is available to scene only!");
-//                        break;
-//                    }
-//                    StartCoroutine(FadeProgress());
-//                    break;
+        private static bool TryLoadScene(bool readAnyKey, AsyncOperation asyncLoad)
+        {
+            return TryLoadScene(readAnyKey, true, KeyCode.None, asyncLoad);
+        }
 
-//                default:
-//                    break;
-//            }
-//        }
+        private static bool TryLoadScene(bool readAnyKey, KeyCode keyToRead, AsyncOperation asyncLoad)
+        {
+            return TryLoadScene(readAnyKey, false, keyToRead, asyncLoad);
+        }
 
-//        IEnumerator Fade(bool IsAlpha, CanvasGroup _Alpha, float _FadeSpeed)
-//        {
-//            canvas.enabled = true;
-//            if (OnFade != null)
-//                OnFade();
-//            _Alpha.alpha = 0;
-//            while (_Alpha.alpha < 1)
-//            {
-//                yield return update;
-//                _Alpha.alpha += _FadeSpeed / 100;
-//            }
-//            if (IsAlpha)
-//                StartCoroutine(FadeOut(IsAlpha, _Alpha, _FadeSpeed));
-//        }
-//        IEnumerator FadeOut(bool IsAlpha, CanvasGroup _Alpha, float _FadeSpeed)
-//        {
-//            if (BeforeSceneIsLoaded != null)
-//                BeforeSceneIsLoaded();
-//            if (IsAlpha && FadeScene != "")
-//                SceneManager.LoadScene(FadeScene);
+        private static bool TryLoadScene(bool readAnyKey)
+        {
+            return TryLoadScene(readAnyKey, true, KeyCode.None);
+        }
 
-//            yield return waitForEnd;
+        private static bool TryLoadScene(bool readAnyKey, KeyCode keyToRead)
+        {
+            return TryLoadScene(readAnyKey, false, keyToRead);
+        }
+        
+        private static bool TryLoadScene(bool readKey, bool readAnyKey, KeyCode keyToRead)
+        {
+            return !readKey
+                || readAnyKey && Input.anyKeyDown
+                || !readAnyKey && Input.GetKeyDown(keyToRead);
+        }
 
-//            _Alpha.alpha = 1;
-//            while (_Alpha.alpha > 0)
-//            {
-//                yield return update;
-//                _Alpha.alpha -= _FadeSpeed / 100;
-//                if (_Alpha.alpha < 0.1f)
-//                    IsFading = false;
-//            }
-//            canvas.enabled = false;
-//        }
+        private static bool TryLoadScene(bool readKey, bool readAnyKey, KeyCode keyToRead, AsyncOperation asyncLoad)
+        {
+            if (TryLoadScene(readKey, readAnyKey, keyToRead))
+            {
+                asyncLoad.allowSceneActivation = true;
+                return true;
+            }
+            return false;
+        }
 
-//        void SpawnProgress(Transform layTrans)
-//        {
-//            if (ProgressFader.LoadingBar != null)
-//                bar = Instantiate(ProgressFader.LoadingBar, layTrans);
-//            if (ProgressFader.LoadingImage != null)
-//                image = Instantiate(ProgressFader.LoadingImage, layTrans);
-//            if (ProgressFader.LoadingProgressText != null)
-//                progress = Instantiate(ProgressFader.LoadingProgressText, layTrans);
-//            if (ProgressFader.LoadingText != null)
-//                text = Instantiate(ProgressFader.LoadingText, layTrans);
-//            if (!ProgressAlpha)
-//                ProgressAlpha = layout.GetComponent<CanvasGroup>();
-//        }
 
-//        void SetProgress(AsyncOperation asyncLoad)
-//        {
-//            if (progress != null)
-//                progress.text = (asyncLoad.progress * 100).ToString("0") + "%";
-//            if (bar != null)
-//                bar.value = asyncLoad.progress;
-//            if (image != null)
-//                image.fillAmount = asyncLoad.progress * 100;
-//        }
+        //public static void Fade() => Fade("", TPFade.FaderType.Alpha);
+        //public static void Fade(string sceneName, TPFade.FaderType FadeType) =>
+        //    case TPFade.FaderType.Alpha:  StartCoroutine(Fade(true, Alpha, AlphaFader.FadeSpeed));
+        //    case TPFade.FaderType.Progress: StartCoroutine(FadeProgress());
 
-//        void SetFullProgress()
-//        {
-//            if (progress != null)
-//                progress.text = "100%";
-//            if (bar != null)
-//                bar.value = 1f;
-//            if (image != null)
-//                image.fillAmount = 100;
-//            if (text != null)
-//                text.text = ProgressFader.LoadingTextString;
-//        }
+        //void SpawnProgress(Transform layTrans) {
+        //    if (ProgressFader.LoadingBar != null)
+        //        bar = Instantiate(ProgressFader.LoadingBar, layTrans);
+        //    if (ProgressFader.LoadingImage != null)
+        //        image = Instantiate(ProgressFader.LoadingImage, layTrans);
+        //    if (ProgressFader.LoadingProgressText != null)
+        //        progress = Instantiate(ProgressFader.LoadingProgressText, layTrans);
+        //    if (ProgressFader.LoadingText != null)
+        //        text = Instantiate(ProgressFader.LoadingText, layTrans);
+        //    if (!ProgressAlpha)
+        //        ProgressAlpha = layout.GetComponent<CanvasGroup>();
+        //}
 
-//        IEnumerator FadeProgress()
-//        {
-//            if (OnFade != null)
-//                OnFade();
-//            ChangeCreator(true);
+        //void SetProgress(AsyncOperation asyncLoad) {
+        //    if (progress != null)
+        //        progress.text = (asyncLoad.progress * 100).ToString("0") + "%";
+        //    if (bar != null)
+        //        bar.value = asyncLoad.progress;
+        //    if (image != null)
+        //        image.fillAmount = asyncLoad.progress * 100;
+        //}
 
-//            if (!layout)
-//            {
-//                layout = Instantiate(ProgressFader.ProgressPrefab, transform);
-//                layTrans = layout.transform;
-//                for (int i = 0; i < layTrans.childCount; i++)
-//                {
-//                    Destroy(layTrans.GetChild(i).gameObject);
-//                }
-//            }
-//            else
-//                layout.SetActive(true);
+        //void SetFullProgress() {
+        //    if (progress != null)
+        //        progress.text = "100%";
+        //    if (bar != null)
+        //        bar.value = 1f;
+        //    if (image != null)
+        //        image.fillAmount = 100;
+        //    if (text != null)
+        //        text.text = ProgressFader.LoadingTextString;
+        //}
 
-//            if (!bar || !image || !progress || !text || !ProgressAlpha)
-//                SpawnProgress(layTrans);
+        //IEnumerator FadeProgress() {
+        //    if (OnFade != null)
+        //        OnFade();
+        //    ChangeCreator(true);
 
-//            StartCoroutine(Fade(false, ProgressAlpha, ProgressFader.ProgressFadeSpeed));
-//            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(FadeScene);
-//            asyncLoad.allowSceneActivation = false;
+        //    if (!layout)
+        //    {
+        //        layout = Instantiate(ProgressFader.ProgressPrefab, transform);
+        //        layTrans = layout.transform;
+        //        for (int i = 0; i < layTrans.childCount; i++)
+        //        {
+        //            Destroy(layTrans.GetChild(i).gameObject);
+        //        }
+        //    }
+        //    else
+        //        layout.SetActive(true);
 
-//            while (!asyncLoad.isDone)
-//            {
-//                SetProgress(asyncLoad);
+        //    if (!bar || !image || !progress || !text || !ProgressAlpha)
+        //        SpawnProgress(layTrans);
 
-//                if (asyncLoad.progress >= 0.9f)
-//                {
-//                    SetFullProgress();
-//                    ReadKey(asyncLoad);
-//                }
-//                yield return null;
-//            }
+        //    StartCoroutine(Fade(false, ProgressAlpha, ProgressFader.ProgressFadeSpeed));
+        //    AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(FadeScene);
+        //    asyncLoad.allowSceneActivation = false;
 
-//            StartCoroutine(FadeOut(false, ProgressAlpha, ProgressFader.ProgressFadeSpeed));
-//            yield return new WaitWhile(() => ProgressAlpha.alpha > 0);
-//            layout.SetActive(false);
-//            ChangeCreator(false);
-//        }
+        //    while (!asyncLoad.isDone)
+        //    {
+        //        SetProgress(asyncLoad);
 
-//        void ChangeCreator(bool started)
-//        {
-//            canvas.enabled = started ? true : false;
-//            FadeImage.enabled = started ? false : true;
-//            Alpha.alpha = started ? 1 : 0;
-//        }
+        //        if (asyncLoad.progress >= 0.9f)
+        //        {
+        //            SetFullProgress();
+        //            ReadKey(asyncLoad);
+        //        }
+        //        yield return null;
+        //    }
 
-//        void ReadKey(AsyncOperation asyncLoad)
-//        {
-//            if (ProgressFader.MustKeyToStart)
-//            {
-//                if (!ProgressFader.LoadingAnyKeyToStart)
-//                {
-//                    if (Input.GetKeyDown(ProgressFader.LoadingKeyToStart))
-//                        asyncLoad.allowSceneActivation = true;
-//                }
-//                else
-//                {
-//                    if (Input.anyKeyDown)
-//                        asyncLoad.allowSceneActivation = true;
-//                }
-//            }
-//            else
-//            {
-//                asyncLoad.allowSceneActivation = true;
-//            }
-//        }
+        //    StartCoroutine(FadeOut(false, ProgressAlpha, ProgressFader.ProgressFadeSpeed));
+        //    yield return new WaitWhile(() => ProgressAlpha.alpha > 0);
+        //    layout.SetActive(false);
+        //    ChangeCreator(false);
+        //}
 
-//        public void SetOnFaderStarted(OnFading _OnFade)
-//        {
-//            OnFade = _OnFade;
-//        }
+        //void ChangeCreator(bool started) {
+        //    canvas.enabled = started ? true : false;
+        //    FadeImage.enabled = started ? false : true;
+        //    Alpha.alpha = started ? 1 : 0;
+        //}
+    }
 
-//        public void SetBeforeSceneLoaded(OnFading _BeforeSceneIsLoaded)
-//        {
-//            BeforeSceneIsLoaded = _BeforeSceneIsLoaded;
-//        }
-//    }
-
-//}
+}

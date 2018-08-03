@@ -127,7 +127,7 @@ namespace TPFramework
 
     public static class TPAchievementManager
     {
-        public static Action<GameObject, float, bool> OnNotifyActive = delegate { };
+        public static Action<GameObject, float, bool> OnNotifyActivation = delegate { };
 
         private static bool isBusy;
         private static SharedObjectCollection sharedLayouts = new SharedObjectCollection(2);
@@ -148,7 +148,7 @@ namespace TPFramework
                 isBusy = true;
                 notification.FillNotify(notifyInfo);
 #if NET_2_0 || NET_2_0_SUBSET
-                TPCoroutine.Instance.StartCoroutine(IEShowNotification(notification.TPLayout, notification));
+                TPCoroutine.RunCoroutine(IEShowNotification(notification.TPLayout, notification));
 #else
                 IEShowNotification(notifyObj, notification);
 #endif
@@ -175,7 +175,7 @@ namespace TPFramework
             float evaluate = notification.NotifyAnimatedWait.Evaluate(percentage);
             while (evaluate < 1.0f)
             {
-                OnNotifyActive(sharedObj, evaluate, evaluate <= 0.5f);
+                OnNotifyActivation(sharedObj, evaluate, evaluate <= 0.5f);
                 percentage += Time.deltaTime * notification.AnimateSpeed;
                 evaluate = notification.NotifyAnimatedWait.Evaluate(percentage);
                 yield return null;

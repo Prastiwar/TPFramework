@@ -24,7 +24,7 @@ namespace TPFramework
         Theme
     }
 
-    public sealed class TPAudioPool
+    public static class TPAudioPool
     {
         private static Dictionary<string, TPAudioBundle> audioPool = new Dictionary<string, TPAudioBundle>();
         private static AudioSource sfxSource;

@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace TPFramework
 {
-    internal class TPReusable { } // marker to find this script
+    internal static class TPReusable { } // marker to find this script
 
     [Serializable]
     public class ReusableList<T>

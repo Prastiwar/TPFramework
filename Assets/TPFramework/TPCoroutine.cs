@@ -1,18 +1,25 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 namespace TPFramework
 {
     public sealed class TPCoroutine : MonoBehaviour
     {
-        public static TPCoroutine Instance { get; private set; }
+        private static TPCoroutine instance;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void OnScene()
         {
-            if (Instance == null)
+            if (instance == null)
             {
-                Instance = new GameObject("TPCoroutine").AddComponent<TPCoroutine>();
+                instance = new GameObject("TPCoroutine").AddComponent<TPCoroutine>();
             }
+        }
+
+        public static void RunCoroutine(IEnumerator routine)
+        {
+            // TODO: Implementation
+            instance.StartCoroutine(routine); // temporary use Unity's solution
         }
     }
 }

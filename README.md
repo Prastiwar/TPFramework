@@ -31,6 +31,7 @@
 * ***TPToolTip*** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - *Implement in-game tooltips*
 * ***TPRandom*** &nbsp;&nbsp;&nbsp;&nbsp;- *Probability, random functions*
 * ***TPEditor*** &nbsp;&nbsp;&nbsp;&nbsp;- *Helpful library for extending editor*
+* ***TPAnim*** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- *Animate whatever you want*
 * ***TPFade*** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- *Fade between scenes*
 * ***TPUI*** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- *Generic UI Layout and much more*
 

@@ -29,7 +29,7 @@ public class Examples : MonoBehaviour
             Debug.Log("Achievement completed!");
         };
 
-        TPAchievementManager.OnNotifyActive = CustomNotifyActive;
+        TPAchievementManager.OnNotifyActivation = CustomNotifyActive;
 
         for (int i = 0; i < ex.Achievement.Info.ReachPoints; i++)
         {
@@ -207,9 +207,7 @@ public class Examples : MonoBehaviour
     private void CustomNotifyActive(GameObject notifyObj, float evaluatedTime, bool toActive)
     {
         var obj = notifyObj.transform.GetChild(0).gameObject.transform;
-        obj.localScale = obj.localScale.Equal(toActive
-            ? (2 * evaluatedTime)         // grow from 0 to 1 when evaluate is from 0 to 0.5f 
-            : (2 - (2 * evaluatedTime))); // decrease from 1 to 0 when evaluate is from 0.5f to 1f
+        obj.localScale = obj.localScale.Equal(TPAnim.NormalizedCurveTime(evaluatedTime));
     }
 
     private Vector3 GetRandomPosition()
