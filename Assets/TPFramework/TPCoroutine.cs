@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace TPFramework
@@ -6,6 +7,7 @@ namespace TPFramework
     public sealed class TPCoroutine : MonoBehaviour
     {
         private static TPCoroutine instance;
+        public static YieldInstruction WaitOneFrame { get { return null; } }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void OnScene()
@@ -16,6 +18,7 @@ namespace TPFramework
             }
         }
 
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static void RunCoroutine(IEnumerator routine)
         {
             // TODO: Implementation

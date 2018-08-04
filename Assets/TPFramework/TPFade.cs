@@ -6,6 +6,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -15,8 +16,8 @@ namespace TPFramework
 {
     public interface ITPFade
     {
-        void InitializeFade(TPFadeState state);
-        void Fade(TPFadeInfo fadeInfo, TPFadeState state);
+        void InitializeFade(TPFadeLayout state);
+        void Fade(float time, TPFadeInfo fadeInfo, TPFadeLayout state);
     }
 
     [Serializable]
@@ -28,9 +29,8 @@ namespace TPFramework
     }
 
     [Serializable]
-    public struct TPFadeState
+    public struct TPFadeLayout
     {
-        public float Time;
         public Image Image;
         public CanvasGroup CanvasGrouup;
     }
@@ -42,8 +42,8 @@ namespace TPFramework
         public GameObject ProgressPrefab;
         public Slider LoadingBar;
         public Image LoadingImage;
-        public Text LoadingText;
-        public Text LoadingProgressText;
+        public TextMeshProUGUI LoadingText;
+        public TextMeshProUGUI LoadingProgressText;
         public string LoadingTextString;
 
         public float ProgressFadeSpeed;
@@ -52,11 +52,11 @@ namespace TPFramework
         public bool LoadingAnyKeyToStart;
         public KeyCode LoadingKeyToStart;
 
-        public void InitializeFade(TPFadeState state)
+        public void InitializeFade(TPFadeLayout state)
         {
         }
 
-        public void Fade(TPFadeInfo fadeInfo, TPFadeState state)
+        public void Fade(float time, TPFadeInfo fadeInfo, TPFadeLayout state)
         {
         }
     }
@@ -67,17 +67,17 @@ namespace TPFramework
         public Sprite FadeTexture;
         public Color FadeColor;
 
-        public void InitializeFade(TPFadeState state)
+        public void InitializeFade(TPFadeLayout state)
         {
             state.Image.sprite = FadeTexture;
             state.Image.color = FadeColor;
         }
 
-        public void Fade(TPFadeInfo fadeInfo, TPFadeState state)
+        public void Fade(float time, TPFadeInfo fadeInfo, TPFadeLayout state)
         {
-            state.CanvasGrouup.alpha = TPAnim.NormalizedCurveTime(state.Time);
+            state.CanvasGrouup.alpha = TPAnim.NormalizedCurveTime(time);
 
-            if (state.Time >= 0.5f && !string.IsNullOrEmpty(fadeInfo.FadeToScene))
+            if (time >= 0.5f && !string.IsNullOrEmpty(fadeInfo.FadeToScene))
             {
                 SceneManager.LoadScene(fadeInfo.FadeToScene);
             }
@@ -86,7 +86,7 @@ namespace TPFramework
 
     public static class TPFade
     {
-        private static TPFadeState fadeLayout;
+        private static TPFadeLayout fadeLayout;
         private static bool isFading;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -113,24 +113,26 @@ namespace TPFramework
 
         public static void Fade(TPFadeInfo info)
         {
-            TPCoroutine.RunCoroutine(IEFade(info, fadeLayout));
+            if (!isFading)
+                //TPCoroutine.RunCoroutine(IEFade(info, fadeLayout));
+            TPAnim.Animate(info.FadeAnim, (time) => info.ITPFade.Fade(time, info, fadeLayout), () => isFading = true, () => isFading = false);
         }
 
-        private static IEnumerator IEFade(TPFadeInfo fadeInfo, TPFadeState state)
-        {
-            isFading = true;
-            float percentage = 0.0f;
-            state.Time = fadeInfo.FadeAnim.Curve.Evaluate(percentage);
-            while (state.Time < 1.0f)
-            {
-                fadeInfo.ITPFade.Fade(fadeInfo, state);
+        //private static IEnumerator IEFade(TPFadeInfo fadeInfo, TPFadeLayout state)
+        //{
+        //    isFading = true;
+        //    float percentage = 0.0f;
+        //    state.Time = fadeInfo.FadeAnim.Curve.Evaluate(percentage);
+        //    while (state.Time < 1.0f)
+        //    {
+        //        fadeInfo.ITPFade.Fade(fadeInfo, state);
 
-                percentage += Time.deltaTime * fadeInfo.FadeAnim.Speed;
-                state.Time = fadeInfo.FadeAnim.Curve.Evaluate(percentage);
-                yield return null;
-            }
-            isFading = false;
-        }
+        //        percentage += Time.deltaTime * fadeInfo.FadeAnim.Speed;
+        //        state.Time = fadeInfo.FadeAnim.Curve.Evaluate(percentage);
+        //        yield return null;
+        //    }
+        //    isFading = false;
+        //}
 
         private static bool TryLoadScene(bool readAnyKey, AsyncOperation asyncLoad)
         {
@@ -151,7 +153,7 @@ namespace TPFramework
         {
             return TryLoadScene(readAnyKey, false, keyToRead);
         }
-        
+
         private static bool TryLoadScene(bool readKey, bool readAnyKey, KeyCode keyToRead)
         {
             return !readKey

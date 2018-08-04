@@ -10,9 +10,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.UI;
-#if HAS_TMPRO
 using TMPro;
-#endif
 
 namespace TPFramework
 {
@@ -75,17 +73,10 @@ namespace TPFramework
         public AnimationCurve NotifyAnimatedWait;
 
         private Image iconImage;
-#if HAS_TMPRO
         private TextMeshProUGUI pointsText;
         private TextMeshProUGUI reachPointsText;
         private TextMeshProUGUI titleText;
         private TextMeshProUGUI descriptionText;
-#else
-        private Text pointsText;
-        private Text reachPointsText;
-        private Text titleText;
-        private Text descriptionText;
-#endif
         private Sprite achievementIcon;
 
         protected override void OnInitialized()
@@ -178,7 +169,7 @@ namespace TPFramework
                 OnNotifyActivation(sharedObj, evaluate, evaluate <= 0.5f);
                 percentage += Time.deltaTime * notification.AnimateSpeed;
                 evaluate = notification.NotifyAnimatedWait.Evaluate(percentage);
-                yield return null;
+                yield return TPCoroutine.WaitOneFrame;
             }
             sharedObj.SetActive(false);
 

@@ -18,7 +18,6 @@ namespace TPFramework.Internal
 
     internal struct TPDefines
     {
-        public const string HasTMPRO = "HAS_TMPRO";
         public const string TPEditorMessages = "TPFrameworkLogs";
         public const string TPObjectPoolSafeChecks = "TPObjectPoolSafeChecks";
         public const string TPTooltipSafeChecks = "TPTooltipSafeChecks";
@@ -52,6 +51,18 @@ namespace TPFramework.Internal
             new TPUIPackage(),          // 14
         };
 
+        private static List<Type> GetExistingPackageTypes {
+            get {
+                return Assembly.GetExecutingAssembly().GetTypes().Where(typ => typ.HasNamespace(_TPNamespace)).ToList();
+            }
+        }
+
+        private static bool HasTMPro {
+            get {
+                return AppDomain.CurrentDomain.GetAssemblies().Any(assembly => assembly.GetTypes().Any(typ => typ.HasNamespace("TMPro")));
+            }
+        }
+
         static TPPackageManager()
         {
             ReloadPackages();
@@ -69,9 +80,12 @@ namespace TPFramework.Internal
         [MenuItem(MENU + "/Reload Packages", priority = 0)]
         private static void ReloadPackages()
         {
-            SetDefine(TPDefines.HasTMPRO, Assembly.GetExecutingAssembly().GetTypes().Any(a => a.IsClass && a.Namespace != null && a.Namespace.Contains("TMPro")));
-            List<Type> tpPackages = Assembly.GetExecutingAssembly().GetTypes().Where(a => a.IsClass && a.Namespace != null && a.Namespace.Contains(_TPNamespace)).ToList();
-            ReloadPackages(tpPackages);
+            if (!HasTMPro)
+            {
+                Debug.LogError("You don't have TextMeshPro installed. You can download it from <color=cyan> https://assetstore.unity.com/packages/essentials/beta-projects/textmesh-pro-84126 </color>");
+            }
+
+            ReloadPackages(GetExistingPackageTypes);
 #if TPFrameworkLogs
             CheckLoadedPackages();
 #endif
@@ -93,7 +107,7 @@ namespace TPFramework.Internal
             for (int i = 0; i < packagesLength; i++)
             {
                 if (!_TPPackages[i].IsLoaded)
-                    Debug.Log(_TPPackages[i].Name + "<color=red> was not found</color>");
+                    Debug.Log(_TPPackages[i].Name + "<color=red> was not found </color>");
             }
             Debug.Log("You can disable Package Logs in " + MENU + "/Disable Package Logs");
         }

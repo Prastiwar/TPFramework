@@ -11,9 +11,6 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-#if HAS_TMPRO
-using TMPro;
-#endif
 
 namespace TPFramework
 {

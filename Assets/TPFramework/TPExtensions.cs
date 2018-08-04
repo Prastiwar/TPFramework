@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -20,11 +21,47 @@ namespace TPFramework
         private static readonly ReusableList<Transform> reusableTransform = new ReusableList<Transform>();
         private static readonly char[] resolutionSeparators = new char[] { ' ', 'x', '@', 'H', 'z' };
 
+        /* --------------------------------------------------------------- Utility --------------------------------------------------------------- */
+
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static bool IsFrame(int frameModulo)
+        public static bool IsFrame(this int frameModulo)
         {
             return Time.frameCount % frameModulo == 0;
         }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static void SafeInvoke(this Action action)
+        {
+            if (action != null)
+                action();
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static void ToLog(this object obj, string label = null)
+        {
+            Debug.Log(label != null ? label + ": " + obj : obj);
+        }
+
+#if NET_2_0 || NET_2_0_SUBSET
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static System.Collections.IEnumerator DelayAction(float delay, Action action)
+        {
+            while (delay-- >= 0)
+                yield return null;
+            if (action != null)
+                action();
+        }
+
+#else
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static async void DelayAction(float delay, Action action)
+        {
+            await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(delay));
+            if (action != null)
+                action();
+        }
+#endif
 
         /* --------------------------------------------------------------- Primitives --------------------------------------------------------------- */
 
@@ -476,31 +513,25 @@ namespace TPFramework
             };
         }
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void ToLog(this object obj, string label = null)
-        {
-            Debug.Log(label != null ? label + ": " + obj : obj);
-        }
-
-#if NET_2_0 || NET_2_0_SUBSET
+        /* --------------------------------------------------------------- Reflection --------------------------------------------------------------- */
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static System.Collections.IEnumerator DelayAction(float delay, Action action)
+        public static bool HasNamespace(this Type type, string nameSpace)
         {
-            while (delay-- >= 0)
-                yield return null;
-            if (action != null)
-                action();
+            return type.IsClass && type.Namespace != null && type.Namespace.Contains(nameSpace);
         }
 
-#else
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static async void DelayAction(float delay, Action action)
+        public static bool TryGetAttribute<T>(this FieldInfo fieldInfo, out T attribute, bool inherited = false) where T : Attribute
         {
-            await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(delay));
-            if (action != null)
-                action();
+            Type type = typeof(T);
+            if (fieldInfo.IsDefined(type, inherited))
+            {
+                attribute = (T)fieldInfo.GetCustomAttributes(type, inherited)[0];
+                return true;
+            }
+            attribute = null;
+            return false;
         }
-#endif
     }
 }

@@ -3,9 +3,7 @@ using System.Collections;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-#if HAS_TMPRO
 using TMPro;
-#endif
 
 namespace TPFramework
 {
@@ -36,11 +34,7 @@ namespace TPFramework
         protected Transform LayoutTransform { get; private set; }  // Child of TPLayout, have Image & Button & Text parents
         protected Image[] Images { get; private set; }             // All Image components got from all childs of Image parent
         protected Button[] Buttons { get; private set; }           // All Button components got from all childs of Button parent
-#if HAS_TMPRO
-        protected TextMeshProUGUI Texts { get; private set; }      // All TextMeshProUGUI components got from all childs of Text parent
-#else
-        protected Text[] Texts { get; private set; }               // All Text components got from all childs of Text parent
-#endif
+        protected TextMeshProUGUI[] Texts { get; private set; }      // All TextMeshProUGUI components got from all childs of Text parent
         protected bool IsInitialized { get { return TPLayout; } }  // If layout is instantiated
 
         /// <summary> If IsInitialized is false - instantiate LayoutPrefab to TPLayout and get Images & Buttons & Texts </summary>
@@ -85,11 +79,7 @@ namespace TPFramework
                 throw new Exception("Invalid TPUILayout! Child 0: Parent of Images must contain only Images as childs");
             else if (transform.GetChild(1).GetChilds().Any(x => x.GetComponent<Button>() == null))
                 throw new Exception("Invalid TPUILayout! Child 1: Parent of Buttons must contain only Buttons as childs");
-#if HAS_TMPRO
-            else if(transform.GetChild(0).GetChildrens().Any(x => x.GetComponent<TextMeshProUGUI>() == null))
-#else
-            else if (transform.GetChild(2).GetChilds().Any(x => x.GetComponent<Text>() == null))
-#endif
+            else if(transform.GetChild(2).GetChilds().Any(x => x.GetComponent<TextMeshProUGUI>() == null))
                 throw new Exception("Invalid TPUILayout! Child 2: Parent of Texts must contain only Texts as childs");
         }
 
@@ -114,18 +104,11 @@ namespace TPFramework
     {
         [SerializeField] private Transform parent;
         [SerializeField] private TPAnimation popAnim;
-
-#if HAS_TMPRO
+        
         private TextMeshProUGUI headerText;
         private TextMeshProUGUI descriptionText;
         private TextMeshProUGUI acceptText;
         private TextMeshProUGUI cancelText;
-#else
-        private Text headerText;
-        private Text descriptionText;
-        private Text acceptText;
-        private Text cancelText;
-#endif
 
         private Button acceptButton;
         private Button cancelButton;
@@ -133,8 +116,8 @@ namespace TPFramework
         public Action OnAccept = delegate { };
         public Action OnCancel = delegate { };
 
-        public Action OnShow = delegate { };
-        public Action OnHide = delegate { };
+        public Action<float> OnShow = delegate { };
+        public Action<float> OnHide = delegate { };
 
         protected override void OnInitialized()
         {
@@ -142,13 +125,8 @@ namespace TPFramework
             descriptionText = Texts[1];
             acceptButton = Buttons[0];
             cancelButton = Buttons[1];
-#if HAS_TMPRO
             acceptText = Buttons[0].GetComponentInChildren<TextMeshProUGUI>();
             cancelText = Buttons[1].GetComponentInChildren<TextMeshProUGUI>();
-#else
-            acceptText = Buttons[0].GetComponentInChildren<Text>();
-            cancelText = Buttons[1].GetComponentInChildren<Text>();
-#endif
             OnAccept = Hide;
             OnCancel = Hide;
             acceptButton.onClick.AddListener(() => OnAccept());
@@ -182,42 +160,15 @@ namespace TPFramework
 
         public void Show()
         {
-            TPLayout.SetActive(true);
-            TPCoroutine.RunCoroutine(Animate(true));
+            TPAnim.Animate(popAnim, OnShow, () => TPLayout.SetActive(true));
         }
 
         public void Hide()
         {
-            TPCoroutine.RunCoroutine(Animate(false));
+            TPAnim.Animate(popAnim, OnHide, null, () => TPLayout.SetActive(false));
         }
-
-        private IEnumerator Animate(bool show)
-        {
-            float percentage = show ? 0 : 1;
-            float speed = show ? popAnim.Speed : -popAnim.Speed;
-
-            while (show ? percentage < 1 : percentage > 0)
-            {
-                float xyz = popAnim.Curve.Evaluate(percentage);
-                TPLayout.transform.localScale = new Vector3(xyz, xyz, xyz);
-                percentage += Time.deltaTime * speed;
-                yield return null;
-            }
-
-            if (!show)
-                TPLayout.SetActive(false);
-
-            // how it is in fade
-            //float percentage = 0.0f;
-            //state.Time = fadeInfo.FadeAnim.Curve.Evaluate(percentage);
-            //while (state.Time < 1.0f)
-            //{
-            //    fadeInfo.ITPFade.Fade(fadeInfo, state);
-
-            //    percentage += Time.deltaTime * fadeInfo.FadeAnim.Speed;
-            //    state.Time = fadeInfo.FadeAnim.Curve.Evaluate(percentage);
-            //    yield return null;
-            //}
-        }
+        
+        //    float xyz = popAnim.Curve.Evaluate(percentage);
+        //    TPLayout.transform.localScale = new Vector3(xyz, xyz, xyz);
     }
 }
