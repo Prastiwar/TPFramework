@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace TPFramework
 {
-    internal static class TPReusable { } // marker to find this script
+    internal static class TPCollections { } // marker to find this script
 
     [Serializable]
     public class ReusableList<T>
@@ -67,6 +67,58 @@ namespace TPFramework
             if (!SharedObjects.ContainsKey(id))
                 return SharedObjects[id] = UnityEngine.Object.Instantiate(gameObject, parent);
             return SharedObjects[id];
+        }
+    }
+
+    [Serializable]
+    public class Queue<T, U>
+    {
+        private readonly Queue<KeyValuePair<T, U>> _queue;
+        public int Count { get { return _queue.Count; } }
+
+        public Queue(int capacity = 10)
+        {
+            _queue = new Queue<KeyValuePair<T, U>>(capacity);
+        }
+
+        public void Enqueue(T key, U value)
+        {
+            _queue.Enqueue(new KeyValuePair<T, U>(key, value));
+        }
+
+        public KeyValuePair<T, U> Dequeue()
+        {
+            return _queue.Dequeue();
+        }
+
+        public KeyValuePair<T, U> Peek()
+        {
+            return _queue.Peek();
+        }
+
+        public KeyValuePair<T, U>[] ToArray()
+        {
+            return _queue.ToArray();
+        }
+
+        public bool Contains(T key, U value)
+        {
+            return _queue.Contains(new KeyValuePair<T, U>(key, value));
+        }
+
+        public void Clear()
+        {
+            _queue.Clear();
+        }
+
+        public void TrimExcess()
+        {
+            _queue.TrimExcess();
+        }
+
+        public void CopyTo(KeyValuePair<T, U>[] array, int idx)
+        {
+            _queue.CopyTo(array, idx);
         }
     }
 }

@@ -33,7 +33,9 @@ namespace TPFramework
         public static void SafeInvoke(this Action action)
         {
             if (action != null)
+            {
                 action();
+            }
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline

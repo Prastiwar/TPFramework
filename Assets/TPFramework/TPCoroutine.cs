@@ -7,6 +7,7 @@ namespace TPFramework
     public sealed class TPCoroutine : MonoBehaviour
     {
         private static TPCoroutine instance;
+
         public static YieldInstruction WaitOneFrame { get { return null; } }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -14,7 +15,8 @@ namespace TPFramework
         {
             if (instance == null)
             {
-                instance = new GameObject("TPCoroutine").AddComponent<TPCoroutine>();
+                instance = new GameObject("TPCoroutineDispatcher").AddComponent<TPCoroutine>();
+                DontDestroyOnLoad(instance);
             }
         }
 

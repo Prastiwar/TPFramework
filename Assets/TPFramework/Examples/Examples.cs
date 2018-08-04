@@ -15,8 +15,14 @@ public class Examples : MonoBehaviour
     public TPTooltipExample     TPTooltipExample;
     public TPRandomExample      TPRandomExample;
     public TPFaderExample       TPFaderExample;
+    public TPUIExample          TPUIExample;
 
     private readonly WaitForSeconds waitSecond = new WaitForSeconds(1);
+
+    private void Awake()
+    {
+        DeactiveExamples();
+    }
 
     public void ExampleTPAchievement()
     {
@@ -155,6 +161,28 @@ public class Examples : MonoBehaviour
     }
 
 
+    public void ExampleTPUI()
+    {
+        DeactiveExamples();
+        TPUIExample ex = TPUIExample;
+        TPUIExample.Scene.SetActive(true);
+        ex.ModalWindow.Initialize();
+        ex.WindowEnabled = false;
+        ex.ModalWindow.OnShow = CustomModalWindowPop;
+        ex.ModalWindow.OnHide = CustomModalWindowPop;
+
+        ex.ToggleWindowBtn.onClick.AddListener(() => {
+            ex.WindowEnabled = !ex.WindowEnabled;
+            if (ex.WindowEnabled)
+                ex.ModalWindow.Show();
+            else
+                ex.ModalWindow.Hide();
+        });
+    }
+
+
+    /*------------------------------------------------------ Helpers to examples ------------------------------------------------------*/
+
 
     private IEnumerator TPRandomToggleObject(int repeat, TPRandomExample ex)
     {
@@ -189,11 +217,11 @@ public class Examples : MonoBehaviour
     {
         while (last >= 0)
         {
-            TPObjectPool.ToggleActive(ex.PoolKey, TPObjectState.Deactive, GetRandomPosition(), true);
+            TPObjectPool.ToggleActive(ex.PoolKey, TPObjectState.Deactive, TPRandom.InsideUnitSquare() * 5, true);
             last--;
             yield return waitSecond;
         }
-        // Alternative
+        // ** Alternative: **
         //while (last >= 0)
         //{
         //    GameObject obj = TPObjectPool.PopObject(ex.PoolKey, TPObjectState.Deactive, true);
@@ -204,17 +232,14 @@ public class Examples : MonoBehaviour
         //}
     }
 
-    private void CustomNotifyActive(GameObject notifyObj, float evaluatedTime, bool toActive)
+    private void CustomNotifyActive(float evaluatedTime, Transform notify)
     {
-        var obj = notifyObj.transform.GetChild(0).gameObject.transform;
-        obj.localScale = obj.localScale.Equal(TPAnim.NormalizedCurveTime(evaluatedTime));
+        notify.localScale = notify.localScale.Equal(TPAnim.NormalizedCurveTime(evaluatedTime));
     }
 
-    private Vector3 GetRandomPosition()
+    private void CustomModalWindowPop(float evaluatedTime, Transform window)
     {
-        float randX = UnityEngine.Random.Range(-8, 8);
-        float randY = UnityEngine.Random.Range(-8, 8);
-        return new Vector3(randX, randY, 0);
+        window.localScale = window.localScale.Equal(TPAnim.NormalizedCurveTime(evaluatedTime));
     }
 
     private void MessageWithLines(string message)
@@ -234,5 +259,6 @@ public class Examples : MonoBehaviour
         TPRandomExample.Scene.SetActive(false);
         TPSettingsExample.Scene.SetActive(false);
         TPTooltipExample.Scene.SetActive(false);
+        TPUIExample.Scene.SetActive(false);
     }
 }

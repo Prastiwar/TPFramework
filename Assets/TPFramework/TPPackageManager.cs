@@ -36,13 +36,13 @@ namespace TPFramework.Internal
         private static readonly ITPPackage[] _TPPackages = new ITPPackage[packagesLength] {
             new TPAchievementPackage(), // 0
             new TPPersistencePackage(), // 1
-            new TPExtensionsPackage(),  // 2
-            new TPObjectPoolPackage(),  // 3
-            new TPAudioPoolPackage(),   // 4
-            new TPInventoryPackage(),   // 5
-            new TPAttributePackage(),   // 6
-            new TPSettingsPackage(),    // 7
-            new TPReusablePackage(),    // 8
+            new TPCollectionsPackage(), // 2
+            new TPExtensionsPackage(),  // 3
+            new TPObjectPoolPackage(),  // 4
+            new TPAudioPoolPackage(),   // 5
+            new TPInventoryPackage(),   // 6
+            new TPAttributePackage(),   // 7
+            new TPSettingsPackage(),    // 8
             new TPTooltipPackage(),     // 9
             new TPRandomPackage(),      // 10
             new TPEditorPackage(),      // 11
@@ -302,9 +302,9 @@ namespace TPFramework.Internal
     }
 
 
-    internal struct TPReusablePackage : ITPPackage
+    internal struct TPCollectionsPackage : ITPPackage
     {
-        public string Name { get { return "TPReusable"; } }
+        public string Name { get { return "TPCollections"; } }
         public bool IsLoaded { get; private set; }
 
         public bool Reload()

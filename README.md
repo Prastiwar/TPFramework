@@ -21,13 +21,13 @@
 
 * ***TPAchievement*** - *Create custom achievements*
 * ***TPPersistence*** &nbsp;&nbsp;&nbsp;- *Save and Load game in few lines*
+* ***TPCollections*** &nbsp;&nbsp;&nbsp;&nbsp;- *Performant temporary or not collections*
 * ***TPExtensions*** &nbsp;&nbsp;&nbsp; - *Library contains a lot common methods*
 * ***TPObjectPool*** &nbsp;&nbsp;&nbsp;- *Increase performance with object pooling*
 * ***TPAudioPool*** &nbsp;&nbsp;&nbsp; - *Manage your audio bundles easily*
 * ***TPInventory*** &nbsp;&nbsp;&nbsp;&nbsp; - *Implement an Inventory system in your game fast*
 * ***TPAttribute*** &nbsp;&nbsp;&nbsp;&nbsp; - *Create attributes and modify them freely*
 * ***TPSettings*** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - *Convenient library to create an options menu*
-* ***TPReusable*** &nbsp;&nbsp;&nbsp;&nbsp;- *Performant temporary collections*
 * ***TPToolTip*** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - *Implement in-game tooltips*
 * ***TPRandom*** &nbsp;&nbsp;&nbsp;&nbsp;- *Probability, random functions*
 * ***TPEditor*** &nbsp;&nbsp;&nbsp;&nbsp;- *Helpful library for extending editor*

@@ -69,8 +69,7 @@ namespace TPFramework
     [Serializable]
     public sealed class TPAchievementNotify : TPUILayout
     {
-        public float AnimateSpeed;
-        public AnimationCurve NotifyAnimatedWait;
+        public TPAnimation NotifyAnim;
 
         private Image iconImage;
         private TextMeshProUGUI pointsText;
@@ -118,7 +117,7 @@ namespace TPFramework
 
     public static class TPAchievementManager
     {
-        public static Action<GameObject, float, bool> OnNotifyActivation = delegate { };
+        public static TPAnim.OnAnimActivationHandler OnNotifyActivation = delegate { };
 
         private static bool isBusy;
         private static SharedObjectCollection sharedLayouts = new SharedObjectCollection(2);
@@ -138,11 +137,16 @@ namespace TPFramework
             {
                 isBusy = true;
                 notification.FillNotify(notifyInfo);
-#if NET_2_0 || NET_2_0_SUBSET
-                TPCoroutine.RunCoroutine(IEShowNotification(notification.TPLayout, notification));
-#else
-                IEShowNotification(notifyObj, notification);
-#endif
+                TPAnim.Animate(notification.NotifyAnim, (time) => OnNotifyActivation(time, notification.LayoutTransform), () => notification.TPLayout.SetActive(true),
+                    () => {
+                        notification.TPLayout.SetActive(false);
+                        isBusy = false;
+                        if (notificationQueue.Count > 0)
+                        {
+                            var pair = notificationQueue.Dequeue();
+                            ShowNotification(pair.Key, pair.Value);
+                        }
+                    });
             }
             else
             {
@@ -155,53 +159,5 @@ namespace TPFramework
         {
             return sharedLayouts.ShareObject(layout, parent);
         }
-
-#if NET_2_0 || NET_2_0_SUBSET
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        private static IEnumerator IEShowNotification(GameObject sharedObj, TPAchievementNotify notification)
-        {
-            sharedObj.SetActive(true);
-            float percentage = 0.0f;
-            float evaluate = notification.NotifyAnimatedWait.Evaluate(percentage);
-            while (evaluate < 1.0f)
-            {
-                OnNotifyActivation(sharedObj, evaluate, evaluate <= 0.5f);
-                percentage += Time.deltaTime * notification.AnimateSpeed;
-                evaluate = notification.NotifyAnimatedWait.Evaluate(percentage);
-                yield return TPCoroutine.WaitOneFrame;
-            }
-            sharedObj.SetActive(false);
-
-            isBusy = false;
-            if (notificationQueue.Count > 0)
-            {
-                var pair = notificationQueue.Dequeue();
-                ShowNotification(pair.Key, pair.Value);
-            }
-        }
-
-#else        
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        private static async void IEShowNotification(GameObject sharedObj, TPNotification notification)
-        {
-            OnNotifyActive(sharedObj, notification.NotifyLong, true);
-
-            await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(notification.NotifyLong));
-            sharedObj.SetActive(true);
-
-            OnNotifyActive(sharedObj, notification.NotifyLong, false);
-
-            await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(notification.NotifyLong));
-            sharedObj.SetActive(false);
-
-            isBusy = false;
-            if (notificationQueue.Count > 0)
-            {
-                var pair = notificationQueue.Dequeue();
-                ShowNotification(pair.Key, pair.Value);
-            }
-        }
-#endif
     }
 }

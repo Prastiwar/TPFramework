@@ -114,25 +114,8 @@ namespace TPFramework
         public static void Fade(TPFadeInfo info)
         {
             if (!isFading)
-                //TPCoroutine.RunCoroutine(IEFade(info, fadeLayout));
-            TPAnim.Animate(info.FadeAnim, (time) => info.ITPFade.Fade(time, info, fadeLayout), () => isFading = true, () => isFading = false);
+                TPAnim.Animate(info.FadeAnim, (time) => info.ITPFade.Fade(time, info, fadeLayout), () => isFading = true, () => isFading = false);
         }
-
-        //private static IEnumerator IEFade(TPFadeInfo fadeInfo, TPFadeLayout state)
-        //{
-        //    isFading = true;
-        //    float percentage = 0.0f;
-        //    state.Time = fadeInfo.FadeAnim.Curve.Evaluate(percentage);
-        //    while (state.Time < 1.0f)
-        //    {
-        //        fadeInfo.ITPFade.Fade(fadeInfo, state);
-
-        //        percentage += Time.deltaTime * fadeInfo.FadeAnim.Speed;
-        //        state.Time = fadeInfo.FadeAnim.Curve.Evaluate(percentage);
-        //        yield return null;
-        //    }
-        //    isFading = false;
-        //}
 
         private static bool TryLoadScene(bool readAnyKey, AsyncOperation asyncLoad)
         {

@@ -23,22 +23,23 @@ MonoBehaviour:
   TPNotify:
     LayoutPrefab: {fileID: 1706478286941376, guid: 6171133b4537cae43ad27d8347166b46,
       type: 2}
-    AnimateSpeed: 0.5
-    NotifyAnimatedWait:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 2
-        time: 0
-        value: 0
-        inSlope: 3.1524024
-        outSlope: 3.1524024
-        tangentMode: 0
-      - serializedVersion: 2
-        time: 1
-        value: 1
-        inSlope: 3.0383167
-        outSlope: 3.0383167
-        tangentMode: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 0
+    NotifyAnim:
+      Curve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 2
+          time: 0
+          value: 0
+          inSlope: 3.0464392
+          outSlope: 3.0464392
+          tangentMode: 0
+        - serializedVersion: 2
+          time: 1
+          value: 1
+          inSlope: 3.0359359
+          outSlope: 3.0359359
+          tangentMode: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 0
+      Speed: 1

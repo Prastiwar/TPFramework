@@ -43,11 +43,10 @@ namespace TPFramework
                 return sfxSource;
             }
             set {
-                sfxSource = value;
-                if (!ReferenceEquals(sfxSource, null))
+                if (!ReferenceEquals(value, null))
                 {
-                    sfxSource = GetOrCreateSource("TPAduioSFXSource", false);
-                    CopySource(ref sfxSource, value);
+                    sfxSource = SFXSource;
+                    CopySourceParemeters(value, ref sfxSource);
                 }
             }
         }
@@ -65,11 +64,10 @@ namespace TPFramework
                 return themeSource;
             }
             set {
-                themeSource = value;
-                if (!ReferenceEquals(themeSource, null))
+                if (!ReferenceEquals(value, null))
                 {
-                    themeSource = GetOrCreateSource("TPAudioThemeSource", true);
-                    CopySource(ref themeSource, value);
+                    themeSource = ThemeSource;
+                    CopySourceParemeters(value, ref themeSource);
                 }
             }
         }
@@ -274,40 +272,40 @@ namespace TPFramework
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        private static void CopySource(ref AudioSource source, AudioSource copySource)
+        private static void CopySourceParemeters(AudioSource fromSource, ref AudioSource toSource)
         {
-            source.bypassEffects = copySource.bypassEffects;
-            source.bypassListenerEffects = copySource.bypassListenerEffects;
-            source.bypassReverbZones = copySource.bypassReverbZones;
-            source.dopplerLevel = copySource.dopplerLevel;
-            source.enabled = copySource.enabled;
-            source.hideFlags = copySource.hideFlags;
-            source.ignoreListenerPause = copySource.ignoreListenerPause;
-            source.ignoreListenerVolume = copySource.ignoreListenerVolume;
-            source.loop = copySource.loop;
-            source.maxDistance = copySource.maxDistance;
-            source.minDistance = copySource.minDistance;
-            source.mute = copySource.mute;
-            source.outputAudioMixerGroup = copySource.outputAudioMixerGroup;
-            source.panStereo = copySource.panStereo;
-            source.pitch = copySource.pitch;
-            source.playOnAwake = copySource.playOnAwake;
-            source.priority = copySource.priority;
-            source.reverbZoneMix = copySource.reverbZoneMix;
-            source.rolloffMode = copySource.rolloffMode;
-            source.spatialBlend = copySource.spatialBlend;
-            source.spatialize = copySource.spatialize;
-            source.spatializePostEffects = copySource.spatializePostEffects;
-            source.spread = copySource.spread;
-            source.tag = copySource.tag;
-            source.time = copySource.time;
-            source.timeSamples = copySource.timeSamples;
-            source.velocityUpdateMode = copySource.velocityUpdateMode;
-            source.volume = copySource.volume;
-            source.SetCustomCurve(AudioSourceCurveType.CustomRolloff, copySource.GetCustomCurve(AudioSourceCurveType.CustomRolloff));
-            source.SetCustomCurve(AudioSourceCurveType.ReverbZoneMix, copySource.GetCustomCurve(AudioSourceCurveType.ReverbZoneMix));
-            source.SetCustomCurve(AudioSourceCurveType.SpatialBlend, copySource.GetCustomCurve(AudioSourceCurveType.SpatialBlend));
-            source.SetCustomCurve(AudioSourceCurveType.Spread, copySource.GetCustomCurve(AudioSourceCurveType.Spread));
+            toSource.bypassEffects = fromSource.bypassEffects;
+            toSource.bypassListenerEffects = fromSource.bypassListenerEffects;
+            toSource.bypassReverbZones = fromSource.bypassReverbZones;
+            toSource.dopplerLevel = fromSource.dopplerLevel;
+            toSource.enabled = fromSource.enabled;
+            toSource.hideFlags = fromSource.hideFlags;
+            toSource.ignoreListenerPause = fromSource.ignoreListenerPause;
+            toSource.ignoreListenerVolume = fromSource.ignoreListenerVolume;
+            toSource.loop = fromSource.loop;
+            toSource.maxDistance = fromSource.maxDistance;
+            toSource.minDistance = fromSource.minDistance;
+            toSource.mute = fromSource.mute;
+            toSource.outputAudioMixerGroup = fromSource.outputAudioMixerGroup;
+            toSource.panStereo = fromSource.panStereo;
+            toSource.pitch = fromSource.pitch;
+            toSource.playOnAwake = fromSource.playOnAwake;
+            toSource.priority = fromSource.priority;
+            toSource.reverbZoneMix = fromSource.reverbZoneMix;
+            toSource.rolloffMode = fromSource.rolloffMode;
+            toSource.spatialBlend = fromSource.spatialBlend;
+            toSource.spatialize = fromSource.spatialize;
+            toSource.spatializePostEffects = fromSource.spatializePostEffects;
+            toSource.spread = fromSource.spread;
+            toSource.tag = fromSource.tag;
+            toSource.time = fromSource.time;
+            toSource.timeSamples = fromSource.timeSamples;
+            toSource.velocityUpdateMode = fromSource.velocityUpdateMode;
+            toSource.volume = fromSource.volume;
+            toSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, fromSource.GetCustomCurve(AudioSourceCurveType.CustomRolloff));
+            toSource.SetCustomCurve(AudioSourceCurveType.ReverbZoneMix, fromSource.GetCustomCurve(AudioSourceCurveType.ReverbZoneMix));
+            toSource.SetCustomCurve(AudioSourceCurveType.SpatialBlend, fromSource.GetCustomCurve(AudioSourceCurveType.SpatialBlend));
+            toSource.SetCustomCurve(AudioSourceCurveType.Spread, fromSource.GetCustomCurve(AudioSourceCurveType.Spread));
         }
 
         private static bool SafeKey(string key)

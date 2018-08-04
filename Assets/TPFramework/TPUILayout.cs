@@ -28,14 +28,14 @@ namespace TPFramework
     [Serializable]
     public class TPUILayout
     {
-        public GameObject LayoutPrefab;           // Prefab to be isntantiated and assigned to TPLayout
-        public GameObject TPLayout { get; set; }  // Instantiated prefab
+        public GameObject LayoutPrefab;                         // Prefab to be isntantiated and assigned to TPLayout
+        public GameObject TPLayout { get; set; }                // Instantiated prefab
+        public Transform LayoutTransform { get; private set; }  // Child of TPLayout, have Image & Button & Text parents
 
-        protected Transform LayoutTransform { get; private set; }  // Child of TPLayout, have Image & Button & Text parents
-        protected Image[] Images { get; private set; }             // All Image components got from all childs of Image parent
-        protected Button[] Buttons { get; private set; }           // All Button components got from all childs of Button parent
-        protected TextMeshProUGUI[] Texts { get; private set; }      // All TextMeshProUGUI components got from all childs of Text parent
-        protected bool IsInitialized { get { return TPLayout; } }  // If layout is instantiated
+        protected Image[] Images { get; private set; }            // All Image components got from all childs of Image parent
+        protected Button[] Buttons { get; private set; }          // All Button components got from all childs of Button parent
+        protected TextMeshProUGUI[] Texts { get; private set; }   // All TextMeshProUGUI components got from all childs of Text parent
+        protected bool IsInitialized { get { return TPLayout; } } // If layout is instantiated
 
         /// <summary> If IsInitialized is false - instantiate LayoutPrefab to TPLayout and get Images & Buttons & Texts </summary>
         protected void InitializeIfIsNot(Transform parent = null)
@@ -79,8 +79,8 @@ namespace TPFramework
                 throw new Exception("Invalid TPUILayout! Child 0: Parent of Images must contain only Images as childs");
             else if (transform.GetChild(1).GetChilds().Any(x => x.GetComponent<Button>() == null))
                 throw new Exception("Invalid TPUILayout! Child 1: Parent of Buttons must contain only Buttons as childs");
-            else if(transform.GetChild(2).GetChilds().Any(x => x.GetComponent<TextMeshProUGUI>() == null))
-                throw new Exception("Invalid TPUILayout! Child 2: Parent of Texts must contain only Texts as childs");
+            else if (transform.GetChild(2).GetChilds().Any(x => x.GetComponent<TextMeshProUGUI>() == null))
+                throw new Exception("Invalid TPUILayout! Child 2: Parent of Texts must contain only TextMeshProUGUIs as childs");
         }
 
 #endif
@@ -102,9 +102,8 @@ namespace TPFramework
     [Serializable]
     public class TPModalWindow : TPUILayout
     {
-        [SerializeField] private Transform parent;
         [SerializeField] private TPAnimation popAnim;
-        
+
         private TextMeshProUGUI headerText;
         private TextMeshProUGUI descriptionText;
         private TextMeshProUGUI acceptText;
@@ -115,9 +114,9 @@ namespace TPFramework
 
         public Action OnAccept = delegate { };
         public Action OnCancel = delegate { };
-
-        public Action<float> OnShow = delegate { };
-        public Action<float> OnHide = delegate { };
+        
+        public TPAnim.OnAnimActivationHandler OnShow = delegate { };
+        public TPAnim.OnAnimActivationHandler OnHide = delegate { };
 
         protected override void OnInitialized()
         {
@@ -135,7 +134,7 @@ namespace TPFramework
 
         public void Initialize()
         {
-            InitializeIfIsNot(parent);
+            InitializeIfIsNot();
         }
 
         public void SetHeaderText(string text)
@@ -160,15 +159,13 @@ namespace TPFramework
 
         public void Show()
         {
-            TPAnim.Animate(popAnim, OnShow, () => TPLayout.SetActive(true));
+            TPAnim.Animate(popAnim, (time) => OnShow(time, LayoutTransform), () => TPLayout.SetActive(true), null, 0.5f);
         }
 
         public void Hide()
         {
-            TPAnim.Animate(popAnim, OnHide, null, () => TPLayout.SetActive(false));
+            TPAnim.Animate(popAnim, (time) => OnHide(time, LayoutTransform), null, () => TPLayout.SetActive(false), 1.0f, 0.5f);
         }
-        
-        //    float xyz = popAnim.Curve.Evaluate(percentage);
-        //    TPLayout.transform.localScale = new Vector3(xyz, xyz, xyz);
+
     }
 }

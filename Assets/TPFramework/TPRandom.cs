@@ -177,9 +177,9 @@ namespace TPFramework
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static Vector3 InsideUnitBox()
         {
-            float randX = Random.Range(-1, 1);
-            float randY = Random.Range(-1, 1);
-            float randZ = Random.Range(-1, 1);
+            float randX = Random.Range(-1f, 1f);
+            float randY = Random.Range(-1f, 1f);
+            float randZ = Random.Range(-1f, 1f);
             return new Vector3(randX, randY, randZ);
         }
 
@@ -187,8 +187,8 @@ namespace TPFramework
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public static Vector2 InsideUnitSquare()
         {
-            float randX = Random.Range(-1, 1);
-            float randY = Random.Range(-1, 1);
+            float randX = Random.Range(-1f, 1f);
+            float randY = Random.Range(-1f, 1f);
             return new Vector2(randX, randY);
         }
 

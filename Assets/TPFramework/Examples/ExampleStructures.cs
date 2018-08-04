@@ -87,3 +87,12 @@ public struct TPAttributeExample
     public TPAttribute Health;
     public TPModifier HealthIncreaser;
 }
+
+[Serializable]
+public struct TPUIExample
+{
+    public GameObject Scene;
+    public Button ToggleWindowBtn;
+    [HideInInspector] public bool WindowEnabled;
+    public TPModalWindow ModalWindow;
+}
