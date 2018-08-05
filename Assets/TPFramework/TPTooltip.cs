@@ -37,7 +37,7 @@ namespace TPFramework
 
             if (TooltipType.IsClickable())
             {
-                TooltipLayout.Boot(TooltipType);
+                TooltipLayout.Prepare(TooltipType);
                 TPTooltipManager.OnPointerClick(eventData);
             }
         }
@@ -50,7 +50,7 @@ namespace TPFramework
 
             if (!TooltipType.IsClickable())
             {
-                TooltipLayout.Boot(TooltipType);
+                TooltipLayout.Prepare(TooltipType);
                 TPTooltipManager.OnPointerEnter(eventData);
             }
         }
@@ -161,8 +161,6 @@ namespace TPFramework
     [Serializable]
     public class TPTooltipLayout : TPUILayout
     {
-        private CanvasGroup panelCanvasGroup;
-
         internal float panelHalfHeight;
         internal float panelHalfWidth;
 
@@ -175,9 +173,8 @@ namespace TPFramework
 #if TPTooltipSafeChecks
             SafeCheck(TPLayout);
 #endif
-            panelCanvasGroup = TPLayout.GetComponent<CanvasGroup>();
-            panelCanvasGroup.alpha = 0;
-            panelCanvasGroup.blocksRaycasts = true;
+            CanvasGroup.alpha = 0;
+            CanvasGroup.blocksRaycasts = false;
 
             Rect panelRect = LayoutTransform.GetComponent<Image>().rectTransform.rect;
             panelHalfWidth = panelRect.width / 2;
@@ -194,19 +191,24 @@ namespace TPFramework
             return false;
         }
 
-        public void Boot(TPTooltipType type)
+        public void Prepare(TPTooltipType type)
         {
             InitializeIfIsNot();
 
             if (!type.IsDynamic())
             {
-                panelCanvasGroup.blocksRaycasts = true;
                 SetPositionToStatic();
+            }
+
+            if (type == TPTooltipType.StaticClick)
+            {
+                CanvasGroup.blocksRaycasts = true;
             }
             else
             {
-                panelCanvasGroup.blocksRaycasts = false;
+                CanvasGroup.blocksRaycasts = false;
             }
+
         }
 
 #if TPTooltipSafeChecks
@@ -219,18 +221,6 @@ namespace TPFramework
                 throw new Exception("Invalid Tooltip Layout! LayoutTransform(child of canvas) needs to have Image component");
         }
 #endif
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public bool IsActive()
-        {
-            return panelCanvasGroup.alpha == 1;
-        }
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public void SetActive(bool active)
-        {
-            panelCanvasGroup.alpha = active ? 1 : 0;
-        }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public void SetPosition(Vector2 position)

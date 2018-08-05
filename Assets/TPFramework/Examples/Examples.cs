@@ -14,7 +14,7 @@ public class Examples : MonoBehaviour
     public TPSettingsExample    TPSettingsExample;
     public TPTooltipExample     TPTooltipExample;
     public TPRandomExample      TPRandomExample;
-    public TPFaderExample       TPFaderExample;
+    public TPFadeExample       TPFadeExample;
     public TPUIExample          TPUIExample;
 
     private readonly WaitForSeconds waitSecond = new WaitForSeconds(1);
@@ -152,12 +152,15 @@ public class Examples : MonoBehaviour
     }
 
 
-    public void ExampleTPFader()
+    public void ExampleTPFade()
     {
         DeactiveExamples();
-        //TPFaderExample ex = TPFaderExample;
-
-        throw new NotImplementedException();
+        TPFadeExample ex = TPFadeExample;
+        TPFadeExample.Scene.SetActive(true);
+        ex.FadeInfo.TPFade = ex.AlphaFade;
+        ex.FadeButton.onClick.AddListener(() => {
+            TPFade.Fade(ex.FadeInfo);
+        });
     }
 
 
@@ -166,10 +169,11 @@ public class Examples : MonoBehaviour
         DeactiveExamples();
         TPUIExample ex = TPUIExample;
         TPUIExample.Scene.SetActive(true);
+
         ex.ModalWindow.Initialize();
         ex.WindowEnabled = false;
-        ex.ModalWindow.OnShow = CustomModalWindowPop;
-        ex.ModalWindow.OnHide = CustomModalWindowPop;
+        ex.ModalWindow.OnShow = () => CustomModalWindowPop();
+        ex.ModalWindow.OnHide = () => CustomModalWindowPop();
 
         ex.ToggleWindowBtn.onClick.AddListener(() => {
             ex.WindowEnabled = !ex.WindowEnabled;
@@ -234,12 +238,12 @@ public class Examples : MonoBehaviour
 
     private void CustomNotifyActive(float evaluatedTime, Transform notify)
     {
-        notify.localScale = notify.localScale.Equal(TPAnim.NormalizedCurveTime(evaluatedTime));
+        notify.localScale = notify.localScale.Equal(TPAnim.ReflectNormalizedCurveTime(evaluatedTime));
     }
 
-    private void CustomModalWindowPop(float evaluatedTime, Transform window)
+    private void CustomModalWindowPop(/*float evaluatedTime, Transform window*/)
     {
-        window.localScale = window.localScale.Equal(TPAnim.NormalizedCurveTime(evaluatedTime));
+        //window.localScale = window.localScale.Equal(TPAnim.ReflectNormalizedCurveTime(evaluatedTime));
     }
 
     private void MessageWithLines(string message)
@@ -256,6 +260,7 @@ public class Examples : MonoBehaviour
 
     private void DeactiveExamples()
     {
+        TPFadeExample.Scene.SetActive(false);
         TPRandomExample.Scene.SetActive(false);
         TPSettingsExample.Scene.SetActive(false);
         TPTooltipExample.Scene.SetActive(false);

@@ -5,63 +5,66 @@
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.UI;
+using TPFramework.Core;
 using TMPro;
 
-namespace TPFramework
+namespace TPFramework.Unity
 {
-    [Serializable]
-    public struct TPAchievementNotifyInfo
-    {
-        public string Title;
-        [Multiline] public string Description;
-        public bool IsCompleted;
-        public float Points;
-        public float ReachPoints;
-    }
-
     /* ---------------------------------------------------------------------- Achievement ---------------------------------------------------------------------- */
 
     [CreateAssetMenu(menuName = "TP/TPAchievement/Achievement", fileName = "Achievement")]
-    public class TPAchievement : ScriptableObject
+    public class TPAchievement : ScriptableObject, ITPAchievement
     {
-        public Action<TPAchievement> OnComplete = delegate { };
         public Sprite Icon;
-        public TPAchievementNotifyInfo Info;
-        [Space]
-        public bool ShowNotifyOnComplete;
-        public bool ShowNotifyOnProgress;
-        public TPAchievementNotify TPNotify;
+
+        public TPAchievementData Data { get; private set; }
+        public Action OnComplete { get; set; }
 
         public void AddPoints(float points)
         {
-            if (Info.IsCompleted)
-                return;
-            Info.Points += points;
-
-            if (Info.Points >= Info.ReachPoints)
-            {
-                Info.Points = Info.ReachPoints;
-                Complete(ShowNotifyOnComplete);
-            }
-            else if (ShowNotifyOnProgress)
-            {
-                TPNotify.Show(this);
-            }
+            throw new NotImplementedException();
         }
 
-        public void Complete(bool showNotification = false)
+        public void Complete()
         {
-            Info.IsCompleted = true;
-            Info.Points = Info.ReachPoints;
-            if (showNotification)
-                TPNotify.Show(this, true);
-            OnComplete(this);
+            throw new NotImplementedException();
         }
+
+        //public Action<TPAchievement> OnComplete = delegate { };
+        //public TPAchievementNotifyInfo Info;
+        //public bool ShowNotifyOnComplete;
+        //public bool ShowNotifyOnProgress;
+        //public TPAchievementNotify TPNotify;
+
+        //public void AddPoints(float points)
+        //{
+        //    if (Info.IsCompleted)
+        //        return;
+        //    Info.Points += points;
+
+        //    if (Info.Points >= Info.ReachPoints)
+        //    {
+        //        Info.Points = Info.ReachPoints;
+        //        Complete(ShowNotifyOnComplete);
+        //    }
+        //    else if (ShowNotifyOnProgress)
+        //    {
+        //        TPNotify.Show(this);
+        //    }
+        //}
+
+        //public void Complete(bool showNotification = false)
+        //{
+        //    Info.IsCompleted = true;
+        //    Info.Points = Info.ReachPoints;
+        //    if (showNotification)
+        //        TPNotify.Show(this, true);
+        //    OnComplete(this);
+        //}
     }
 
     /* ---------------------------------------------------------------------- Notification ---------------------------------------------------------------------- */
@@ -89,7 +92,7 @@ namespace TPFramework
 
         public void Show(TPAchievement achievement, bool showDescription = false)
         {
-            TPAchievementNotifyInfo fillInfo = achievement.Info;
+            TPAchievementData fillInfo = achievement.Data;
             if (!showDescription)
                 fillInfo.Description = string.Empty;
             achievementIcon = achievement.Icon;
@@ -103,7 +106,7 @@ namespace TPFramework
             return true;
         }
 
-        public void FillNotify(TPAchievementNotifyInfo fillInfo)
+        public void FillNotify(TPAchievementData fillInfo)
         {
             iconImage.sprite = achievementIcon;
             titleText.text = fillInfo.Title;
@@ -121,7 +124,7 @@ namespace TPFramework
 
         private static bool isBusy;
         private static SharedObjectCollection sharedLayouts = new SharedObjectCollection(2);
-        private static Queue<KeyValuePair<TPAchievementNotify, TPAchievementNotifyInfo>> notificationQueue = new Queue<KeyValuePair<TPAchievementNotify, TPAchievementNotifyInfo>>(4);
+        private static Queue<KeyValuePair<TPAchievementNotify, TPAchievementData>> notificationQueue = new Queue<KeyValuePair<TPAchievementNotify, TPAchievementData>>(4);
 
 #if NET_2_0 || NET_2_0_SUBSET
         private static WaitForSeconds waitNotifyLong;
@@ -131,15 +134,15 @@ namespace TPFramework
 #endif
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        internal static void ShowNotification(TPAchievementNotify notification, TPAchievementNotifyInfo notifyInfo)
+        internal static void ShowNotification(TPAchievementNotify notification, TPAchievementData notifyInfo)
         {
             if (!isBusy)
             {
                 isBusy = true;
                 notification.FillNotify(notifyInfo);
-                TPAnim.Animate(notification.NotifyAnim, (time) => OnNotifyActivation(time, notification.LayoutTransform), () => notification.TPLayout.SetActive(true),
+                TPAnim.Animate(notification.NotifyAnim, (time) => OnNotifyActivation(time, notification.LayoutTransform), () => notification.SetActive(true),
                     () => {
-                        notification.TPLayout.SetActive(false);
+                        notification.SetActive(false);
                         isBusy = false;
                         if (notificationQueue.Count > 0)
                         {
@@ -150,7 +153,7 @@ namespace TPFramework
             }
             else
             {
-                notificationQueue.Enqueue(new KeyValuePair<TPAchievementNotify, TPAchievementNotifyInfo>(notification, notifyInfo));
+                notificationQueue.Enqueue(new KeyValuePair<TPAchievementNotify, TPAchievementData>(notification, notifyInfo));
             }
         }
 

@@ -86,70 +86,98 @@ namespace TPFramework.Editor
         public static GUIStyle ToolbarSerachField { get { return GUI.skin.FindStyle("ToolbarSeachTextField"); } }
         public static GUIStyle ToolbarSearchCancel { get { return GUI.skin.FindStyle("ToolbarSeachCancelButton"); } }
 
+        private static GUIStyle textWrap;
         public static GUIStyle TextWrap {
             get {
-                GUIStyle textStyle = new GUIStyle(GUI.skin.textField) {
-                    wordWrap = true
-                };
-                return textStyle;
+                if (textWrap == null)
+                {
+                    textWrap = new GUIStyle(GUI.skin.textField) {
+                        wordWrap = true
+                    };
+                }
+                return textWrap;
             }
         }
 
+        private static GUIStyle richTextWrap;
         public static GUIStyle RichTextWrap {
             get {
-                GUIStyle style = new GUIStyle(EditorStyles.textField) {
-                    richText = true,
-                    wordWrap = true
-                };
-                return style;
+                if (richTextWrap == null)
+                {
+                    richTextWrap = new GUIStyle(EditorStyles.textField) {
+                        richText = true,
+                        wordWrap = true
+                    };
+                }
+                return richTextWrap;
             }
         }
 
+        private static GUIStyle richText;
         public static GUIStyle RichText {
             get {
-                GUIStyle style = new GUIStyle(EditorStyles.textField) {
-                    richText = true
-                };
-                return style;
+                if (richText == null)
+                {
+                    richText = new GUIStyle(EditorStyles.textField) {
+                        richText = true
+                    };
+                }
+                return richText;
             }
         }
 
+        private static GUIStyle richLabel;
         public static GUIStyle RichLabel {
             get {
-                GUIStyle style = new GUIStyle(EditorStyles.label) {
-                    richText = true
-                };
-                return style;
+                if (richLabel == null)
+                {
+                    richLabel = new GUIStyle(EditorStyles.label) {
+                        richText = true
+                    };
+                }
+                return richLabel;
             }
         }
 
+        private static GUIStyle richLeftButton;
         public static GUIStyle RichLeftButton {
             get {
-                GUIStyle style = new GUIStyle(EditorStyles.miniButtonLeft) {
-                    alignment = TextAnchor.MiddleLeft,
-                    richText = true
-                };
-                return style;
+                if (richLeftButton == null)
+                {
+                    richLeftButton = new GUIStyle(EditorStyles.miniButtonLeft) {
+                        alignment = TextAnchor.MiddleLeft,
+                        richText = true
+                    };
+                }
+                return richLeftButton;
             }
         }
 
+        private static GUIStyle richMidButton;
         public static GUIStyle RichMidButton {
             get {
-                GUIStyle style = new GUIStyle(EditorStyles.miniButtonLeft) {
-                    alignment = TextAnchor.MiddleCenter,
-                    richText = true
-                };
-                return style;
+                if (richMidButton == null)
+                {
+                    richMidButton = new GUIStyle(EditorStyles.miniButtonLeft) {
+                        alignment = TextAnchor.MiddleCenter,
+                        richText = true
+                    };
+                }
+                return richMidButton;
             }
         }
 
+        private static GUIStyle richRightButton;
         public static GUIStyle RichRightButton {
             get {
-                GUIStyle style = new GUIStyle(EditorStyles.miniButtonLeft) {
-                    alignment = TextAnchor.MiddleRight,
-                    richText = true
-                };
-                return style;
+                if (richRightButton == null)
+                {
+                    richRightButton = new GUIStyle(EditorStyles.miniButtonLeft) {
+                        alignment = TextAnchor.MiddleRight,
+                        richText = true
+                    };
+                }
+                return richRightButton;
             }
         }
     }

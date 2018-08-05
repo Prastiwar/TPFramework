@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Runtime.CompilerServices;
 
 namespace TPFramework
 {
@@ -31,6 +32,7 @@ namespace TPFramework
         public GameObject LayoutPrefab;                         // Prefab to be isntantiated and assigned to TPLayout
         public GameObject TPLayout { get; set; }                // Instantiated prefab
         public Transform LayoutTransform { get; private set; }  // Child of TPLayout, have Image & Button & Text parents
+        public CanvasGroup CanvasGroup { get; private set; }
 
         protected Image[] Images { get; private set; }            // All Image components got from all childs of Image parent
         protected Button[] Buttons { get; private set; }          // All Button components got from all childs of Button parent
@@ -57,13 +59,28 @@ namespace TPFramework
         /// <summary> Returns if TPLayout is already spawned - if returns false, instantiate prefab on InitializeIfIsNot() </summary>
         protected virtual bool LayoutSpawn(Transform parent = null) { return false; }
 
+        /// <summary> If you set activation frequently, you'll want to avoid GC from eventsystem, use it instead of TPLayout.SetActive(..) </summary>
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public void SetActive(bool enable)
+        {
+            CanvasGroup.alpha = enable ? 1 : 0;
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public bool IsActive()
+        {
+            return CanvasGroup.alpha == 1 && TPLayout.activeSelf;
+        }
+
         /// <summary> Get Image & Buttons & Texts components from childs of parents </summary>
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         private void Initialize()
         {
             LayoutTransform = TPLayout.transform.GetChild(0);
 #if TPUISafeChecks
             SafeCheck(LayoutTransform);
 #endif
+            CanvasGroup = TPLayout.GetComponent<CanvasGroup>();
             Images = Initialize(LayoutTransform.GetChild(0), Images);
             Buttons = Initialize(LayoutTransform.GetChild(1), Buttons);
             Texts = Initialize(LayoutTransform.GetChild(2), Texts);
@@ -75,6 +92,8 @@ namespace TPFramework
         {
             if (transform.childCount < 3)
                 throw new Exception("Invalid TPUILayout! LayoutTransform needs to have Child 0: Parent of Images, Child 1: Parent of Buttons, Child 2: Parent of Texts");
+            else if (transform.parent.GetComponent<CanvasGroup>() == null)
+                throw new Exception("Invalid TPUILayout! TPLayout needs CanvasGroup component");
             else if (transform.GetChild(0).GetChilds().Any(x => x.GetComponent<Image>() == null))
                 throw new Exception("Invalid TPUILayout! Child 0: Parent of Images must contain only Images as childs");
             else if (transform.GetChild(1).GetChilds().Any(x => x.GetComponent<Button>() == null))
@@ -85,6 +104,7 @@ namespace TPFramework
 
 #endif
 
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         private T[] Initialize<T>(Transform child, T[] array)
         {
             int length = child.childCount;
@@ -102,21 +122,17 @@ namespace TPFramework
     [Serializable]
     public class TPModalWindow : TPUILayout
     {
-        [SerializeField] private TPAnimation popAnim;
-
         private TextMeshProUGUI headerText;
         private TextMeshProUGUI descriptionText;
         private TextMeshProUGUI acceptText;
         private TextMeshProUGUI cancelText;
-
         private Button acceptButton;
         private Button cancelButton;
 
         public Action OnAccept = delegate { };
         public Action OnCancel = delegate { };
-        
-        public TPAnim.OnAnimActivationHandler OnShow = delegate { };
-        public TPAnim.OnAnimActivationHandler OnHide = delegate { };
+        public Action OnShow = delegate { };
+        public Action OnHide = delegate { };
 
         protected override void OnInitialized()
         {
@@ -126,8 +142,11 @@ namespace TPFramework
             cancelButton = Buttons[1];
             acceptText = Buttons[0].GetComponentInChildren<TextMeshProUGUI>();
             cancelText = Buttons[1].GetComponentInChildren<TextMeshProUGUI>();
+
             OnAccept = Hide;
             OnCancel = Hide;
+            OnShow = () => LayoutTransform.gameObject.SetActive(true);
+            OnHide = () => LayoutTransform.gameObject.SetActive(false);
             acceptButton.onClick.AddListener(() => OnAccept());
             cancelButton.onClick.AddListener(() => OnCancel());
         }
@@ -159,12 +178,12 @@ namespace TPFramework
 
         public void Show()
         {
-            TPAnim.Animate(popAnim, (time) => OnShow(time, LayoutTransform), () => TPLayout.SetActive(true), null, 0.5f);
+            OnShow();
         }
 
         public void Hide()
         {
-            TPAnim.Animate(popAnim, (time) => OnHide(time, LayoutTransform), null, () => TPLayout.SetActive(false), 1.0f, 0.5f);
+            OnHide();
         }
 
     }

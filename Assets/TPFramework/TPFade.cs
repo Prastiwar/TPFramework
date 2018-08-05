@@ -4,13 +4,10 @@
 *   Repository: https://github.com/Prastiwar/TPFramework 
 */
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 namespace TPFramework
 {
@@ -25,7 +22,7 @@ namespace TPFramework
     {
         public string FadeToScene;
         public TPAnimation FadeAnim;
-        public ITPFade ITPFade;
+        public ITPFade TPFade;
     }
 
     [Serializable]
@@ -75,7 +72,7 @@ namespace TPFramework
 
         public void Fade(float time, TPFadeInfo fadeInfo, TPFadeLayout state)
         {
-            state.CanvasGrouup.alpha = TPAnim.NormalizedCurveTime(time);
+            state.CanvasGrouup.alpha = TPAnim.ReflectNormalizedCurveTime(time);
 
             if (time >= 0.5f && !string.IsNullOrEmpty(fadeInfo.FadeToScene))
             {
@@ -114,39 +111,39 @@ namespace TPFramework
         public static void Fade(TPFadeInfo info)
         {
             if (!isFading)
-                TPAnim.Animate(info.FadeAnim, (time) => info.ITPFade.Fade(time, info, fadeLayout), () => isFading = true, () => isFading = false);
+                TPAnim.Animate(info.FadeAnim, (time) => info.TPFade.Fade(time, info, fadeLayout), () => isFading = true, () => isFading = false);
         }
 
-        private static bool TryLoadScene(bool readAnyKey, AsyncOperation asyncLoad)
+        private static bool CanLoadScene(bool readAnyKey, AsyncOperation asyncLoad)
         {
-            return TryLoadScene(readAnyKey, true, KeyCode.None, asyncLoad);
+            return CanLoadScene(readAnyKey, true, KeyCode.None, asyncLoad);
         }
 
-        private static bool TryLoadScene(bool readAnyKey, KeyCode keyToRead, AsyncOperation asyncLoad)
+        private static bool CanLoadScene(bool readAnyKey, KeyCode keyToRead, AsyncOperation asyncLoad)
         {
-            return TryLoadScene(readAnyKey, false, keyToRead, asyncLoad);
+            return CanLoadScene(readAnyKey, false, keyToRead, asyncLoad);
         }
 
-        private static bool TryLoadScene(bool readAnyKey)
+        private static bool CanLoadScene(bool readAnyKey)
         {
-            return TryLoadScene(readAnyKey, true, KeyCode.None);
+            return CanLoadScene(readAnyKey, true, KeyCode.None);
         }
 
-        private static bool TryLoadScene(bool readAnyKey, KeyCode keyToRead)
+        private static bool CanLoadScene(bool readAnyKey, KeyCode keyToRead)
         {
-            return TryLoadScene(readAnyKey, false, keyToRead);
+            return CanLoadScene(readAnyKey, false, keyToRead);
         }
 
-        private static bool TryLoadScene(bool readKey, bool readAnyKey, KeyCode keyToRead)
+        private static bool CanLoadScene(bool readKey, bool readAnyKey, KeyCode keyToRead)
         {
             return !readKey
                 || readAnyKey && Input.anyKeyDown
                 || !readAnyKey && Input.GetKeyDown(keyToRead);
         }
 
-        private static bool TryLoadScene(bool readKey, bool readAnyKey, KeyCode keyToRead, AsyncOperation asyncLoad)
+        private static bool CanLoadScene(bool readKey, bool readAnyKey, KeyCode keyToRead, AsyncOperation asyncLoad)
         {
-            if (TryLoadScene(readKey, readAnyKey, keyToRead))
+            if (CanLoadScene(readKey, readAnyKey, keyToRead))
             {
                 asyncLoad.allowSceneActivation = true;
                 return true;

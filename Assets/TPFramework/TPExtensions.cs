@@ -44,6 +44,17 @@ namespace TPFramework
             Debug.Log(label != null ? label + ": " + obj : obj);
         }
 
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static float GetFloat(this AudioMixer audioMixer, string paramName)
+        {
+            float value;
+            bool result = audioMixer.GetFloat(paramName, out value);
+            if (result)
+                return value;
+            else
+                return 0f;
+        }
+
 #if NET_2_0 || NET_2_0_SUBSET
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
@@ -314,6 +325,35 @@ namespace TPFramework
             return new Vector3(equal, equal, equal);
         }
 
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static Vector3[] SequenceBoxPositions(int width, int height, int layers)
+        {
+            List<Vector3> vectors = reusableVector3.CleanList;
+            int length = width * height * layers;
+            for (int i = 0; i < length; i++)
+            {
+                int x = i / (width * layers);
+                int y = i - x * height * layers / layers;
+                int z = i - x * width * layers - y * layers;
+                vectors.Add(new Vector3(x, y, z));
+            }
+            return vectors.ToArray();
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static Vector3[] SequenceSquarePositions(int width, int height)
+        {
+            List<Vector3> vectors = reusableVector3.CleanList;
+            int length = width * height;
+            for (int i = 0; i < length; i++)
+            {
+                int x = i / width;
+                int y = i % height;
+                vectors.Add(new Vector2(x, y));
+            }
+            return vectors.ToArray();
+        }
+
         /* --------------------------------------------------------------- Collection --------------------------------------------------------------- */
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
@@ -462,17 +502,6 @@ namespace TPFramework
             for (int i = 0; i < length; i++)
                 sum += floatings[i];
             return sum;
-        }
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static float GetFloat(this AudioMixer audioMixer, string paramName)
-        {
-            float value;
-            bool result = audioMixer.GetFloat(paramName, out value);
-            if (result)
-                return value;
-            else
-                return 0f;
         }
 
         /* --------------------------------------------------------------- Strings --------------------------------------------------------------- */

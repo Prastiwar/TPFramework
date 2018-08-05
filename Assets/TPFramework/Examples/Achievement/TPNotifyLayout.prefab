@@ -138,6 +138,7 @@ GameObject:
   - component: {fileID: 224001861188703596}
   - component: {fileID: 222467333830632466}
   - component: {fileID: 223538884262460664}
+  - component: {fileID: 225133386641490456}
   m_Layer: 5
   m_Name: TPNotifyLayout
   m_TagString: Untagged
@@ -1087,3 +1088,14 @@ RectTransform:
   m_AnchoredPosition: {x: 0.0000038146973, y: 0}
   m_SizeDelta: {x: 0, y: 39.9}
   m_Pivot: {x: 0.5, y: 1}
+--- !u!225 &225133386641490456
+CanvasGroup:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1706478286941376}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0

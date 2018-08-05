@@ -8,117 +8,51 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using TPFramework.Core;
 
-namespace TPFramework
+namespace TPFramework.Unity
 {
     internal static class TPCollections { } // marker to find this script
 
-    [Serializable]
-    public class ReusableList<T>
-    {
-        private readonly List<T> _list;
+    //[Serializable]
+    //public class SharedObjectCollection
+    //{
+    //    public readonly Dictionary<int, GameObject> SharedObjects;
 
-        public List<T> CleanList {
-            get {
-                _list.Clear();
-                return _list;
-            }
-        }
+    //    public SharedObjectCollection(int capacity = 10)
+    //    {
+    //        SharedObjects = new Dictionary<int, GameObject>(capacity);
+    //    }
 
-        public ReusableList(int capacity = 10)
-        {
-            _list = new List<T>(capacity);
-        }
-    }
-
-    [Serializable]
-    public class ReusableDictionary<TKey, TValue>
-    {
-        private readonly Dictionary<TKey, TValue> _dictionary;
-
-        public Dictionary<TKey, TValue> CleanDictionary {
-            get {
-                _dictionary.Clear();
-                return _dictionary;
-            }
-        }
-
-        public ReusableDictionary(int capacity = 10)
-        {
-            _dictionary = new Dictionary<TKey, TValue>(capacity);
-        }
-    }
+    //    /// <summary> Returns shared object if exists, if no, instantiate it and return </summary>
+    //    [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+    //    public GameObject ShareObject(GameObject gameObject, Transform parent = null)
+    //    {
+    //        int id = gameObject.GetInstanceID();
+    //        if (!SharedObjects.ContainsKey(id))
+    //            return SharedObjects[id] = UnityEngine.Object.Instantiate(gameObject, parent);
+    //        return SharedObjects[id];
+    //    }
+    //}
 
     [Serializable]
-    public class SharedObjectCollection
+    public class SharedGameObjectCollection : SharedObjectCollection<GameObject>
     {
-        public readonly Dictionary<int, GameObject> SharedObjects;
+        //public readonly Dictionary<int, GameObject> SharedObjects;
 
-        public SharedObjectCollection(int capacity = 10)
-        {
-            SharedObjects = new Dictionary<int, GameObject>(capacity);
-        }
-        
-        /// <summary> Returns shared object if exists, if no, instantiate it and return </summary>
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public GameObject ShareObject(GameObject gameObject, Transform parent = null)
-        {
-            int id = gameObject.GetInstanceID();
-            if (!SharedObjects.ContainsKey(id))
-                return SharedObjects[id] = UnityEngine.Object.Instantiate(gameObject, parent);
-            return SharedObjects[id];
-        }
-    }
+        //public SharedObjectCollection(int capacity = 10)
+        //{
+        //    SharedObjects = new Dictionary<int, GameObject>(capacity);
+        //}
 
-    [Serializable]
-    public class Queue<T, U>
-    {
-        private readonly Queue<KeyValuePair<T, U>> _queue;
-        public int Count { get { return _queue.Count; } }
-
-        public Queue(int capacity = 10)
-        {
-            _queue = new Queue<KeyValuePair<T, U>>(capacity);
-        }
-
-        public void Enqueue(T key, U value)
-        {
-            _queue.Enqueue(new KeyValuePair<T, U>(key, value));
-        }
-
-        public KeyValuePair<T, U> Dequeue()
-        {
-            return _queue.Dequeue();
-        }
-
-        public KeyValuePair<T, U> Peek()
-        {
-            return _queue.Peek();
-        }
-
-        public KeyValuePair<T, U>[] ToArray()
-        {
-            return _queue.ToArray();
-        }
-
-        public bool Contains(T key, U value)
-        {
-            return _queue.Contains(new KeyValuePair<T, U>(key, value));
-        }
-
-        public void Clear()
-        {
-            _queue.Clear();
-        }
-
-        public void TrimExcess()
-        {
-            _queue.TrimExcess();
-        }
-
-        public void CopyTo(KeyValuePair<T, U>[] array, int idx)
-        {
-            _queue.CopyTo(array, idx);
-        }
+        ///// <summary> Returns shared object if exists, if no, instantiate it and return </summary>
+        //[MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        //public GameObject ShareObject(GameObject gameObject, Transform parent = null)
+        //{
+        //    int id = gameObject.GetInstanceID();
+        //    if (!SharedObjects.ContainsKey(id))
+        //        return SharedObjects[id] = UnityEngine.Object.Instantiate(gameObject, parent);
+        //    return SharedObjects[id];
+        //}
     }
 }

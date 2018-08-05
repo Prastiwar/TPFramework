@@ -39,8 +39,12 @@ public struct TPTooltipExample
 }
 
 [Serializable]
-public struct TPFaderExample
+public struct TPFadeExample
 {
+    public GameObject Scene;
+    public Button FadeButton;
+    public TPAlphaFade AlphaFade;
+    public TPFadeInfo FadeInfo;
 }
 
 [Serializable]
