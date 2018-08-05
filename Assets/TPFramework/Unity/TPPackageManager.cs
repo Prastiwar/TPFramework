@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using TPFramework.Core;
 using UnityEditor;
 using UnityEngine;
 
@@ -32,20 +33,19 @@ namespace TPFramework.Internal
         private static BuildTargetGroup _targetGroup { get { return EditorUserBuildSettings.selectedBuildTargetGroup; } }
         private static readonly string _TPNamespace = "TPFramework";
         private const int packagesLength = 15;
-
         private static readonly ITPPackage[] _TPPackages = new ITPPackage[packagesLength] {
             new TPAchievementPackage(), // 0
             new TPPersistencePackage(), // 1
             new TPCollectionsPackage(), // 2
             new TPExtensionsPackage(),  // 3
             new TPObjectPoolPackage(),  // 4
-            new TPAudioPoolPackage(),   // 5
-            new TPInventoryPackage(),   // 6
-            new TPAttributePackage(),   // 7
-            new TPSettingsPackage(),    // 8
-            new TPTooltipPackage(),     // 9
-            new TPRandomPackage(),      // 10
-            new TPEditorPackage(),      // 11
+            new TPInventoryPackage(),   // 5
+            new TPAttributePackage(),   // 6
+            new TPSettingsPackage(),    // 7
+            new TPTooltipPackage(),     // 8
+            new TPRandomPackage(),      // 9
+            new TPEditorPackage(),      // 10
+            new TPAudioPackage(),       // 11
             new TPAnimPackage(),        // 12
             new TPFadePackage(),        // 13
             new TPUIPackage(),          // 14
@@ -186,7 +186,7 @@ namespace TPFramework.Internal
 
     internal struct TPAchievementPackage : ITPPackage
     {
-        public string Name { get { return "TPAchievement"; } }
+        public string Name { get { return "TPAchievementPackage"; } }
         public bool IsLoaded { get; private set; }
 
         public bool Reload()
@@ -199,7 +199,7 @@ namespace TPFramework.Internal
 
     internal struct TPPersistencePackage : ITPPackage
     {
-        public string Name { get { return "TPPersistence"; } }
+        public string Name { get { return "TPPersistencePackage"; } }
         public bool IsLoaded { get; private set; }
 
         public bool Reload()
@@ -212,7 +212,7 @@ namespace TPFramework.Internal
 
     internal struct TPExtensionsPackage : ITPPackage
     {
-        public string Name { get { return "TPExtensions"; } }
+        public string Name { get { return "TPExtensionsPackage"; } }
         public bool IsLoaded { get; private set; }
 
         public bool Reload()
@@ -225,7 +225,7 @@ namespace TPFramework.Internal
 
     internal struct TPObjectPoolPackage : ITPPackage
     {
-        public string Name { get { return "TPObjectPool"; } }
+        public string Name { get { return "TPObjectPoolPackage"; } }
         public bool IsLoaded { get; private set; }
 
 #if TPObjectPoolSafeChecks
@@ -244,22 +244,9 @@ namespace TPFramework.Internal
     }
 
 
-    internal struct TPAudioPoolPackage : ITPPackage
-    {
-        public string Name { get { return "TPAudioPool"; } }
-        public bool IsLoaded { get; private set; }
-
-        public bool Reload()
-        {
-            IsLoaded = true;
-            return IsLoaded;
-        }
-    }
-
-
     internal struct TPInventoryPackage : ITPPackage
     {
-        public string Name { get { return "TPInventory"; } }
+        public string Name { get { return "TPInventoryPackage"; } }
         public bool IsLoaded { get; private set; }
 
         public bool Reload()
@@ -272,7 +259,7 @@ namespace TPFramework.Internal
 
     internal struct TPAttributePackage : ITPPackage
     {
-        public string Name { get { return "TPAttribute"; } }
+        public string Name { get { return "TPAttributePackage"; } }
         public bool IsLoaded { get; private set; }
 
         public bool Reload()
@@ -285,7 +272,7 @@ namespace TPFramework.Internal
 
     internal struct TPSettingsPackage : ITPPackage
     {
-        public string Name { get { return "TPSettings"; } }
+        public string Name { get { return "TPSettingsPackage"; } }
         public bool IsLoaded { get; private set; }
 
         public bool Reload()
@@ -304,7 +291,7 @@ namespace TPFramework.Internal
 
     internal struct TPCollectionsPackage : ITPPackage
     {
-        public string Name { get { return "TPCollections"; } }
+        public string Name { get { return "TPCollectionsPackage"; } }
         public bool IsLoaded { get; private set; }
 
         public bool Reload()
@@ -317,7 +304,7 @@ namespace TPFramework.Internal
 
     internal struct TPTooltipPackage : ITPPackage
     {
-        public string Name { get { return "TPTooltip"; } }
+        public string Name { get { return "TPTooltipPackage"; } }
         public bool IsLoaded { get; private set; }
 
 #if TPTooltipSafeChecks
@@ -337,7 +324,7 @@ namespace TPFramework.Internal
 
     internal struct TPRandomPackage : ITPPackage
     {
-        public string Name { get { return "TPRandom"; } }
+        public string Name { get { return "TPRandomPackage"; } }
         public bool IsLoaded { get; private set; }
 
         public bool Reload()
@@ -350,7 +337,20 @@ namespace TPFramework.Internal
 
     internal struct TPEditorPackage : ITPPackage
     {
-        public string Name { get { return "TPEditor"; } }
+        public string Name { get { return "TPEditorPackage"; } }
+        public bool IsLoaded { get; private set; }
+
+        public bool Reload()
+        {
+            IsLoaded = true;
+            return IsLoaded;
+        }
+    }
+
+
+    internal struct TPAudioPackage : ITPPackage
+    {
+        public string Name { get { return "TPAudioPackage"; } }
         public bool IsLoaded { get; private set; }
 
         public bool Reload()
@@ -363,7 +363,7 @@ namespace TPFramework.Internal
 
     internal struct TPAnimPackage : ITPPackage
     {
-        public string Name { get { return "TPAnim"; } }
+        public string Name { get { return "TPAnimPackage"; } }
         public bool IsLoaded { get; private set; }
 
         public bool Reload()
@@ -376,7 +376,7 @@ namespace TPFramework.Internal
 
     internal struct TPFadePackage : ITPPackage
     {
-        public string Name { get { return "TPFade"; } }
+        public string Name { get { return "TPFadePackage"; } }
         public bool IsLoaded { get; private set; }
 
         public bool Reload()
@@ -389,7 +389,7 @@ namespace TPFramework.Internal
 
     internal class TPUIPackage : ITPPackage
     {
-        public string Name { get { return "TPUI"; } }
+        public string Name { get { return "TPUIPackage"; } }
         public bool IsLoaded { get; private set; }
 
 #if TPUISafeChecks

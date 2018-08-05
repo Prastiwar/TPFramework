@@ -19,52 +19,41 @@ namespace TPFramework.Unity
     [CreateAssetMenu(menuName = "TP/TPAchievement/Achievement", fileName = "Achievement")]
     public class TPAchievement : ScriptableObject, ITPAchievement
     {
-        public Sprite Icon;
+        [SerializeField] private TPAchievementData data;
 
-        public TPAchievementData Data { get; private set; }
+        public Sprite Icon;
+        public TPAchievementData Data { get { return data; } private set { data = value; } }
         public Action OnComplete { get; set; }
+
+        public bool ShowNotifyOnComplete;
+        public bool ShowNotifyOnProgress;
+        public TPAchievementNotify TPNotify;
 
         public void AddPoints(float points)
         {
-            throw new NotImplementedException();
+            if (data.IsCompleted)
+                return;
+            data.Points += points;
+
+            if (data.Points >= data.ReachPoints)
+            {
+                data.Points = data.ReachPoints;
+                Complete();
+            }
+            else if (ShowNotifyOnProgress)
+            {
+                TPNotify.Show(this);
+            }
         }
 
         public void Complete()
         {
-            throw new NotImplementedException();
+            data.IsCompleted = true;
+            data.Points = data.ReachPoints;
+            if (ShowNotifyOnComplete)
+                TPNotify.Show(this, true);
+            OnComplete();
         }
-
-        //public Action<TPAchievement> OnComplete = delegate { };
-        //public TPAchievementNotifyInfo Info;
-        //public bool ShowNotifyOnComplete;
-        //public bool ShowNotifyOnProgress;
-        //public TPAchievementNotify TPNotify;
-
-        //public void AddPoints(float points)
-        //{
-        //    if (Info.IsCompleted)
-        //        return;
-        //    Info.Points += points;
-
-        //    if (Info.Points >= Info.ReachPoints)
-        //    {
-        //        Info.Points = Info.ReachPoints;
-        //        Complete(ShowNotifyOnComplete);
-        //    }
-        //    else if (ShowNotifyOnProgress)
-        //    {
-        //        TPNotify.Show(this);
-        //    }
-        //}
-
-        //public void Complete(bool showNotification = false)
-        //{
-        //    Info.IsCompleted = true;
-        //    Info.Points = Info.ReachPoints;
-        //    if (showNotification)
-        //        TPNotify.Show(this, true);
-        //    OnComplete(this);
-        //}
     }
 
     /* ---------------------------------------------------------------------- Notification ---------------------------------------------------------------------- */
@@ -96,7 +85,7 @@ namespace TPFramework.Unity
             if (!showDescription)
                 fillInfo.Description = string.Empty;
             achievementIcon = achievement.Icon;
-            InitializeIfIsNot();
+            Initialize();
             TPAchievementManager.ShowNotification(this, fillInfo);
         }
 
@@ -123,15 +112,8 @@ namespace TPFramework.Unity
         public static TPAnim.OnAnimActivationHandler OnNotifyActivation = delegate { };
 
         private static bool isBusy;
-        private static SharedObjectCollection sharedLayouts = new SharedObjectCollection(2);
+        private static SharedGameObjectCollection sharedLayouts = new SharedGameObjectCollection(2);
         private static Queue<KeyValuePair<TPAchievementNotify, TPAchievementData>> notificationQueue = new Queue<KeyValuePair<TPAchievementNotify, TPAchievementData>>(4);
-
-#if NET_2_0 || NET_2_0_SUBSET
-        private static WaitForSeconds waitNotifyLong;
-        private static float secondsToWait;
-        private static WaitForSeconds waitShow;
-        private static float showSeconds;
-#endif
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         internal static void ShowNotification(TPAchievementNotify notification, TPAchievementData notifyInfo)

@@ -7,65 +7,45 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using TPFramework.Core;
+using UnityEngine;
 
-namespace TPFramework.Core
+namespace TPFramework.Unity
 {
-    /* ---------------------------------------------------------------- Core ---------------------------------------------------------------- */
-
-    public enum ModifierType
-    {
-        FlatIncrease,
-        FlatMultiply,
-        Percentage
-    }
-
-    public interface ITPModifier
-    {
-        float Value { get; }
-        object Source { get; }
-        ModifierType Type { get; }
-        int Priority { get; }
-    }
-
-    public interface ITPAttribute<T> where T : ITPModifier
-    {
-        ITPModifierContainer<T> Modifiers { get; }
-        float BaseValue { get; }
-        float Value { get; }
-        void Recalculate();
-        Action<float> OnChanged { get; }
-    }
-
-    public interface ITPModifierContainer<T> where T : ITPModifier
-    {
-        ITPAttribute<T> Attribute { get; }
-        T this[int index] { get; }
-        float Count { get; }
-        void Add(T modifier);
-        bool Remove(T modifier);
-        bool HasModifier(T modifier);
-        int Compare(T mod1, T mod2);
-        void Sort();
-    }
-
     /* ---------------------------------------------------------------- Modifier ---------------------------------------------------------------- */
 
     [Serializable]
     public struct TPModifier : ITPModifier
     {
+        [SerializeField] private float value;
+        [SerializeField] private ModifierType type;
+        [SerializeField] private int priority;
+
         public object Source { get; set; }
-        public float Value { get; private set; }
-        public ModifierType Type { get; private set; }
-        public int Priority { get; private set; }
+
+        public float Value {
+            get { return value; }
+            private set { this.value = value; }
+        }
+
+        public ModifierType Type {
+            get { return type; }
+            private set { type = value; }
+        }
+
+        public int Priority {
+            get { return priority; }
+            private set { priority = value; }
+        }
 
         public TPModifier(ModifierType type, float value, object source) : this(type, value, (int)type, source) { }
         public TPModifier(ModifierType tye, float value, int priority) : this(tye, value, priority, null) { }
         public TPModifier(ModifierType type, float value) : this(type, value, (int)type, null) { }
         public TPModifier(ModifierType type, float value, int priority, object source)
         {
-            Priority = priority;
-            Value = value;
-            Type = type;
+            this.priority = priority;
+            this.value = value;
+            this.type = type;
             Source = source;
         }
 
@@ -109,9 +89,9 @@ namespace TPFramework.Core
     /* ---------------------------------------------------------------- Modifier Container ---------------------------------------------------------------- */
 
     [Serializable]
-    public struct TPModifierContainer<T> : ITPModifierContainer<T> where T : ITPModifier
+    public class TPModifierContainer<T> : ITPModifierContainer<T> where T : ITPModifier
     {
-        private readonly List<T> modifiers;
+        [SerializeField] private List<T> modifiers;
         private readonly ReusableList<T> reusableModifiers;
 
         public float Count { get; private set; }
@@ -247,16 +227,30 @@ namespace TPFramework.Core
         }
     }
 
-    /* ---------------------------------------------------------------- Attribute ---------------------------------------------------------------- */
+    [Serializable]
+    public class TPModifierContainerWrapper : TPModifierContainer<TPModifier>, Core.ITPModifierContainer<TPModifier>
+    {
+        public TPModifierContainerWrapper(ITPAttribute<TPModifier> attribute, int capacity = 10) : base(attribute, capacity) { }
+    }
 
+    /* ---------------------------------------------------------------- Attribute ---------------------------------------------------------------- */
+    
     [Serializable]
     public class TPAttribute : ITPAttribute<TPModifier>
     {
+        [SerializeField] private float baseValue;
+        [SerializeField] private TPModifierContainerWrapper modifiers;
+
         /// <summary> List collection of modifiers </summary>
-        public ITPModifierContainer<TPModifier> Modifiers { get; private set; }
+        public ITPModifierContainer<TPModifier> Modifiers {
+            get { return modifiers; }
+        }
 
         /// <summary> Base value without any modifier </summary>
-        public float BaseValue { get; set; }
+        public float BaseValue {
+            get { return baseValue; }
+            set { baseValue = value; }
+        }
 
         /// <summary> Calculated value with all modifiers </summary>
         public float Value { get; private set; }
@@ -266,7 +260,8 @@ namespace TPFramework.Core
 
         public TPAttribute()
         {
-            Modifiers = new TPModifierContainer<TPModifier>(this);
+            modifiers = new TPModifierContainerWrapper(this);
+            OnChanged = delegate { };
         }
 
         /// <summary> Request recalculating Value with modifiers </summary>

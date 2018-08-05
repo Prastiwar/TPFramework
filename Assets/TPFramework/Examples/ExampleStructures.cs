@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
 using TPFramework;
+using TPFramework.Unity;
+using TPFramework.Core;
 
 [Serializable]
 public struct TPSettingsExample
@@ -88,8 +90,8 @@ public struct TPPersistenceExample
 [Serializable]
 public struct TPAttributeExample
 {
-    public TPAttribute Health;
-    public TPModifier HealthIncreaser;
+    public TPFramework.Unity.TPAttribute Health;
+    public TPFramework.Unity.TPModifier HealthIncreaser;
 }
 
 [Serializable]

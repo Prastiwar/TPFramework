@@ -41,27 +41,6 @@ namespace TPFramework.Core
     }
 
     [Serializable]
-    public class SharedObjectCollection<T>
-    {
-        public readonly Dictionary<int, T> SharedObjects;
-
-        public SharedObjectCollection(int capacity = 10)
-        {
-            SharedObjects = new Dictionary<int, T>(capacity);
-        }
-
-        /// <summary> Returns shared object if exists, if no, instantiate it and return </summary>
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public T ShareObject(T obj)
-        {
-            int id = gameObject.GetInstanceID();
-            if (!SharedObjects.ContainsKey(id))
-                return SharedObjects[id] = UnityEngine.Object.Instantiate(gameObject, parent);
-            return SharedObjects[id];
-        }
-    }
-
-    [Serializable]
     public class Queue<T, U>
     {
         private readonly Queue<KeyValuePair<T, U>> _queue;

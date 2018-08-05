@@ -8,16 +8,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc818e48231b0c04b98afba3ad9e6f23, type: 3}
+  m_Script: {fileID: 11500000, guid: aef978109cae18c448b34a92842673b7, type: 3}
   m_Name: Achievement
   m_EditorClassIdentifier: 
-  Icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  Info:
+  data:
     Title: First Achievement
-    Description: Congratulations! You've made your first achievement
-    IsCompleted: 0
+    Description: Congratulations! You've made your first achievement!
     Points: 0
     ReachPoints: 5
+    IsCompleted: 0
+  Icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   ShowNotifyOnComplete: 1
   ShowNotifyOnProgress: 1
   TPNotify:
@@ -30,14 +30,14 @@ MonoBehaviour:
         - serializedVersion: 2
           time: 0
           value: 0
-          inSlope: 3.0464392
-          outSlope: 3.0464392
+          inSlope: 1
+          outSlope: 1
           tangentMode: 0
         - serializedVersion: 2
           time: 1
           value: 1
-          inSlope: 3.0359359
-          outSlope: 3.0359359
+          inSlope: 1
+          outSlope: 1
           tangentMode: 0
         m_PreInfinity: 2
         m_PostInfinity: 2

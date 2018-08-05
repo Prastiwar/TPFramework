@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-namespace TPFramework
+namespace TPFramework.Unity
 {
     [Serializable]
     public struct TPAudioObject
@@ -24,7 +24,7 @@ namespace TPFramework
         Theme
     }
 
-    public static class TPAudioPool
+    public static class TPAudio
     {
         private static Dictionary<string, TPAudioBundle> audioPool = new Dictionary<string, TPAudioBundle>();
         private static AudioSource sfxSource;
@@ -150,7 +150,7 @@ namespace TPFramework
         {
             AudioClip clip = GetClip(bundle, audioName);
             SFXSource.PlayOneShot(clip, volumeScale);
-            mono.StartCoroutine(TPExtensions.DelayAction(clip.length, onAudioEnd));
+            mono.StartCoroutine(Core.TPExtensions.DelayAction(clip.length, onAudioEnd));
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
@@ -183,7 +183,7 @@ namespace TPFramework
             AudioClip clip = GetClip(bundle, audioName);
             GetSource(source).clip = clip;
             GetSource(source).Play(delay);
-            mono.StartCoroutine(TPExtensions.DelayAction(clip.length + delay, onAudioEnd));
+            mono.StartCoroutine(Core.TPExtensions.DelayAction(clip.length + delay, onAudioEnd));
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline

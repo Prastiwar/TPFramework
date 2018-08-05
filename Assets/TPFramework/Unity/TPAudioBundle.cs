@@ -6,7 +6,7 @@
 
 using UnityEngine;
 
-namespace TPFramework
+namespace TPFramework.Unity
 {
     [CreateAssetMenu(menuName = "TP/TPAudioPool/Audio Bundle", fileName = "AudioBundle")]
     public class TPAudioBundle : ScriptableObject

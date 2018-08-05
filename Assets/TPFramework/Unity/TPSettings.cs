@@ -8,11 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using TPFramework.Core;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
 
-namespace TPFramework
+namespace TPFramework.Unity
 {
     public static class TPSettings
     {

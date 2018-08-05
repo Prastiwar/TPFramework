@@ -2,6 +2,7 @@
 using UnityEngine;
 using TPFramework;
 using System.Collections;
+using TPFramework.Unity;
 
 public class Examples : MonoBehaviour
 {
@@ -28,16 +29,16 @@ public class Examples : MonoBehaviour
     {
         DeactiveExamples();
         TPAchievementExample ex = TPAchievementExample;
-        ex.Achievement.Info.Points = 0;
-        ex.Achievement.Info.IsCompleted = false;
+        //ex.Achievement.Data.Points = 0;
+        //ex.Achievement.Data.IsCompleted = false;
 
-        ex.Achievement.OnComplete += (achievement) => {
+        ex.Achievement.OnComplete += () => {
             Debug.Log("Achievement completed!");
         };
 
         TPAchievementManager.OnNotifyActivation = CustomNotifyActive;
 
-        for (int i = 0; i < ex.Achievement.Info.ReachPoints; i++)
+        for (int i = 0; i < ex.Achievement.Data.ReachPoints; i++)
         {
             ex.Achievement.AddPoints(1);
         }
@@ -73,7 +74,7 @@ public class Examples : MonoBehaviour
         DrawLine();
         Debug.Log("TPAttribute Health Base value:" + ex.Health.BaseValue);
         Debug.Log("TPAttribute Health Value before armor equip: " + ex.Health.Value);
-        ex.Health.AddModifier(ex.HealthIncreaser);
+        ex.Health.Modifiers.Add(ex.HealthIncreaser);
         Debug.Log("TPAttribute Health Value after armor equip: " + ex.Health.Value);
         DrawLine();
     }
@@ -84,7 +85,7 @@ public class Examples : MonoBehaviour
         DeactiveExamples();
         TPAudioPoolExample ex = TPAudioPoolExample;
 
-        TPAudioPool.AddToPool("MyBundle", ex.AudioBundle);
+        TPAudio.AddToPool("MyBundle", ex.AudioBundle);
         StartCoroutine(TPAudioPoolRepeatPlaying(5));
     }
 
@@ -204,7 +205,7 @@ public class Examples : MonoBehaviour
         while (repeat >= 0)
         {
 #if NET_2_0 || NET_2_0_SUBSET
-            TPAudioPool.Play(this, "MyBundle", "door", () => {
+            TPAudio.Play(this, "MyBundle", "door", () => {
                 MessageWithLines("TPAudioPool Sound 'door' was played by MyBundle");
             });
 #else

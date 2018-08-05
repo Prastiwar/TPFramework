@@ -6,9 +6,10 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using TPFramework.Core;
 using UnityEngine;
 
-namespace TPFramework
+namespace TPFramework.Unity
 {
     public enum TPObjectState
     {

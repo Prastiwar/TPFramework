@@ -7,11 +7,12 @@
 using System;
 using System.Collections;
 using System.Runtime.CompilerServices;
+using TPFramework.Unity;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace TPFramework
+namespace TPFramework.Unity
 {
     public enum TPTooltipType
     {
@@ -78,7 +79,7 @@ namespace TPFramework
     {
         private static TPTooltip observer;
         private static PointerEventData _eventData;
-        private static readonly SharedObjectCollection sharedLayouts = new SharedObjectCollection(2);
+        private static readonly SharedGameObjectCollection sharedLayouts = new SharedGameObjectCollection(2);
 
         public static Action<TPTooltip> OnObserverEnter = delegate { observer.TooltipLayout.SetActive(true); };
         public static Action<TPTooltip> OnObserverExit = delegate { observer.TooltipLayout.SetActive(false); };
@@ -193,7 +194,7 @@ namespace TPFramework
 
         public void Prepare(TPTooltipType type)
         {
-            InitializeIfIsNot();
+            Initialize();
 
             if (!type.IsDynamic())
             {

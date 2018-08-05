@@ -6,9 +6,10 @@
 
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using TPFramework.Core;
 using UnityEngine;
 
-namespace TPFramework
+namespace TPFramework.Unity
 {
     /// <summary> Struct holds probability of int and element of T which can be returned in PickWithProbability </summary>
     /// <typeparam name="T"> Element can be returned if selected in Pick </typeparam>

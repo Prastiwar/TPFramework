@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 
-namespace TPFramework
+namespace TPFramework.Unity
 {
     public interface ITPFade
     {

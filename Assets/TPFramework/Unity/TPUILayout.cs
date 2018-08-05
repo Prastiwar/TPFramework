@@ -5,8 +5,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Runtime.CompilerServices;
+using TPFramework.Core;
 
-namespace TPFramework
+namespace TPFramework.Unity
 {
     internal static class TPUI { } // marker to find this script
 
@@ -27,20 +28,33 @@ namespace TPFramework
     ///             - ...
     /// </summary>
     [Serializable]
-    public class TPUILayout
+    public class TPUILayout : ITPUI
     {
         public GameObject LayoutPrefab;                         // Prefab to be isntantiated and assigned to TPLayout
         public GameObject TPLayout { get; set; }                // Instantiated prefab
         public Transform LayoutTransform { get; private set; }  // Child of TPLayout, have Image & Button & Text parents
         public CanvasGroup CanvasGroup { get; private set; }
+        public bool IsInitialized { get { return TPLayout; } }
 
         protected Image[] Images { get; private set; }            // All Image components got from all childs of Image parent
         protected Button[] Buttons { get; private set; }          // All Button components got from all childs of Button parent
         protected TextMeshProUGUI[] Texts { get; private set; }   // All TextMeshProUGUI components got from all childs of Text parent
-        protected bool IsInitialized { get { return TPLayout; } } // If layout is instantiated
+
+        /// <summary> Is called after Initialize </summary>
+        protected virtual void OnInitialized() { }
+
+        /// <summary> Returns if TPLayout is already spawned - if returns false, instantiate prefab on InitializeIfIsNot() </summary>
+        protected virtual bool LayoutSpawn(Transform parent = null) { return IsInitialized; }
+        
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public void Initialize()
+        {
+            Initialize(null);
+        }
 
         /// <summary> If IsInitialized is false - instantiate LayoutPrefab to TPLayout and get Images & Buttons & Texts </summary>
-        protected void InitializeIfIsNot(Transform parent = null)
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public void Initialize(Transform parent)
         {
             if (IsInitialized)
                 return;
@@ -49,15 +63,9 @@ namespace TPFramework
             {
                 TPLayout = UnityEngine.Object.Instantiate(LayoutPrefab, parent);
             }
-            Initialize();
+            InitializeLayout();
             OnInitialized();
         }
-
-        /// <summary> Is called after Initialize </summary>
-        protected virtual void OnInitialized() { }
-
-        /// <summary> Returns if TPLayout is already spawned - if returns false, instantiate prefab on InitializeIfIsNot() </summary>
-        protected virtual bool LayoutSpawn(Transform parent = null) { return false; }
 
         /// <summary> If you set activation frequently, you'll want to avoid GC from eventsystem, use it instead of TPLayout.SetActive(..) </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
@@ -74,7 +82,7 @@ namespace TPFramework
 
         /// <summary> Get Image & Buttons & Texts components from childs of parents </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        private void Initialize()
+        private void InitializeLayout()
         {
             LayoutTransform = TPLayout.transform.GetChild(0);
 #if TPUISafeChecks
@@ -153,7 +161,7 @@ namespace TPFramework
 
         public void Initialize()
         {
-            InitializeIfIsNot();
+            Initialize();
         }
 
         public void SetHeaderText(string text)

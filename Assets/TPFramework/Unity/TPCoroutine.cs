@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-namespace TPFramework
+namespace TPFramework.Unity
 {
     public sealed class TPCoroutine : MonoBehaviour
     {

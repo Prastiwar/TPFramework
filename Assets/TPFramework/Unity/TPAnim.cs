@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Runtime.CompilerServices;
+using TPFramework.Core;
 using UnityEngine;
 
-namespace TPFramework
+namespace TPFramework.Unity
 {
     [Serializable]
     public struct TPAnimation

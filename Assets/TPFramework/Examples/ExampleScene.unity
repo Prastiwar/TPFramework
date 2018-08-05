@@ -5486,6 +5486,14 @@ MonoBehaviour:
   TooltipLayout:
     LayoutPrefab: {fileID: 1068468929922102, guid: e7d9d5499e1596647ba13d3270528228,
       type: 2}
+    <TPLayout>k__BackingField: {fileID: 0}
+    <LayoutTransform>k__BackingField: {fileID: 0}
+    <CanvasGroup>k__BackingField: {fileID: 0}
+    <Images>k__BackingField: []
+    <Buttons>k__BackingField: []
+    <Texts>k__BackingField: []
+    panelHalfHeight: 0
+    panelHalfWidth: 0
     DynamicOffset: {x: 0, y: 0}
     UseSharedLayout: 1
     staticPosition: {fileID: 2121683396}
@@ -8677,6 +8685,14 @@ MonoBehaviour:
   TooltipLayout:
     LayoutPrefab: {fileID: 1068468929922102, guid: e7d9d5499e1596647ba13d3270528228,
       type: 2}
+    <TPLayout>k__BackingField: {fileID: 0}
+    <LayoutTransform>k__BackingField: {fileID: 0}
+    <CanvasGroup>k__BackingField: {fileID: 0}
+    <Images>k__BackingField: []
+    <Buttons>k__BackingField: []
+    <Texts>k__BackingField: []
+    panelHalfHeight: 0
+    panelHalfWidth: 0
     DynamicOffset: {x: 0, y: 0}
     UseSharedLayout: 1
     staticPosition: {fileID: 2121683396}
@@ -10404,6 +10420,14 @@ MonoBehaviour:
   TooltipLayout:
     LayoutPrefab: {fileID: 1068468929922102, guid: e7d9d5499e1596647ba13d3270528228,
       type: 2}
+    <TPLayout>k__BackingField: {fileID: 0}
+    <LayoutTransform>k__BackingField: {fileID: 0}
+    <CanvasGroup>k__BackingField: {fileID: 0}
+    <Images>k__BackingField: []
+    <Buttons>k__BackingField: []
+    <Texts>k__BackingField: []
+    panelHalfHeight: 0
+    panelHalfWidth: 0
     DynamicOffset: {x: 0, y: 0}
     UseSharedLayout: 1
     staticPosition: {fileID: 2121683396}
@@ -10942,7 +10966,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TPAchievementExample:
-    Achievement: {fileID: 11400000, guid: e3439c39bd2ef774dab3475280e02eb8, type: 2}
+    Achievement: {fileID: 11400000, guid: 6761654b04f334949b8a335c06d64b15, type: 2}
   TPObjectPoolExample:
     PoolKey: 0
     Prefab: {fileID: 1023094823439678, guid: 10f9add3b0989884d8855fa7982ff701, type: 2}
@@ -10951,13 +10975,17 @@ MonoBehaviour:
     Health:
       baseValue: 100
       modifiers:
-      - Value: 10
-        type: 3
-        priority: 0
+        modifiers:
+        - value: 1
+          type: 0
+          priority: 0
+        - value: 2
+          type: 1
+          priority: 0
     HealthIncreaser:
-      Value: 20
-      type: 1
-      priority: 1
+      value: 100
+      type: 0
+      priority: 0
   TPAudioPoolExample:
     AudioBundle: {fileID: 11400000, guid: 34d56a8708c5b634c92a9036d4d47c0e, type: 2}
   TPSettingsExample:
@@ -10994,7 +11022,7 @@ MonoBehaviour:
     Scene: {fileID: 626631861}
     FadeButton: {fileID: 109428186}
     AlphaFade:
-      FadeTexture: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+      FadeTexture: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 3}
       FadeColor: {r: 0.125, g: 0.125, b: 0.125, a: 0}
     FadeInfo:
       FadeToScene: 
@@ -12089,6 +12117,14 @@ MonoBehaviour:
   TooltipLayout:
     LayoutPrefab: {fileID: 1068468929922102, guid: e7d9d5499e1596647ba13d3270528228,
       type: 2}
+    <TPLayout>k__BackingField: {fileID: 0}
+    <LayoutTransform>k__BackingField: {fileID: 0}
+    <CanvasGroup>k__BackingField: {fileID: 0}
+    <Images>k__BackingField: []
+    <Buttons>k__BackingField: []
+    <Texts>k__BackingField: []
+    panelHalfHeight: 0
+    panelHalfWidth: 0
     DynamicOffset: {x: 0, y: 0}
     UseSharedLayout: 1
     staticPosition: {fileID: 2121683396}

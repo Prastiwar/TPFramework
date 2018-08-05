@@ -7,7 +7,7 @@
 //using System.Collections.Generic;
 //using UnityEngine;
 
-//namespace TPFramework
+//namespace TPFramework.Unity
 //{
 //    public class TPInventory
 //    {
