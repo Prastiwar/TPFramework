@@ -130,19 +130,35 @@ namespace TPFramework.Unity
 
         /// <summary> Returns int array of random probabilities sorted from high to low </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static int[] RandomProbabilitiesDescent(int length, int total = 100)
+        public static int[] RandomProbabilitiesDescent(int length, int total, int min, int max)
         {
-            int[] chances = RandomProbabilitiesAscent(length, total);
+            int[] chances = RandomProbabilitiesAscent(length, total, min, max);
             System.Array.Reverse(chances);
             return chances;
         }
 
         /// <summary> Returns int array of random probabilities sorted from low to high </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static int[] RandomProbabilitiesAscent(int length, int total = 100)
+        public static int[] RandomProbabilitiesAscent(int length, int total, int min, int max)
         {
-            int[] chances = RandomProbabilities(length, total);
+            int[] chances = RandomProbabilities(length, total, min, max);
             System.Array.Sort(chances);
+            return chances;
+        }
+
+        public static int[] RandomProbabilitiesAscent(int length, int min, int max)
+        {
+            int[] chances = new int[length];
+            for (int i = 0; i < length; i++)
+                chances[i] = Random.Range(min, max);
+            System.Array.Sort(chances);
+            return chances;
+        }
+
+        public static int[] RandomProbabilitiesDescent(int length, int min, int max)
+        {
+            int[] chances = RandomProbabilitiesAscent(length, min, max);
+            System.Array.Reverse(chances);
             return chances;
         }
 

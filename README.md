@@ -24,13 +24,13 @@
 * ***TPCollections*** &nbsp;&nbsp;&nbsp;&nbsp;- *Performant temporary or not collections*
 * ***TPExtensions*** &nbsp;&nbsp;&nbsp; - *Library contains a lot common methods*
 * ***TPObjectPool*** &nbsp;&nbsp;&nbsp;- *Increase performance with object pooling*
-* ***TPAudioPool*** &nbsp;&nbsp;&nbsp; - *Manage your audio bundles easily*
 * ***TPInventory*** &nbsp;&nbsp;&nbsp;&nbsp; - *Implement an Inventory system in your game fast*
 * ***TPAttribute*** &nbsp;&nbsp;&nbsp;&nbsp; - *Create attributes and modify them freely*
 * ***TPSettings*** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - *Convenient library to create an options menu*
 * ***TPToolTip*** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - *Implement in-game tooltips*
 * ***TPRandom*** &nbsp;&nbsp;&nbsp;&nbsp;- *Probability, random functions*
 * ***TPEditor*** &nbsp;&nbsp;&nbsp;&nbsp;- *Helpful library for extending editor*
+* ***TPAudio*** &nbsp;&nbsp;&nbsp;&nbsp; - *Manage your audio bundles easily*
 * ***TPAnim*** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- *Animate whatever you want*
 * ***TPFade*** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- *Fade between scenes*
 * ***TPUI*** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- *Generic UI Layout and much more*

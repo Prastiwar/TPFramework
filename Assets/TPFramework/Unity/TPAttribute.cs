@@ -223,6 +223,7 @@ namespace TPFramework.Unity
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public void Sort()
         {
+            Count = modifiers.Count;
             modifiers.Sort(Compare);
         }
     }
@@ -234,7 +235,7 @@ namespace TPFramework.Unity
     }
 
     /* ---------------------------------------------------------------- Attribute ---------------------------------------------------------------- */
-    
+
     [Serializable]
     public class TPAttribute : ITPAttribute<TPModifier>
     {
@@ -270,7 +271,6 @@ namespace TPFramework.Unity
         {
             Value = BaseValue;
             Modifiers.Sort();
-
             for (int i = 0; i < Modifiers.Count; i++)
             {
                 switch (Modifiers[i].Type)

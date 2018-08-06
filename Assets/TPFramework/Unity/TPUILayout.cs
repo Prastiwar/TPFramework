@@ -45,7 +45,8 @@ namespace TPFramework.Unity
 
         /// <summary> Returns if TPLayout is already spawned - if returns false, instantiate prefab on InitializeIfIsNot() </summary>
         protected virtual bool LayoutSpawn(Transform parent = null) { return IsInitialized; }
-        
+
+        /// <summary> If IsInitialized is false - instantiate LayoutPrefab to TPLayout and get Images & Buttons & Texts </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public void Initialize()
         {
@@ -157,11 +158,6 @@ namespace TPFramework.Unity
             OnHide = () => LayoutTransform.gameObject.SetActive(false);
             acceptButton.onClick.AddListener(() => OnAccept());
             cancelButton.onClick.AddListener(() => OnCancel());
-        }
-
-        public void Initialize()
-        {
-            Initialize();
         }
 
         public void SetHeaderText(string text)

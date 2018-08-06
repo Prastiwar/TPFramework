@@ -72,7 +72,7 @@ public class Examples : MonoBehaviour
         object goldenArmor = new object(); // some Item
         ex.HealthIncreaser.Source = goldenArmor;
         DrawLine();
-        Debug.Log("TPAttribute Health Base value:" + ex.Health.BaseValue);
+        Debug.Log("TPAttribute Health Base value: " + ex.Health.BaseValue);
         Debug.Log("TPAttribute Health Value before armor equip: " + ex.Health.Value);
         ex.Health.Modifiers.Add(ex.HealthIncreaser);
         Debug.Log("TPAttribute Health Value after armor equip: " + ex.Health.Value);

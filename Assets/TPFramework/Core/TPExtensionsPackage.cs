@@ -101,7 +101,7 @@ namespace TPFramework.Core
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void SortReverse(this int[] integers)
+        public static int[] SortReverse(this int[] integers)
         {
             int count = integers.Length;
             int shouldIndex = count - 1;
@@ -113,10 +113,11 @@ namespace TPFramework.Core
                 integers[shouldIndex] = tempShuffle;
                 shouldIndex--;
             }
+            return integers;
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void SortReverse(this List<float> floats)
+        public static List<float> SortReverse(this List<float> floats)
         {
             int count = floats.Count;
             int shouldIndex = count - 1;
@@ -128,10 +129,11 @@ namespace TPFramework.Core
                 floats[shouldIndex] = tempShuffle;
                 shouldIndex--;
             }
+            return floats;
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void SortReverse(this float[] floats)
+        public static float[] SortReverse(this float[] floats)
         {
             int count = floats.Length;
             int shouldIndex = count - 1;
@@ -143,6 +145,7 @@ namespace TPFramework.Core
                 floats[shouldIndex] = tempShuffle;
                 shouldIndex--;
             }
+            return floats;
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline

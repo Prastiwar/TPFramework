@@ -2,38 +2,122 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using TPFramework.Core;
 using UnityEditor;
 using UnityEngine;
+using TPFramework.Core;
 
 namespace TPFramework.Internal
 {
-    internal interface ITPPackage
-    {
-        string Name { get; }
-        bool IsLoaded { get; }
-
-        bool Reload();
-    }
-
-    internal struct TPDefines
+    internal struct TPDefineInfo
     {
         public const string TPEditorMessages = "TPFrameworkLogs";
-        public const string TPObjectPoolSafeChecks = "TPObjectPoolSafeChecks";
-        public const string TPTooltipSafeChecks = "TPTooltipSafeChecks";
-        public const string TPUISafeChecks = "TPUISafeChecks";
+        public const string TPObjectPoolSafety = "TPObjectPoolSafeChecks";
+        public const string TPTooltipSafety = "TPTooltipSafeChecks";
+        public const string TPUISafety = "TPUISafeChecks";
+
+        internal struct MenuMessage
+        {
+#if TPFrameworkLogs
+            public const string TPEditorMessages = "Disable Package Logs";
+#else
+            public const string TPEditorMessages = "Enable Package Logs";
+#endif
+#if TPObjectPoolSafeChecks
+            public const string TPObjectPoolSafeChecks = "Disable TPObjectPool Safe Checks";
+#else
+            public const string TPObjectPoolSafeChecks = "Enable TPObjectPool Safe Checks";
+#endif
+#if TPTooltipSafeChecks
+            public const string TPTooltipSafeChecks = "Disable TPTooltip Safe Checks";
+#else
+            public const string TPTooltipSafeChecks = "Enable Package Logs";
+#endif
+#if TPUISafeChecks
+            public const string TPUISafeChecks = "Disable TPUI Safe Checks";
+#else
+            public const string TPUISafeChecks = "Enable TPUI Safe Checks";
+#endif
+        }
+    }
+
+    internal struct TPDefineManager : ITPDefineManager
+    {
+        private static BuildTargetGroup _TargetGroup { get { return EditorUserBuildSettings.selectedBuildTargetGroup; } }
+
+        public void CheckFirstRun()
+        {
+            if (EditorPrefs.GetBool("TP_IsFirstRun", true))
+            {
+                SetDefine(TPDefineInfo.TPEditorMessages, true);
+                SetDefine(TPDefineInfo.TPObjectPoolSafety, true);
+                SetDefine(TPDefineInfo.TPTooltipSafety, true);
+                SetDefine(TPDefineInfo.TPUISafety, true);
+                EditorPrefs.SetBool("TP_IsFirstRun", false);
+            }
+        }
+
+        public void ToggleDefine(string define)
+        {
+            bool enabled = !EditorPrefs.GetBool(define, false);
+            EditorPrefs.SetBool(define, enabled);
+            SetDefine(define, enabled);
+        }
+
+        public void SetDefine(string define, bool enabled)
+        {
+            if (enabled)
+                TryAddDefine(define);
+            else
+                TryRemoveDefine(define);
+        }
+
+        public bool IsDefined(string define)
+        {
+            return GetDefines().Contains(define);
+        }
+
+        private bool TryAddDefine(string define)
+        {
+            List<string> allDefines = GetDefines();
+            if (!allDefines.Contains(define))
+            {
+                allDefines.Add(define);
+                SetDefines(allDefines);
+                return true;
+            }
+            return false;
+        }
+
+        private bool TryRemoveDefine(string define)
+        {
+            List<string> allDefines = GetDefines();
+            if (allDefines.Contains(define))
+            {
+                allDefines.Remove(define);
+                SetDefines(allDefines);
+            }
+            return false;
+        }
+
+        private void SetDefines(List<string> allDefines)
+        {
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(_TargetGroup, string.Join(";", allDefines.ToArray()));
+        }
+
+        private List<string> GetDefines()
+        {
+            string defines = PlayerSettings.GetScriptingDefineSymbolsForGroup(_TargetGroup);
+            return defines.Split(';').ToList();
+        }
     }
 
     [InitializeOnLoad]
     internal class TPPackageManager
     {
-        public const string MENU = "TPFramework";
+        internal const string MENU = "TPFramework/";
+        internal static Core.TPPackageManager Manager { get; private set; }
 
-        private static BuildTargetGroup _targetGroup { get { return EditorUserBuildSettings.selectedBuildTargetGroup; } }
-        private static readonly string _TPNamespace = "TPFramework";
-        private const int packagesLength = 15;
-        private static readonly ITPPackage[] _TPPackages = new ITPPackage[packagesLength] {
+        private static readonly ITPPackage[] _TPPackages = new ITPPackage[TPFrameworkInfo.PackagesLength] {
             new TPAchievementPackage(), // 0
             new TPPersistencePackage(), // 1
             new TPCollectionsPackage(), // 2
@@ -51,12 +135,6 @@ namespace TPFramework.Internal
             new TPUIPackage(),          // 14
         };
 
-        private static List<Type> GetExistingPackageTypes {
-            get {
-                return Assembly.GetExecutingAssembly().GetTypes().Where(typ => typ.HasNamespace(_TPNamespace)).ToList();
-            }
-        }
-
         private static bool HasTMPro {
             get {
                 return AppDomain.CurrentDomain.GetAssemblies().Any(assembly => assembly.GetTypes().Any(typ => typ.HasNamespace("TMPro")));
@@ -65,19 +143,15 @@ namespace TPFramework.Internal
 
         static TPPackageManager()
         {
+            Manager = new Core.TPPackageManager(_TPPackages, new TPDefineManager());
             ReloadPackages();
-            CheckFirstRun();
+            ((TPDefineManager)Manager.DefineManager).CheckFirstRun();
         }
 
-#if TPFrameworkLogs
+        [MenuItem(MENU + TPDefineInfo.MenuMessage.TPEditorMessages, priority = 1)]
+        private static void ToggleMessages() { Manager.DefineManager.ToggleDefine(TPDefineInfo.TPEditorMessages); }
 
-        [MenuItem(MENU + "/Disable Package Logs", priority = 1)]
-#else
-        [MenuItem(Menu + "/Enable Package Logs", priority = 1)]
-#endif
-        private static void ToggleMessages() { ToggleDefine(TPDefines.TPEditorMessages); }
-
-        [MenuItem(MENU + "/Reload Packages", priority = 0)]
+        [MenuItem(MENU + "Reload Packages", priority = 0)]
         private static void ReloadPackages()
         {
             if (!HasTMPro)
@@ -85,140 +159,19 @@ namespace TPFramework.Internal
                 Debug.LogError("You don't have TextMeshPro installed. You can download it from <color=cyan> https://assetstore.unity.com/packages/essentials/beta-projects/textmesh-pro-84126 </color>");
             }
 
-            ReloadPackages(GetExistingPackageTypes);
+            Manager.ReloadPackages(TPFrameworkInfo.GetExistingPackagePaths);
+
 #if TPFrameworkLogs
-            CheckLoadedPackages();
-#endif
-        }
-
-        private static void ReloadPackages(List<Type> tpPackages)
-        {
-            for (int i = 0; i < packagesLength; i++)
+            ITPPackage[] unloadedPackages = Manager.GetUnloadedPackages();
+            if (unloadedPackages.Length > 0)
             {
-                if (tpPackages.Any(x => x.Name == _TPPackages[i].Name))
+                for (int i = 0; i < unloadedPackages.Length; i++)
                 {
-                    _TPPackages[i].Reload();
+                    Debug.Log(unloadedPackages[i].Name + "<color=red> was not found </color>");
                 }
+                Debug.Log("You can disable Package Logs in " + MENU + "/Disable Package Logs");
             }
-        }
-
-        private static void CheckLoadedPackages()
-        {
-            for (int i = 0; i < packagesLength; i++)
-            {
-                if (!_TPPackages[i].IsLoaded)
-                    Debug.Log(_TPPackages[i].Name + "<color=red> was not found </color>");
-            }
-            Debug.Log("You can disable Package Logs in " + MENU + "/Disable Package Logs");
-        }
-
-        internal static void CheckFirstRun()
-        {
-            if (EditorPrefs.GetBool("TP_IsFirstRun", true))
-            {
-                SetDefine(TPDefines.TPEditorMessages, true);
-                SetDefine(TPDefines.TPObjectPoolSafeChecks, true);
-                SetDefine(TPDefines.TPTooltipSafeChecks, true);
-                SetDefine(TPDefines.TPUISafeChecks, true);
-                EditorPrefs.SetBool("TP_IsFirstRun", false);
-            }
-        }
-
-        internal static void ToggleDefine(string define)
-        {
-            bool enabled = !EditorPrefs.GetBool(define, false);
-            EditorPrefs.SetBool(define, enabled);
-
-            if (enabled)
-                TryAddDefine(define);
-            else
-                TryRemoveDefine(define);
-        }
-
-        internal static void SetDefine(string define, bool enabled)
-        {
-            if (enabled)
-                TryAddDefine(define);
-            else
-                TryRemoveDefine(define);
-        }
-
-        internal static bool TryAddDefine(string define)
-        {
-            List<string> allDefines = GetDefines();
-            if (!allDefines.Contains(define))
-            {
-                allDefines.Add(define);
-                SetDefines(allDefines);
-                return true;
-            }
-            return false;
-        }
-
-        internal static bool TryRemoveDefine(string define)
-        {
-            List<string> allDefines = GetDefines();
-            if (allDefines.Contains(define))
-            {
-                allDefines.Remove(define);
-                SetDefines(allDefines);
-            }
-            return false;
-        }
-
-        internal static bool IsDefined(string define)
-        {
-            return GetDefines().Contains(define);
-        }
-
-        internal static void SetDefines(List<string> allDefines)
-        {
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(_targetGroup, string.Join(";", allDefines.ToArray()));
-        }
-
-        internal static List<string> GetDefines()
-        {
-            string defines = PlayerSettings.GetScriptingDefineSymbolsForGroup(_targetGroup);
-            return defines.Split(';').ToList();
-        }
-    }
-
-
-    internal struct TPAchievementPackage : ITPPackage
-    {
-        public string Name { get { return "TPAchievementPackage"; } }
-        public bool IsLoaded { get; private set; }
-
-        public bool Reload()
-        {
-            IsLoaded = true;
-            return IsLoaded;
-        }
-    }
-
-
-    internal struct TPPersistencePackage : ITPPackage
-    {
-        public string Name { get { return "TPPersistencePackage"; } }
-        public bool IsLoaded { get; private set; }
-
-        public bool Reload()
-        {
-            IsLoaded = true;
-            return IsLoaded;
-        }
-    }
-
-
-    internal struct TPExtensionsPackage : ITPPackage
-    {
-        public string Name { get { return "TPExtensionsPackage"; } }
-        public bool IsLoaded { get; private set; }
-
-        public bool Reload()
-        {
-            IsLoaded = true;
-            return IsLoaded;
+#endif
         }
     }
 
@@ -227,40 +180,10 @@ namespace TPFramework.Internal
     {
         public string Name { get { return "TPObjectPoolPackage"; } }
         public bool IsLoaded { get; private set; }
+        public int Index { get { return 4; } }
 
-#if TPObjectPoolSafeChecks
-
-        [MenuItem(TPPackageManager.MENU + "/Disable TPObjectPool SafeChecks", priority = 60)]
-#else
-        [MenuItem(TPPackageManager.Menu + "/Enable TPObjectPool SafeChecks", priority = 60)]
-#endif
-        private static void ToggleSafeChecks() { TPPackageManager.ToggleDefine(TPDefines.TPObjectPoolSafeChecks); }
-
-        public bool Reload()
-        {
-            IsLoaded = true;
-            return IsLoaded;
-        }
-    }
-
-
-    internal struct TPInventoryPackage : ITPPackage
-    {
-        public string Name { get { return "TPInventoryPackage"; } }
-        public bool IsLoaded { get; private set; }
-
-        public bool Reload()
-        {
-            IsLoaded = true;
-            return IsLoaded;
-        }
-    }
-
-
-    internal struct TPAttributePackage : ITPPackage
-    {
-        public string Name { get { return "TPAttributePackage"; } }
-        public bool IsLoaded { get; private set; }
+        [MenuItem(TPPackageManager.MENU + TPDefineInfo.MenuMessage.TPObjectPoolSafeChecks, priority = 60)]
+        private static void ToggleSafeChecks() { TPPackageManager.Manager.DefineManager.ToggleDefine(TPDefineInfo.TPObjectPoolSafety); }
 
         public bool Reload()
         {
@@ -274,6 +197,7 @@ namespace TPFramework.Internal
     {
         public string Name { get { return "TPSettingsPackage"; } }
         public bool IsLoaded { get; private set; }
+        public int Index { get { return 7; } }
 
         public bool Reload()
         {
@@ -289,30 +213,14 @@ namespace TPFramework.Internal
     }
 
 
-    internal struct TPCollectionsPackage : ITPPackage
-    {
-        public string Name { get { return "TPCollectionsPackage"; } }
-        public bool IsLoaded { get; private set; }
-
-        public bool Reload()
-        {
-            IsLoaded = true;
-            return IsLoaded;
-        }
-    }
-
-
     internal struct TPTooltipPackage : ITPPackage
     {
         public string Name { get { return "TPTooltipPackage"; } }
         public bool IsLoaded { get; private set; }
+        public int Index { get { return 8; } }
 
-#if TPTooltipSafeChecks
-        [MenuItem(TPPackageManager.MENU + "/Disable TPTooltip SafeChecks", priority = 120)]
-#else
-        [MenuItem(TPPackageManager.Menu + "/Enable TPTooltip SafeChecks", priority = 120)]
-#endif
-        private static void ToggleSafeChecks() { TPPackageManager.ToggleDefine(TPDefines.TPTooltipSafeChecks); }
+        [MenuItem(TPPackageManager.MENU + TPDefineInfo.MenuMessage.TPTooltipSafeChecks, priority = 120)]
+        private static void ToggleSafeChecks() { TPPackageManager.Manager.DefineManager.ToggleDefine(TPDefineInfo.TPTooltipSafety); }
 
         public bool Reload()
         {
@@ -322,82 +230,14 @@ namespace TPFramework.Internal
     }
 
 
-    internal struct TPRandomPackage : ITPPackage
-    {
-        public string Name { get { return "TPRandomPackage"; } }
-        public bool IsLoaded { get; private set; }
-
-        public bool Reload()
-        {
-            IsLoaded = true;
-            return IsLoaded;
-        }
-    }
-
-
-    internal struct TPEditorPackage : ITPPackage
-    {
-        public string Name { get { return "TPEditorPackage"; } }
-        public bool IsLoaded { get; private set; }
-
-        public bool Reload()
-        {
-            IsLoaded = true;
-            return IsLoaded;
-        }
-    }
-
-
-    internal struct TPAudioPackage : ITPPackage
-    {
-        public string Name { get { return "TPAudioPackage"; } }
-        public bool IsLoaded { get; private set; }
-
-        public bool Reload()
-        {
-            IsLoaded = true;
-            return IsLoaded;
-        }
-    }
-
-
-    internal struct TPAnimPackage : ITPPackage
-    {
-        public string Name { get { return "TPAnimPackage"; } }
-        public bool IsLoaded { get; private set; }
-
-        public bool Reload()
-        {
-            IsLoaded = true;
-            return IsLoaded;
-        }
-    }
-
-
-    internal struct TPFadePackage : ITPPackage
-    {
-        public string Name { get { return "TPFadePackage"; } }
-        public bool IsLoaded { get; private set; }
-
-        public bool Reload()
-        {
-            IsLoaded = true;
-            return IsLoaded;
-        }
-    }
-
-
-    internal class TPUIPackage : ITPPackage
+    internal struct TPUIPackage : ITPPackage
     {
         public string Name { get { return "TPUIPackage"; } }
         public bool IsLoaded { get; private set; }
+        public int Index { get { return 14; } }
 
-#if TPUISafeChecks
-        [MenuItem(TPPackageManager.MENU + "/Disable TPUI SafeChecks", priority = 160)]
-#else
-        [MenuItem(TPPackageManager.Menu + "/Enable TPUI SafeChecks", priority = 160)]
-#endif
-        private static void ToggleSafeChecks() { TPPackageManager.ToggleDefine(TPDefines.TPUISafeChecks); }
+        [MenuItem(TPPackageManager.MENU + TPDefineInfo.MenuMessage.TPUISafeChecks, priority = 160)]
+        private static void ToggleSafeChecks() { TPPackageManager.Manager.DefineManager.ToggleDefine(TPDefineInfo.TPUISafety); }
 
         public bool Reload()
         {
