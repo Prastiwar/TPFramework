@@ -1,4 +1,10 @@
-﻿using System;
+﻿/**
+*   Authored by Tomasz Piowczyk
+*   License: https://github.com/Prastiwar/TPFramework/blob/master/LICENSE
+*   Repository: https://github.com/Prastiwar/TPFramework 
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -245,7 +251,18 @@ namespace TPFramework.Core
         }
 
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static bool TryGetAttribute<T>(this FieldInfo fieldInfo, out T attribute, bool inherited = false) where T : Attribute
+        public static T GetSingleCustomAttribute<T>(this FieldInfo fieldInfo, bool inherited = false) where T : Attribute
+        {
+            Type type = typeof(T);
+            if (fieldInfo.IsDefined(type, inherited))
+            {
+                return (T)fieldInfo.GetCustomAttributes(type, inherited)[0];
+            }
+            return null;
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static bool TryGetCustomAttribute<T>(this FieldInfo fieldInfo, out T attribute, bool inherited = false) where T : Attribute
         {
             Type type = typeof(T);
             if (fieldInfo.IsDefined(type, inherited))

@@ -85,6 +85,21 @@ public struct TPRandomExample
 [Serializable]
 public struct TPPersistenceExample
 {
+    public GameObject Scene;
+    public Button SaveButton;
+    public Button LoadButton;
+
+    [Persistant("SomeKey", "default")]
+    public string SomeString;
+
+    [Persistant("SomeKey2", false)]
+    public bool SomeBool;
+
+    [Persistant("SomeKey3", 10)]
+    public int SomeInt;
+
+    [Persistant("SomeKey4", 2.55f)]
+    public float SomeFloat;
 }
 
 [Serializable]

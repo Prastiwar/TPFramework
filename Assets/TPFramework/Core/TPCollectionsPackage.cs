@@ -1,4 +1,10 @@
-﻿using System;
+﻿/**
+*   Authored by Tomasz Piowczyk
+*   License: https://github.com/Prastiwar/TPFramework/blob/master/LICENSE
+*   Repository: https://github.com/Prastiwar/TPFramework 
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
@@ -51,41 +57,49 @@ namespace TPFramework.Core
             _queue = new Queue<KeyValuePair<T, U>>(capacity);
         }
 
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public void Enqueue(T key, U value)
         {
             _queue.Enqueue(new KeyValuePair<T, U>(key, value));
         }
 
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public KeyValuePair<T, U> Dequeue()
         {
             return _queue.Dequeue();
         }
 
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public KeyValuePair<T, U> Peek()
         {
             return _queue.Peek();
         }
 
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public KeyValuePair<T, U>[] ToArray()
         {
             return _queue.ToArray();
         }
 
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public bool Contains(T key, U value)
         {
             return _queue.Contains(new KeyValuePair<T, U>(key, value));
         }
 
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public void Clear()
         {
             _queue.Clear();
         }
 
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public void TrimExcess()
         {
             _queue.TrimExcess();
         }
 
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public void CopyTo(KeyValuePair<T, U>[] array, int idx)
         {
             _queue.CopyTo(array, idx);

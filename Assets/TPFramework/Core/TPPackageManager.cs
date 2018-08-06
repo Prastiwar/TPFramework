@@ -1,6 +1,13 @@
-﻿using System;
+﻿/**
+*   Authored by Tomasz Piowczyk
+*   License: https://github.com/Prastiwar/TPFramework/blob/master/LICENSE
+*   Repository: https://github.com/Prastiwar/TPFramework 
+*/
+
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace TPFramework.Core
 {
@@ -48,6 +55,7 @@ namespace TPFramework.Core
             DefineManager = defineManager;
         }
 
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public void ReloadPackages(string[] tpPackagesPaths)
         {
             int pathsLength = tpPackagesPaths.Length;
@@ -64,6 +72,7 @@ namespace TPFramework.Core
             }
         }
 
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public ITPPackage[] GetUnloadedPackages()
         {
             List<ITPPackage> unloadedPackages = new List<ITPPackage>();

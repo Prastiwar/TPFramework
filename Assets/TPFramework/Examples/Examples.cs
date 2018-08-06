@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
-using TPFramework;
 using System.Collections;
 using TPFramework.Unity;
+using TPFramework.Core;
 
 public class Examples : MonoBehaviour
 {
@@ -19,7 +19,7 @@ public class Examples : MonoBehaviour
     public TPUIExample          TPUIExample;
 
     private readonly WaitForSeconds waitSecond = new WaitForSeconds(1);
-
+    
     private void Awake()
     {
         DeactiveExamples();
@@ -47,9 +47,39 @@ public class Examples : MonoBehaviour
     public void ExampleTPPersistence()
     {
         DeactiveExamples();
-        //TPPersistenceExample ex = TPPersistenceExample;
+        TPPersistenceExample.Scene.SetActive(true);
+        TPPersistenceExample.LoadButton.onClick.AddListener(Load);
+        TPPersistenceExample.SaveButton.onClick.AddListener(Save);
+    }
 
-        throw new NotImplementedException();
+    private void Load()
+    {
+#if NET_2_0 || NET_2_0_SUBSET
+        object boxedExample = TPPersistenceExample;
+        boxedExample = TPPersistantPrefs.Load(boxedExample);
+        TPPersistenceExample = (TPPersistenceExample)boxedExample;
+#else
+        TPPersistenceExample = TPPersistantPrefs.Load(TPPersistenceExample);
+#endif
+        DrawLine();
+        Debug.Log("Values Loaded");
+        TPPersistenceExample.SomeString.ToLog("SomeString: ");
+        TPPersistenceExample.SomeBool.ToLog("SomeBool: ");
+        TPPersistenceExample.SomeInt.ToLog("SomeInt: ");
+        TPPersistenceExample.SomeFloat.ToLog("SomeFloat: ");
+        DrawLine();
+    }
+
+    private void Save()
+    {
+        TPPersistantPrefs.Save(TPPersistenceExample);
+        DrawLine();
+        Debug.Log("Values Saved");
+        TPPersistenceExample.SomeString.ToLog("SomeString: ");
+        TPPersistenceExample.SomeBool.ToLog("SomeBool: ");
+        TPPersistenceExample.SomeInt.ToLog("SomeInt: ");
+        TPPersistenceExample.SomeFloat.ToLog("SomeFloat: ");
+        DrawLine();
     }
 
 
@@ -209,7 +239,7 @@ public class Examples : MonoBehaviour
                 MessageWithLines("TPAudioPool Sound 'door' was played by MyBundle");
             });
 #else
-            TPAudioPool.Play("MyBundle", "door", () => {
+            TPAudio.Play("MyBundle", "door", () => {
                 MessageWithLines("TPAudioPool Sound 'door' was played by MyBundle");
             });
 #endif
@@ -266,5 +296,6 @@ public class Examples : MonoBehaviour
         TPSettingsExample.Scene.SetActive(false);
         TPTooltipExample.Scene.SetActive(false);
         TPUIExample.Scene.SetActive(false);
+        TPPersistenceExample.Scene.SetActive(false);
     }
 }

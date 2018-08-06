@@ -1,6 +1,6 @@
 ﻿/**
 *   Authored by Tomasz Piowczyk
-*   MIT LICENSE: https://github.com/Prastiwar/TPFramework/blob/master/LICENSE
+*   License: https://github.com/Prastiwar/TPFramework/blob/master/LICENSE
 *   Repository: https://github.com/Prastiwar/TPFramework 
 */
 

@@ -165,7 +165,7 @@ namespace TPFramework.Unity
         {
             AudioClip clip = GetClip(bundle, audioName);
             SFXSource.PlayOneShot(clip, volumeScale);
-            TPExtensions.DelayAction(clip.length, onAudioEnd);
+            Core.TPExtensions.DelayAction(clip.length, onAudioEnd);
         }
                
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline 
@@ -199,7 +199,7 @@ namespace TPFramework.Unity
             AudioClip clip = GetClip(bundle, audioName);
             GetSource(source).clip = clip;
             GetSource(source).Play(delay);
-            TPExtensions.DelayAction(clip.length + delay, onAudioEnd);
+            Core.TPExtensions.DelayAction(clip.length + delay, onAudioEnd);
         }
         
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline

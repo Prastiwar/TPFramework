@@ -1,396 +1,230 @@
-﻿///**
-//*   Authored by Tomasz Piowczyk
-//*   MIT LICENSE: https://github.com/Prastiwar/TPFramework/blob/master/LICENSE
-//*   Repository: https://github.com/Prastiwar/TPFramework 
-//*/
-//using System;
-//using System.Collections.Generic;
-//using System.IO;
-//using System.Reflection;
-//using System.Security.Cryptography;
-//using System.Text;
-//using UnityEngine;
+﻿/**
+*   Authored by Tomasz Piowczyk
+*   License: https://github.com/Prastiwar/TPFramework/blob/master/LICENSE
+*   Repository: https://github.com/Prastiwar/TPFramework 
+*/
 
-//namespace TPFramework.Unity
-//{
-//    [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
-//    public sealed class PersistantPrefsAttribute : PropertyAttribute
-//    {
-//        internal readonly string key;
-//        internal readonly object defaultVal;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using TPFramework.Core;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
+using System.Text;
 
-//        private PersistantPrefsAttribute(string persistantKey, object defaultValue)
-//        {
-//            key = persistantKey;
-//            defaultVal = defaultValue;
-//        }
+namespace TPFramework.Unity
+{
+    public class TPPersistantPrefs : TPPersistant
+    {
+        private static readonly CspParameters crpyter = new CspParameters {
+            KeyContainerName = "ThisIsAKey"  // This is the key used to encrypt and decrypt can be anything.
+        };
 
-//        public PersistantPrefsAttribute(string persistantKey, int defaultValue) : this(persistantKey, defaultValue as object) { }
-//        public PersistantPrefsAttribute(string persistantKey, string defaultValue) : this(persistantKey, defaultValue as object) { }
-//        public PersistantPrefsAttribute(string persistantKey, float defaultValue) : this(persistantKey, defaultValue as object) { }
-//        public PersistantPrefsAttribute(string persistantKey, bool defaultValue) : this(persistantKey, defaultValue as object) { }
-//        public PersistantPrefsAttribute(string persistantKey) : this(persistantKey, null) { }
-//    }
+        private static readonly RSACryptoServiceProvider provider = new RSACryptoServiceProvider(crpyter);
+
+        private static readonly HashSet<Type> supportedTypes = new HashSet<Type>() {
+            typeof(int),
+            typeof(float),
+            typeof(string),
+            typeof(bool)
+        };
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        private static void PersistantPrefs()
+        {
+            Instance = new TPPersistantPrefs();
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        protected override HashSet<Type> GetSupportedTypes()
+        {
+            return supportedTypes;
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        protected override object LoadValue(PersistantAttribute attribute, object objectValue, bool loadDefault)
+        {
+            string decrypt = Decrypt(PlayerPrefs.GetString(attribute.Key));
+            if (string.IsNullOrEmpty(decrypt))
+            {
+                return loadDefault ? attribute.DefaultValue : null;
+            }
+            return Convert.ChangeType(decrypt, objectValue.GetType());
+        }
+
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        protected override void SaveValue(PersistantAttribute attribute, object saveValue)
+        {
+            PlayerPrefs.SetString(attribute.Key, Encrypt(saveValue.ToString()));
+        }
+
+        private string Encrypt(string value)
+        {
+            byte[] encryptBytes = provider.Encrypt(Encoding.UTF8.GetBytes(value), false);
+            return Convert.ToBase64String(encryptBytes);
+        }
+
+        private string Decrypt(string cryptedValue)
+        {
+            return string.IsNullOrEmpty(cryptedValue) ? string.Empty : Encoding.UTF8.GetString(provider.Decrypt(Convert.FromBase64String(cryptedValue), false));
+        }
+    }
+}
 
 //    public sealed class TPPersistant
 //    {
-//        //[Serializable]
-//        //private struct DataHolder
-//        //{
-//        //    internal readonly bool isInitialized;
-//        //    public List<string> Keys;
-//        //    public List<string> Values;
-
-//        //    public DataHolder(int capacity = 10)
-//        //    {
-//        //        Keys = new List<string>(capacity);
-//        //        Values = new List<string>(capacity);
-//        //        isInitialized = true;
-//        //    }
-
-//        //    public void Add(string key, string value)
-//        //    {
-//        //        Keys.Add(key);
-//        //        Values.Add(value);
-//        //    }
-
-//        //    public string Get(string key)
-//        //    {
-//        //        int length = Keys.Count;
-//        //        for (int i = 0; i < length; i++)
-//        //        {
-//        //            if (Keys[i] == key)
-//        //                return Values[i];
-//        //        }
-//        //        return null;
-//        //    }
-//        //}
-
 //        static readonly string PasswordHash = "P@@Sw0rd";
 //        static readonly string SaltKey = "S@LT&KEY";
 //        static readonly string VIKey = "@1B2c3D4e5F6g7H8";
 //        private static readonly string saltKey = "osiembyt";
 
-//        private static readonly Type typeNeeded = typeof(PersistantPrefsAttribute);
-
-//        private static Type[] supportTypes = new Type[] {
-//            typeof(int),
-//            typeof(float),
-//            typeof(string),
-//            typeof(bool)
-//        };
-
-//        private static readonly Dictionary<FieldInfo, PersistantPrefsAttribute> reusableCollecton = new Dictionary<FieldInfo, PersistantPrefsAttribute>(32);
-//        private static Dictionary<FieldInfo, PersistantPrefsAttribute> ReusableDictionary {
-//            get {
-//                reusableCollecton.Clear();
-//                return reusableCollecton;
-//            }
-//        }
-
-//        public static void SaveObjects(params object[] sources)
+//private static string Decrypt(string encryptedString)
+//{
+//    string result;
+//    DESCryptoServiceProvider desProvider = new DESCryptoServiceProvider {
+//        Mode = CipherMode.ECB,
+//        Padding = PaddingMode.PKCS7,
+//        Key = Encoding.ASCII.GetBytes(saltKey)
+//    };
+//    using (MemoryStream stream = new MemoryStream(Convert.FromBase64String(encryptedString)))
+//    {
+//        using (CryptoStream cs = new CryptoStream(stream, desProvider.CreateDecryptor(), CryptoStreamMode.Read))
 //        {
-//            int length = sources.Length;
-//            for (int i = 0; i < length; i++)
+//            using (StreamReader sr = new StreamReader(cs, Encoding.ASCII))
 //            {
-//                SaveObject(sources[i]);
+//                result = sr.ReadToEnd();
 //            }
 //        }
+//    }
+//    return null;
+//}
 
-//        public static void LoadObjects(params object[] sources)
+//private static string Encrypt(string plainText)
+//{
+//    string result;
+//    DESCryptoServiceProvider desProvider = new DESCryptoServiceProvider {
+//        Mode = CipherMode.ECB,
+//        Padding = PaddingMode.PKCS7,
+//        Key = Encoding.ASCII.GetBytes(saltKey)
+//    };
+//    using (MemoryStream stream = new MemoryStream())
+//    {
+//        using (CryptoStream cs = new CryptoStream(stream, desProvider.CreateEncryptor(), CryptoStreamMode.Write))
 //        {
-//            int length = sources.Length;
-//            for (int i = 0; i < length; i++)
-//            {
-//                LoadObject(sources[i]);
-//            }
+//            byte[] data = Encoding.Default.GetBytes(plainText);
+//            cs.Write(data, 0, data.Length);
+//            cs.FlushFinalBlock(); // <-- Add this
+//            result = Convert.ToBase64String(stream.ToArray());
 //        }
+//    }
+//    return result;
+//}
 
-//        public static void SaveObject(object source)
+
+//public static string Encrypt(string plainText)
+//{
+//    byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+//    byte[] keyBytes = new Rfc2898DeriveBytes(PasswordHash, Encoding.ASCII.GetBytes(SaltKey)).GetBytes(256 / 8);
+//    var symmetricKey = new RijndaelManaged() { Mode = CipherMode.CBC, Padding = PaddingMode.Zeros };
+//    var encryptor = symmetricKey.CreateEncryptor(keyBytes, Encoding.ASCII.GetBytes(VIKey));
+//    byte[] cipherTextBytes;
+
+//    using (var memoryStream = new MemoryStream())
+//    {
+//        using (var cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write))
 //        {
-//            var injectedFields = GetFieldsWithAttribute(source);
-
-//            foreach (var fieldAtt in injectedFields)
-//            {
-//                PersistantPrefsAttribute att = fieldAtt.Value;
-//                object fieldValue = fieldAtt.Key.GetValue(source);
-
-//                if (!IsValidSafeCheck(att.defaultVal, fieldValue))
-//                    return;
-
-//                string cryptKey = Encrypt(att.key);
-//                PlayerPrefs.SetString(Encrypt(att.key), Encrypt(fieldValue.ToString()));
-
-//                if (fieldValue is int)
-//                {
-//                    PlayerPrefs.SetInt(cryptKey, (int)fieldValue);
-//                }
-//                else if (fieldValue is float)
-//                {
-//                    PlayerPrefs.SetFloat(cryptKey, (float)fieldValue);
-//                }
-//                else if (fieldValue is string)
-//                {
-//                    PlayerPrefs.SetString(cryptKey, (string)fieldValue);
-//                }
-//                else if (fieldValue is bool)
-//                {
-//                    PlayerPrefs.SetInt(cryptKey, (bool)fieldValue ? 1 : 0);
-//                }
-//            }
+//            cryptoStream.Write(plainTextBytes, 0, plainTextBytes.Length);
+//            cryptoStream.FlushFinalBlock();
+//            cipherTextBytes = memoryStream.ToArray();
+//            cryptoStream.Close();
 //        }
+//        memoryStream.Close();
+//    }
+//    return Convert.ToBase64String(cipherTextBytes);
+//}
+//public static string Decrypt(string encryptedText)
+//{
+//    byte[] cipherTextBytes = Convert.FromBase64String(encryptedText);
+//    byte[] keyBytes = new Rfc2898DeriveBytes(PasswordHash, Encoding.ASCII.GetBytes(SaltKey)).GetBytes(256 / 8);
+//    var symmetricKey = new RijndaelManaged() { Mode = CipherMode.CBC, Padding = PaddingMode.None };
+//    var decryptor = symmetricKey.CreateDecryptor(keyBytes, Encoding.ASCII.GetBytes(VIKey));
+//    var memoryStream = new MemoryStream(cipherTextBytes);
+//    var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read);
+//    byte[] plainTextBytes = new byte[cipherTextBytes.Length];
 
-//        public static void LoadObject(object source)
-//        {
-//            var injectedFields = GetFieldsWithAttribute(source);
-//            int i = 0;
-//            foreach (var pair in injectedFields)
-//            {
-//                PersistantPrefsAttribute att = pair.Value;
-//                object fieldValue = pair.Key.GetValue(source);
-
-//                if (!IsValidSafeCheck(att.defaultVal, fieldValue))
-//                    return;
-
-//                bool hasDefault = att.defaultVal != null;
-//                object newValue = null;
-//                string cryptKey = Decrypt(att.key);
-//                newValue = Convert.ChangeType(PlayerPrefs.GetString(Decrypt(att.key)), fieldValue.GetType().TypeInitializer.DeclaringType);
-
-//                if (fieldValue is int)
-//                {
-//                    newValue = PlayerPrefs.GetInt(cryptKey, hasDefault ? (int)att.defaultVal : 0);
-//                }
-//                else if (fieldValue is float)
-//                {
-//                    newValue = PlayerPrefs.GetFloat(cryptKey, hasDefault ? (float)att.defaultVal : 0);
-//                }
-//                else if (fieldValue is string)
-//                {
-//                    newValue = PlayerPrefs.GetString(cryptKey, hasDefault ? (string)att.defaultVal : string.Empty);
-//                }
-//                else if (fieldValue is bool)
-//                {
-//                    newValue = PlayerPrefs.GetInt(cryptKey, hasDefault ? (int)att.defaultVal : 0) == 1 ? true : false;
-//                }
-
-//                pair.Key.SetValue(source, newValue);
-//            }
-//        }
-
-//        private static Dictionary<FieldInfo, PersistantPrefsAttribute> GetFieldsWithAttribute(object source)
-//        {
-//            FieldInfo[] fields = source.GetType().GetFields(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-//            int length = fields.Length;
-//            var dictionary = ReusableDictionary;
-
-//            for (int i = 0; i < length; i++)
-//            {
-//                if (IsFieldValid(fields[i]))
-//                {
-//                    dictionary[fields[i]] = (PersistantPrefsAttribute)fields[i].GetCustomAttributes(typeNeeded, false)[0];
-//                }
-//            }
-//            return dictionary;
-//        }
-
-//        private static bool IsFieldValid(FieldInfo field)
-//        {
-//            if (!IsTypeSupported(field.FieldType) || !field.IsDefined(typeNeeded, false))
-//                return false;
-//            return true;
-//        }
-
-//        private static bool IsTypeSupported(Type objType)
-//        {
-//            int supportTypesLength = supportTypes.Length;
-//            for (int i = 0; i < supportTypesLength; i++)
-//            {
-//                if (objType == supportTypes[i])
-//                {
-//                    return true;
-//                }
-//            }
-//            return false;
-//        }
-
-//        private static bool IsValidSafeCheck(object defaultValue, object fieldValue)
-//        {
-//            Type fieldType = fieldValue.GetType();
-//            if (IsTypeSupportedSafeCheck(fieldType))
-//            {
-//                if (defaultValue != null)
-//                {
-//                    return IsDefaultValueValidSafeCheck(defaultValue, fieldType);
-//                }
-//                return true;
-//            }
-//            return false;
-//        }
-
-//        private static bool IsTypeSupportedSafeCheck(Type objType)
-//        {
-//            if (IsTypeSupported(objType))
-//                return true;
-//            Debug.LogError("Only int/float/bool/string are supported!");
-//            return false;
-//        }
-
-//        private static bool IsDefaultValueValidSafeCheck(object defaultValue, Type shouldType)
-//        {
-//            if (defaultValue.GetType() == shouldType)
-//                return true;
-//            Debug.LogError("You're trying to set default value to field with different type");
-//            return false;
-//        }
-
-//        //private static string Decrypt(string encryptedString)
-//        //{
-//        //    string result;
-//        //    DESCryptoServiceProvider desProvider = new DESCryptoServiceProvider {
-//        //        Mode = CipherMode.ECB,
-//        //        Padding = PaddingMode.PKCS7,
-//        //        Key = Encoding.ASCII.GetBytes(saltKey)
-//        //    };
-//        //    using (MemoryStream stream = new MemoryStream(Convert.FromBase64String(encryptedString)))
-//        //    {
-//        //        using (CryptoStream cs = new CryptoStream(stream, desProvider.CreateDecryptor(), CryptoStreamMode.Read))
-//        //        {
-//        //            using (StreamReader sr = new StreamReader(cs, Encoding.ASCII))
-//        //            {
-//        //                result = sr.ReadToEnd();
-//        //            }
-//        //        }
-//        //    }
-//        //    return null;
-//        //}
-
-//        //private static string Encrypt(string plainText)
-//        //{
-//        //    string result;
-//        //    DESCryptoServiceProvider desProvider = new DESCryptoServiceProvider {
-//        //        Mode = CipherMode.ECB,
-//        //        Padding = PaddingMode.PKCS7,
-//        //        Key = Encoding.ASCII.GetBytes(saltKey)
-//        //    };
-//        //    using (MemoryStream stream = new MemoryStream())
-//        //    {
-//        //        using (CryptoStream cs = new CryptoStream(stream, desProvider.CreateEncryptor(), CryptoStreamMode.Write))
-//        //        {
-//        //            byte[] data = Encoding.Default.GetBytes(plainText);
-//        //            cs.Write(data, 0, data.Length);
-//        //            cs.FlushFinalBlock(); // <-- Add this
-//        //            result = Convert.ToBase64String(stream.ToArray());
-//        //        }
-//        //    }
-//        //    return result;
-//        //}
-
-
-//        //public static string Encrypt(string plainText)
-//        //{
-//        //    byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
-//        //    byte[] keyBytes = new Rfc2898DeriveBytes(PasswordHash, Encoding.ASCII.GetBytes(SaltKey)).GetBytes(256 / 8);
-//        //    var symmetricKey = new RijndaelManaged() { Mode = CipherMode.CBC, Padding = PaddingMode.Zeros };
-//        //    var encryptor = symmetricKey.CreateEncryptor(keyBytes, Encoding.ASCII.GetBytes(VIKey));
-//        //    byte[] cipherTextBytes;
-
-//        //    using (var memoryStream = new MemoryStream())
-//        //    {
-//        //        using (var cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write))
-//        //        {
-//        //            cryptoStream.Write(plainTextBytes, 0, plainTextBytes.Length);
-//        //            cryptoStream.FlushFinalBlock();
-//        //            cipherTextBytes = memoryStream.ToArray();
-//        //            cryptoStream.Close();
-//        //        }
-//        //        memoryStream.Close();
-//        //    }
-//        //    return Convert.ToBase64String(cipherTextBytes);
-//        //}
-//        //public static string Decrypt(string encryptedText)
-//        //{
-//        //    byte[] cipherTextBytes = Convert.FromBase64String(encryptedText);
-//        //    byte[] keyBytes = new Rfc2898DeriveBytes(PasswordHash, Encoding.ASCII.GetBytes(SaltKey)).GetBytes(256 / 8);
-//        //    var symmetricKey = new RijndaelManaged() { Mode = CipherMode.CBC, Padding = PaddingMode.None };
-//        //    var decryptor = symmetricKey.CreateDecryptor(keyBytes, Encoding.ASCII.GetBytes(VIKey));
-//        //    var memoryStream = new MemoryStream(cipherTextBytes);
-//        //    var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read);
-//        //    byte[] plainTextBytes = new byte[cipherTextBytes.Length];
-
-//        //    int decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
-//        //    memoryStream.Close();
-//        //    cryptoStream.Close();
-//        //    return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount).TrimEnd("\0".ToCharArray());
-//        //}
+//    int decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
+//    memoryStream.Close();
+//    cryptoStream.Close();
+//    return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount).TrimEnd("\0".ToCharArray());
+//}
 
 
 
-//        //public static string Encrypt(string toEncrypt, bool useHashing = true)
-//        //{
-//        //    byte[] keyArray;
-//        //    byte[] toEncryptArray = UTF8Encoding.UTF8.GetBytes(toEncrypt);
+//public static string Encrypt(string toEncrypt, bool useHashing = true)
+//{
+//    byte[] keyArray;
+//    byte[] toEncryptArray = UTF8Encoding.UTF8.GetBytes(toEncrypt);
 
-//        //    if (useHashing)
-//        //    {
-//        //        MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
-//        //        keyArray = hashmd5.ComputeHash(UTF8Encoding.UTF8.GetBytes(saltKey));
-//        //        hashmd5.Clear();
-//        //    }
-//        //    else
-//        //        keyArray = UTF8Encoding.UTF8.GetBytes(saltKey);
+//    if (useHashing)
+//    {
+//        MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
+//        keyArray = hashmd5.ComputeHash(UTF8Encoding.UTF8.GetBytes(saltKey));
+//        hashmd5.Clear();
+//    }
+//    else
+//        keyArray = UTF8Encoding.UTF8.GetBytes(saltKey);
 
-//        //    TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider {
-//        //        Key = keyArray,
-//        //        Mode = CipherMode.ECB,
-//        //        Padding = PaddingMode.PKCS7
-//        //    };
+//    TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider {
+//        Key = keyArray,
+//        Mode = CipherMode.ECB,
+//        Padding = PaddingMode.PKCS7
+//    };
 
-//        //    ICryptoTransform cTransform = tdes.CreateEncryptor();
-//        //    byte[] resultArray =
-//        //      cTransform.TransformFinalBlock(toEncryptArray, 0,
-//        //      toEncryptArray.Length);
-//        //    tdes.Clear();
-//        //    return Convert.ToBase64String(resultArray, 0, resultArray.Length);
-//        //}
+//    ICryptoTransform cTransform = tdes.CreateEncryptor();
+//    byte[] resultArray =
+//      cTransform.TransformFinalBlock(toEncryptArray, 0,
+//      toEncryptArray.Length);
+//    tdes.Clear();
+//    return Convert.ToBase64String(resultArray, 0, resultArray.Length);
+//}
 
-//        //public static string Decrypt(string cipherString, bool useHashing = true)
-//        //{
-//        //    byte[] keyArray;
-//        //    byte[] toEncryptArray = Convert.FromBase64String(cipherString);
+//public static string Decrypt(string cipherString, bool useHashing = true)
+//{
+//    byte[] keyArray;
+//    byte[] toEncryptArray = Convert.FromBase64String(cipherString);
 
-//        //    if (useHashing)
-//        //    {
-//        //        MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
-//        //        keyArray = hashmd5.ComputeHash(UTF8Encoding.UTF8.GetBytes(saltKey));
+//    if (useHashing)
+//    {
+//        MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
+//        keyArray = hashmd5.ComputeHash(UTF8Encoding.UTF8.GetBytes(saltKey));
 
-//        //        hashmd5.Clear();
-//        //    }
-//        //    else
-//        //    {
-//        //        keyArray = UTF8Encoding.UTF8.GetBytes(saltKey);
-//        //    }
+//        hashmd5.Clear();
+//    }
+//    else
+//    {
+//        keyArray = UTF8Encoding.UTF8.GetBytes(saltKey);
+//    }
 
-//        //    TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider {
-//        //        Key = keyArray,
-//        //        Mode = CipherMode.ECB,
-//        //        Padding = PaddingMode.PKCS7
-//        //    };
+//    TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider {
+//        Key = keyArray,
+//        Mode = CipherMode.ECB,
+//        Padding = PaddingMode.PKCS7
+//    };
 
-//        //    ICryptoTransform cTransform = tdes.CreateDecryptor();
-//        //    byte[] resultArray = cTransform.TransformFinalBlock(
-//        //                         toEncryptArray, 0, toEncryptArray.Length);
-//        //    tdes.Clear();
-//        //    return UTF8Encoding.UTF8.GetString(resultArray);
-//        //}
+//    ICryptoTransform cTransform = tdes.CreateDecryptor();
+//    byte[] resultArray = cTransform.TransformFinalBlock(
+//                         toEncryptArray, 0, toEncryptArray.Length);
+//    tdes.Clear();
+//    return UTF8Encoding.UTF8.GetString(resultArray);
+//}
 
-//        public void Test()
-//        {
-//            var str = "String to be encrypted";
-//            var password = "p@SSword";
-//            var strEncryptred = Cipher.Encrypt(str, password);
-//            var strDecrypted = Cipher.Decrypt(strEncryptred, password);
-//        }
+//public void Test()
+//{
+//    var str = "String to be encrypted";
+//    var password = "p@SSword";
+//    var strEncryptred = Cipher.Encrypt(str, password);
+//    var strDecrypted = Cipher.Decrypt(strEncryptred, password);
+//}
 //    }
 //}
 
