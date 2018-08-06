@@ -9,6 +9,8 @@ using System.Collections.Generic;
 
 namespace TPFramework.Core
 {
+    /* ---------------------------------------------------------------- Core ---------------------------------------------------------------- */
+
     public interface ITPUI
     {
         bool IsInitialized { get; }

@@ -11,9 +11,11 @@ using System.Runtime.CompilerServices;
 
 namespace TPFramework.Core
 {
+    /* ---------------------------------------------------------------- Core ---------------------------------------------------------------- */
+
     public interface ITPPersistant
     {
-        Type PersistantType { get; }
+        Type PersistantAttType { get; }
         HashSet<Type> SupportedTypes { get; }
         void SaveObject<T>(T source);
         void SaveObjects(params object[] objects);
@@ -21,6 +23,8 @@ namespace TPFramework.Core
         void LoadObjects(params object[] objects);
         bool IsTypeSupported(Type type);
     }
+
+    /* ---------------------------------------------------------------- Persistant Attribute ---------------------------------------------------------------- */
 
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
     public sealed class PersistantAttribute : Attribute
@@ -41,31 +45,57 @@ namespace TPFramework.Core
         public PersistantAttribute(string persistantKey) : this(persistantKey, null) { }
     }
 
+    /* ---------------------------------------------------------------- Abstract TPPersistant ---------------------------------------------------------------- */
+
     public abstract class TPPersistant : ITPPersistant
     {
-        public Type PersistantType { get { return typeof(PersistantAttribute); } }
+        public Type PersistantAttType { get { return typeof(PersistantAttribute); } }
         public HashSet<Type> SupportedTypes { get { return GetSupportedTypes(); } }
-     
-        protected static TPPersistant Instance { get;  set; }
-        
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void Save(params object[] sources) { Instance.SaveObjects(sources); }
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void Save<T>(T source) { Instance.SaveObject(source); }
-        
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static T Load<T>(T source) { return Instance.LoadObject(source); }
+        /// <summary> Instance of script that static Save/Load methods should get Values from </summary>
+        protected static TPPersistant Instance { get; set; }
 
+        /// <summary> Called on Save() for field with PersistantAttribute </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         protected abstract void SaveValue(PersistantAttribute attribute, object saveValue);
 
+        /// <summary> Called on Load() for field with PersistantAttribute </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        protected abstract object LoadValue(PersistantAttribute attribute, object objectValue, bool loadDefault);
+        protected abstract object LoadValue(PersistantAttribute attribute, object objectValue);
 
+        /// <summary> Returns Types that can be persistant </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         protected abstract HashSet<Type> GetSupportedTypes();
 
+        /// <summary> Looks for fields in sources with PersistantAttribute and saves them </summary>
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static void Save(params object[] sources)
+        {
+            Instance.SaveObjects(sources);
+        }
+
+        /// <summary> Looks for fields in source with PersistantAttribute and saves them </summary>
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static void Save<T>(T source)
+        {
+            Instance.SaveObject(source);
+        }
+
+        /// <summary> Looks for fields in source with PersistantAttribute and loads them </summary>
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static T Load<T>(T source)
+        {
+            return Instance.LoadObject(source);
+        }
+
+        /// <summary> Looks for fields in sources with PersistantAttribute and loads them </summary>
+        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        public static void Load(params object[] sources)
+        {
+            Instance.LoadObjects(sources);
+        }
+
+        /// <summary> Looks for fields in sources with PersistantAttribute and saves them </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public void SaveObjects(params object[] sources)
         {
@@ -76,6 +106,7 @@ namespace TPFramework.Core
             }
         }
 
+        /// <summary> Looks for fields in sources with PersistantAttribute and loads them </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public void LoadObjects(params object[] sources)
         {
@@ -86,6 +117,7 @@ namespace TPFramework.Core
             }
         }
 
+        /// <summary> Looks for fields in source with PersistantAttribute and saves them </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public void SaveObject<T>(T source)
         {
@@ -96,7 +128,7 @@ namespace TPFramework.Core
                 if (!IsFieldValid(fields[i]))
                     continue;
 
-                PersistantAttribute att = (PersistantAttribute)fields[i].GetCustomAttributes(PersistantType, false)[0];                
+                PersistantAttribute att = (PersistantAttribute)fields[i].GetCustomAttributes(PersistantAttType, false)[0];
                 object fieldValue = fields[i].GetValue(source);
 
                 if (!IsValid(att.DefaultValue, fieldValue))
@@ -106,6 +138,7 @@ namespace TPFramework.Core
             }
         }
 
+        /// <summary> Looks for fields in source with PersistantAttribute and loads them </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         public T LoadObject<T>(T source)
         {
@@ -116,27 +149,26 @@ namespace TPFramework.Core
                 if (!IsFieldValid(fields[i]))
                     continue;
 
-                PersistantAttribute att = (PersistantAttribute)fields[i].GetCustomAttributes(PersistantType, false)[0];
+                PersistantAttribute att = (PersistantAttribute)fields[i].GetCustomAttributes(PersistantAttType, false)[0];
                 object fieldValue = fields[i].GetValue(source);
 
                 if (!IsValid(att.DefaultValue, fieldValue))
                     continue;
 
-                bool hasDefault = att.DefaultValue != null;
-
 #if NET_2_0 || NET_2_0_SUBSET
-                fields[i].SetValue(source, LoadValue(att, fieldValue, hasDefault));
+                fields[i].SetValue(source, LoadValue(att, fieldValue));
 #else
                 fields[i].SetValueDirect(__makeref(source), LoadValue(att, fieldValue, hasDefault));
 #endif
             }
             return source;
         }
-        
+
+        /// <summary> Is field supported and has PersistantAttribute? </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         protected bool IsFieldValid(FieldInfo field)
         {
-            if (!IsTypeSupported(field.FieldType) || !field.IsDefined(PersistantType, false))
+            if (!IsTypeSupported(field.FieldType) || !field.IsDefined(PersistantAttType, false))
                 return false;
             return true;
         }
@@ -147,12 +179,14 @@ namespace TPFramework.Core
             return SupportedTypes.Contains(objType);
         }
 
+        /// <summary> Is default value type same as object type? </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         protected bool IsDefaultValueValid(object defaultValue, Type shouldType)
         {
             return defaultValue.GetType() == shouldType;
         }
 
+        /// <summary> Is field supported and has PersistantAttribute and default value is same type as object? </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
         protected bool IsValid(object defaultValue, object fieldValue)
         {

@@ -11,6 +11,8 @@ using System.Runtime.CompilerServices;
 
 namespace TPFramework.Core
 {
+    /* ---------------------------------------------------------------- Core ---------------------------------------------------------------- */
+
     internal interface ITPPackageManager
     {
         ITPPackage[] Packages { get; }
@@ -34,6 +36,8 @@ namespace TPFramework.Core
         bool Reload();
     }
 
+    /* ---------------------------------------------------------------- Framework Info ---------------------------------------------------------------- */
+
     internal struct TPFrameworkInfo
     {
         public const int PackagesLength = 15;
@@ -43,6 +47,8 @@ namespace TPFramework.Core
             get { return Directory.GetFiles(Environment.CurrentDirectory, "TP*Package.cs", SearchOption.AllDirectories); }
         }
     }
+
+    /* ---------------------------------------------------------------- Package Manager ---------------------------------------------------------------- */
 
     internal class TPPackageManager : ITPPackageManager
     {
@@ -86,6 +92,8 @@ namespace TPFramework.Core
             return unloadedPackages.ToArray();
         }
     }
+
+    /* ---------------------------------------------------------------- Packages ---------------------------------------------------------------- */
 
     internal struct TPAchievementPackage : ITPPackage
     {

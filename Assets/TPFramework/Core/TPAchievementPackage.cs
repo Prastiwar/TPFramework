@@ -8,6 +8,8 @@ using System;
 
 namespace TPFramework.Core
 {
+    /* ---------------------------------------------------------------- Core ---------------------------------------------------------------- */
+
     [Serializable]
     public struct TPAchievementData
     {
