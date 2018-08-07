@@ -69,7 +69,7 @@ namespace TPFramework.Core
 
         /// <summary> Looks for fields in sources with PersistantAttribute and saves them </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void Save(params object[] sources)
+        public static void SaveSources(params object[] sources)
         {
             Instance.SaveObjects(sources);
         }
@@ -90,7 +90,7 @@ namespace TPFramework.Core
 
         /// <summary> Looks for fields in sources with PersistantAttribute and loads them </summary>
         [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static void Load(params object[] sources)
+        public static void LoadSources(params object[] sources)
         {
             Instance.LoadObjects(sources);
         }

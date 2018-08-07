@@ -5,7 +5,6 @@
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
@@ -60,28 +59,6 @@ namespace TPFramework.Core
         public static int Range(int min, int max)
         {
             return random.Next(min, max);
-        }
-
-        /// <summary> Clamps value between min and max</summary>
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        private static float Clamp(float value, float min, float max)
-        {
-            if (value < min)
-                value = min;
-            else if (value > max)
-                value = max;
-            return value;
-        }
-
-        /// <summary> Clamps value between min and max</summary>
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        private static int Clamp(int value, int min, int max)
-        {
-            if (value < min)
-                value = min;
-            else if (value > max)
-                value = max;
-            return value;
         }
 
         // Example chances PickWithProbability(..)
@@ -219,15 +196,15 @@ namespace TPFramework.Core
 
             int[] chances = new int[length];
             int sum = 0;
-            max = Clamp(max, ((total / length) + 1), total);
-            min = Clamp(min, 0, total / length);
+            max = TPMath.Clamp(max, ((total / length) + 1), total);
+            min = TPMath.Clamp(min, 0, total / length);
 
             for (int index = 0; index < length; index++)
             {
                 int lessTotal = total - sum;
                 int counter = length - 1 - index;
-                int low = Clamp(lessTotal - (max * counter), min, max);
-                int high = Clamp(lessTotal - (min * counter), min, max);
+                int low = TPMath.Clamp(lessTotal - (max * counter), min, max);
+                int high = TPMath.Clamp(lessTotal - (min * counter), min, max);
 
                 chances[index] = Range(low, high + 1);
                 sum += chances[index];
@@ -271,5 +248,4 @@ namespace TPFramework.Core
             return sum;
         }
     }
-
 }

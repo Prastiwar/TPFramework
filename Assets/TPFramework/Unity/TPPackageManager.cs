@@ -117,22 +117,11 @@ namespace TPFramework.Internal
         internal const string MENU = "TPFramework/";
         internal static Core.TPPackageManager Manager { get; private set; }
 
-        private static readonly ITPPackage[] _TPPackages = new ITPPackage[TPFrameworkInfo.PackagesLength] {
-            new TPAchievementPackage(), // 0
-            new TPPersistencePackage(), // 1
-            new TPCollectionsPackage(), // 2
-            new TPExtensionsPackage(),  // 3
-            new TPObjectPoolPackage(),  // 4
-            new TPInventoryPackage(),   // 5
-            new TPAttributePackage(),   // 6
-            new TPSettingsPackage(),    // 7
-            new TPTooltipPackage(),     // 8
-            new TPRandomPackage(),      // 9
-            new TPEditorPackage(),      // 10
-            new TPAudioPackage(),       // 11
-            new TPAnimPackage(),        // 12
-            new TPFadePackage(),        // 13
-            new TPUIPackage(),          // 14
+        private static readonly ITPPackage[] overridePackages = new ITPPackage[] {
+            new TPObjectPoolPackage(), 
+            new TPSettingsPackage(),    
+            new TPTooltipPackage(),     
+            new TPUIPackage(),          
         };
 
         private static bool HasTMPro {
@@ -143,7 +132,7 @@ namespace TPFramework.Internal
 
         static TPPackageManager()
         {
-            Manager = new Core.TPPackageManager(_TPPackages, new TPDefineManager());
+            Manager = new Core.TPPackageManager(new TPDefineManager(), overridePackages);
             ReloadPackages();
             ((TPDefineManager)Manager.DefineManager).CheckFirstRun();
         }
@@ -167,7 +156,7 @@ namespace TPFramework.Internal
             {
                 for (int i = 0; i < unloadedPackages.Length; i++)
                 {
-                    Debug.Log(unloadedPackages[i].Name + "<color=red> was not found </color>");
+                    Debug.Log(unloadedPackages[i].FileName + "<color=red> was not found </color>");
                 }
                 Debug.Log("You can disable Package Logs in " + MENU + "/Disable Package Logs");
             }
@@ -176,30 +165,15 @@ namespace TPFramework.Internal
     }
 
 
-    internal struct TPObjectPoolPackage : ITPPackage
+    internal class TPObjectPoolPackage : Core.TPObjectPoolPackage
     {
-        public string Name { get { return "TPObjectPoolPackage"; } }
-        public bool IsLoaded { get; private set; }
-        public int Index { get { return 4; } }
-
         [MenuItem(TPPackageManager.MENU + TPDefineInfo.MenuMessage.TPObjectPoolSafeChecks, priority = 60)]
         private static void ToggleSafeChecks() { TPPackageManager.Manager.DefineManager.ToggleDefine(TPDefineInfo.TPObjectPoolSafety); }
-
-        public bool Reload()
-        {
-            IsLoaded = true;
-            return IsLoaded;
-        }
     }
 
-
-    internal struct TPSettingsPackage : ITPPackage
+    internal class TPSettingsPackage : Core.TPSettingsPackage
     {
-        public string Name { get { return "TPSettingsPackage"; } }
-        public bool IsLoaded { get; private set; }
-        public int Index { get { return 7; } }
-
-        public bool Reload()
+        public override bool Reload()
         {
             IsLoaded = true;
 
@@ -212,38 +186,16 @@ namespace TPFramework.Internal
         }
     }
 
-
-    internal struct TPTooltipPackage : ITPPackage
+    internal class TPTooltipPackage : Core.TPTooltipPackage
     {
-        public string Name { get { return "TPTooltipPackage"; } }
-        public bool IsLoaded { get; private set; }
-        public int Index { get { return 8; } }
-
         [MenuItem(TPPackageManager.MENU + TPDefineInfo.MenuMessage.TPTooltipSafeChecks, priority = 120)]
         private static void ToggleSafeChecks() { TPPackageManager.Manager.DefineManager.ToggleDefine(TPDefineInfo.TPTooltipSafety); }
-
-        public bool Reload()
-        {
-            IsLoaded = true;
-            return IsLoaded;
-        }
     }
 
-
-    internal struct TPUIPackage : ITPPackage
+    internal class TPUIPackage : Core.TPUIPackage
     {
-        public string Name { get { return "TPUIPackage"; } }
-        public bool IsLoaded { get; private set; }
-        public int Index { get { return 14; } }
-
         [MenuItem(TPPackageManager.MENU + TPDefineInfo.MenuMessage.TPUISafeChecks, priority = 160)]
         private static void ToggleSafeChecks() { TPPackageManager.Manager.DefineManager.ToggleDefine(TPDefineInfo.TPUISafety); }
-
-        public bool Reload()
-        {
-            IsLoaded = true;
-            return IsLoaded;
-        }
     }
 }
 #endif

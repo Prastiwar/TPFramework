@@ -33,6 +33,7 @@
 * ***TPAudio*** &nbsp;&nbsp;&nbsp;&nbsp; - *Manage your audio bundles easily*
 * ***TPAnim*** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- *Animate whatever you want*
 * ***TPFade*** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- *Fade between scenes*
+* ***TPMath*** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- *Math library*
 * ***TPUI*** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- *Generic UI Layout and much more*
 
 

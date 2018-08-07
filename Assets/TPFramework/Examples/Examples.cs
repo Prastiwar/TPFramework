@@ -169,7 +169,7 @@ public class Examples : MonoBehaviour
 
         int elLength = ex.GameObjects.Length;
         ex.ProbabilityElements = new ProbabilityElementInt<GameObject>[elLength];
-        int[] randomProbabilities = TPRandom.RandomProbabilities(elLength);
+        int[] randomProbabilities = TPFramework.Core.TPRandom.RandomProbabilities(elLength);
 
         DrawLine();
         for (int i = 0; i < elLength; i++)
@@ -223,7 +223,7 @@ public class Examples : MonoBehaviour
     {
         while (repeat >= 0)
         {
-            GameObject selectedObject = TPRandom.PickWithProbability(ex.ProbabilityElements);
+            GameObject selectedObject = TPFramework.Core.TPRandom.PickWithProbability(ex.ProbabilityElements);
             selectedObject.SetActive(!selectedObject.activeSelf);
             repeat--;
             yield return waitSecond;
@@ -252,7 +252,7 @@ public class Examples : MonoBehaviour
     {
         while (last >= 0)
         {
-            TPObjectPool.ToggleActive(ex.PoolKey, TPObjectState.Deactive, TPRandom.InsideUnitSquare() * 5, true);
+            TPObjectPool.ToggleActive(ex.PoolKey, TPObjectState.Deactive, TPFramework.Unity.TPRandom.InsideUnitSquare() * 5, true);
             last--;
             yield return waitSecond;
         }
