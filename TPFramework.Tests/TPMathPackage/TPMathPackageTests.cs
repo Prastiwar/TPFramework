@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TPFramework.Core;
 
 namespace TPFramework.Tests
 {
@@ -7,7 +7,7 @@ namespace TPFramework.Tests
     public class TPMathPackageTests
     {
         [TestMethod]
-        public void TestMethod1()
+        public void MathTests()
         {
         }
     }

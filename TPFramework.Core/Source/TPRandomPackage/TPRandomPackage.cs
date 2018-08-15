@@ -13,6 +13,8 @@ namespace TPFramework.Core
     public static class TPRandom
     {
         private static Random random = new Random();
+        private static readonly int[] signs = new int[3] { 0, 1, -1 };
+        private static readonly float[] signsProbability = new float[3] { 0.33f, 0.33f, 0.33f };
 
         /// <summary> Select between min [inclusive] and max [exclusive] </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -26,6 +28,12 @@ namespace TPFramework.Core
         public static int Range(int min, int max)
         {
             return random.Next(min, max);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int RandomSign(float probability = 0.5f)
+        {
+            return signs[PickWithProbability(signsProbability)];
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

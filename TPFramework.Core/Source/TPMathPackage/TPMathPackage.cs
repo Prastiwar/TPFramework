@@ -26,26 +26,85 @@ namespace TPFramework.Core
             return from + (to - from) * Clamp(percentage, 0f, 1f);
         }
 
-        /// <summary> Clamps value between min and max </summary>
+        /// <summary> Interpolates between from and to by percentage as angle - Clamp it between 0 and 1 </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float LerpAngle(float from, float to, float percentage)
+        {
+            float deltaAngle = DeltaAngle(from, to);
+            return from + deltaAngle * Clamp01(percentage);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static public float MoveTowards(float value, float targetValue, float maxDelta)
+        {
+            if (Math.Abs(targetValue - value) <= maxDelta)
+                return targetValue;
+            return value + Sign(targetValue - value) * maxDelta;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static public float MoveTowardsAngle(float value, float targetValue, float maxDelta)
+        {
+            float deltaAngle = DeltaAngle(value, targetValue);
+            if (-maxDelta < deltaAngle && deltaAngle < maxDelta)
+                return targetValue;
+            targetValue = value + deltaAngle;
+            return MoveTowards(value, targetValue, maxDelta);
+        }
+        
+        /// <summary> Loops value between 0 and length(exclusive) </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Repeat(float value, float length)
+        {
+            float repeatValue = value - Floor(value / length) * length;
+            return Clamp(repeatValue, 0.0f, length);
+        }
+        
+        /// <summary> PingPongs value between 0 and length </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float PingPong(float value, float length)
+        {
+            value = Repeat(value, length * 2f);
+            return length - Math.Abs(value - length);
+        }
+        
+        /// <summary> Returns the shortest difference between two angles </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float DeltaAngle(float from, float to)
+        {
+            float delta = Repeat((to - from), 360.0f);
+            if (delta > 180.0f)
+                delta -= 360.0f;
+            return delta;
+        }
+
+        /// <summary> Returns clamped value between min and max </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Clamp(float value, float min, float max)
         {
             if (value < min)
-                value = min;
+                return min;
             else if (value > max)
-                value = max;
+                return max;
             return value;
         }
 
-        /// <summary> Clamps value between min and max </summary>
+        /// <summary> Returns clamped value between min and max </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Clamp(int value, int min, int max)
         {
             if (value < min)
-                value = min;
+                return min;
             else if (value > max)
-                value = max;
+                return max;
             return value;
+        }
+
+        /// <summary> Shorthand to clamp normalized float value between 0 to 1 </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Clamp01(float value)
+        {
+            return Clamp(value, 0f, 1f);
         }
 
         /// <summary> Returns smallest integral value </summary>
