@@ -1,16 +1,8 @@
-[Ll]ibrary/
-[Tt]emp/
-[Oo]bj/
-[Bb]uild/
-[Bb]uilds/
-ProjectSettings/
-UnityPackageManager/
-Assets/AssetStoreTools*
 Test.cs
-TestScene.unity
 CodeMaid.*
-Assets/TextMesh Pro
-
+obj/
+bin/
+packages/
 
 # Visual Studio cache directory
 .vs/
@@ -19,7 +11,6 @@ Assets/TextMesh Pro
 ExportedObj/
 .consulo/
 *.csproj
-*.unityproj
 *.sln
 *.suo
 *.tmp
@@ -41,4 +32,3 @@ sysinfo.txt
 
 # Builds
 *.apk
-*.unitypackage
