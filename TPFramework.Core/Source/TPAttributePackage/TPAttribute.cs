@@ -56,7 +56,7 @@ namespace TPFramework.Core
                         break;
 
                     case ModifierType.Percentage:
-                        Value *= (1 + (Modifiers[i].Value > 1.0f ? (Modifiers[i].Value / 100) : Modifiers[i].Value));
+                        Value *= 1 + Modifiers[i].Value;
                         break;
                 }
             }

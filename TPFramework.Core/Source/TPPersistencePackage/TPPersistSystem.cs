@@ -13,8 +13,9 @@ namespace TPFramework.Core
 {
     public abstract class TPPersistSystem : ITPPersistSystem
     {
-        public Type PersistantAttType { get { return typeof(PersistantAttribute); } }
         public HashSet<Type> SupportedTypes { get { return GetSupportedTypes(); } }
+
+        protected Type PersistantAttType { get { return typeof(PersistantAttribute); } }
 
         /// <summary> Instance of script that static Save/Load methods should get Values from </summary>
         protected static TPPersistSystem Instance { get; set; }
@@ -124,6 +125,12 @@ namespace TPFramework.Core
             return source;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsTypeSupported(Type objType)
+        {
+            return SupportedTypes.Contains(objType);
+        }
+
         /// <summary> Is field supported and has PersistantAttribute? </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected bool IsFieldValid(FieldInfo field)
@@ -131,12 +138,6 @@ namespace TPFramework.Core
             if (!IsTypeSupported(field.FieldType) || !field.IsDefined(PersistantAttType, false))
                 return false;
             return true;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsTypeSupported(Type objType)
-        {
-            return SupportedTypes.Contains(objType);
         }
 
         /// <summary> Is default value type same as object type? </summary>

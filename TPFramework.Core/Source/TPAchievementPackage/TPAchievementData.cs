@@ -9,12 +9,12 @@ using System;
 namespace TPFramework.Core
 {
     [Serializable]
-    public struct TPAchievementData
+    public struct TPAchievementData : ITPAchievementData
     {
-        public string Title;
-        public string Description;
-        public float Points;
-        public float ReachPoints;
-        public bool IsCompleted;
+        public string Title       { get; set; }
+        public string Description { get; set; }
+        public float Points       { get; set; }
+        public float ReachPoints  { get; set; }
+        public bool IsCompleted   { get; set; }
     }
 }

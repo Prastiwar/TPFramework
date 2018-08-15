@@ -11,7 +11,7 @@ namespace TPFramework.Internal
 {
     internal struct TPFrameworkInfo
     {
-        public const int PackagesLength = 14;
+        public const int PackagesLength = 9;
         public const string TPCoreNamespace = "TPFramework.Core";
 
         public static string[] GetExistingPackagePaths {
@@ -28,13 +28,8 @@ namespace TPFramework.Internal
                     "TPObjectPoolPackage",
                     "TPInventoryPackage",
                     "TPAttributePackage",
-                    "TPTooltipPackage",
                     "TPRandomPackage",
-                    "TPAudioPackage",
-                    "TPAnimPackage",
-                    "TPFadePackage",
                     "TPMathPackage",
-                    "TPUIPackage"
                 };
             }
         }

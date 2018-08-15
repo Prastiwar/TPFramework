@@ -10,6 +10,7 @@ namespace TPFramework.Internal
     {
         void ToggleDefine(string define);
         void SetDefine(string define, bool enabled);
+
         bool IsDefined(string define);
     }
 }

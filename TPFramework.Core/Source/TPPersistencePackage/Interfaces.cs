@@ -11,7 +11,6 @@ namespace TPFramework.Core
 {
     public interface ITPPersistSystem
     {
-        Type PersistantAttType { get; }
         HashSet<Type> SupportedTypes { get; }
 
         void SaveObject<T>(T source);
