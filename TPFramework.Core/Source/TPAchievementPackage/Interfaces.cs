@@ -8,18 +8,6 @@ using System;
 
 namespace TPFramework.Core
 {
-    /* ---------------------------------------------------------------- Core ---------------------------------------------------------------- */
-
-    [Serializable]
-    public struct TPAchievementData
-    {
-        public string Title;
-        public string Description;
-        public float Points;
-        public float ReachPoints;
-        public bool IsCompleted;
-    }
-
     public interface ITPAchievement
     {
         TPAchievementData Data { get; }

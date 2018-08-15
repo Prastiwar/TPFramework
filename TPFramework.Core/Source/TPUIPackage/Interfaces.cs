@@ -4,10 +4,17 @@
 *   Repository: https://github.com/Prastiwar/TPFramework 
 */
 
-using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace TPFramework.Core
 {
+    public interface ITPUI
+    {
+        void Initialize();
+        void SetActive(bool enable);
 
+        bool IsInitialized { get; }
+        bool IsActive();
+    }
 }

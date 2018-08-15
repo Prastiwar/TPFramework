@@ -16,21 +16,21 @@ namespace TPFramework.Core
     {
         /* --------------------------------------------------------------- Utility --------------------------------------------------------------- */
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SafeInvoke(this Action action)
         {
             if (action != null)            
                 action();
         }
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SafeInvoke<T>(this Action<T> action, T obj)
         {
             if (action != null)
                 action(obj);
         }
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SafeInvoke<T1, T2>(this Action<T1, T2> action, T1 obj, T2 obj2)
         {
             if (action != null)
@@ -39,7 +39,7 @@ namespace TPFramework.Core
 
 #if NET_2_0 || NET_2_0_SUBSET
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static System.Collections.IEnumerator DelayAction(float delay, Action action)
         {
             while (delay-- >= 0)
@@ -49,7 +49,7 @@ namespace TPFramework.Core
         }
 
 #else
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static async void DelayAction(float delay, Action action)
         {
             await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(delay));
@@ -60,7 +60,7 @@ namespace TPFramework.Core
 
         /* --------------------------------------------------------------- Primitives --------------------------------------------------------------- */
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsOutOfBounds<T>(this int integer, IEnumerable<T> collection)
         {
             if (integer < 0 || integer >= collection.Count())
@@ -69,7 +69,7 @@ namespace TPFramework.Core
         }
 
         /// <summary> Returns if integer is out of min(exclusive) and max(inclusive) </summary>
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsOutOfBounds<T>(this int integer, int min, int max)
         {
             if (integer < min || integer >= max)
@@ -77,13 +77,13 @@ namespace TPFramework.Core
             return false;
         }
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int ToInt(this bool boolean)
         {
             return boolean ? 1 : 0;
         }
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool ToBool(this int integer)
         {
             return integer > 0;
@@ -91,7 +91,7 @@ namespace TPFramework.Core
 
         /* --------------------------------------------------------------- Collection --------------------------------------------------------------- */
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SortReverse(this List<int> integers)
         {
             int count = integers.Count;
@@ -106,7 +106,7 @@ namespace TPFramework.Core
             }
         }
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int[] SortReverse(this int[] integers)
         {
             int count = integers.Length;
@@ -122,7 +122,7 @@ namespace TPFramework.Core
             return integers;
         }
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static List<float> SortReverse(this List<float> floats)
         {
             int count = floats.Count;
@@ -138,7 +138,7 @@ namespace TPFramework.Core
             return floats;
         }
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float[] SortReverse(this float[] floats)
         {
             int count = floats.Length;
@@ -154,19 +154,19 @@ namespace TPFramework.Core
             return floats;
         }
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T Last<T>(this List<T> list)
         {
             return list[list.Count - 1];
         }
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T Last<T>(this T[] list)
         {
             return list[list.Length - 1];
         }
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Sum(this int[] integers)
         {
             int sum = 0;
@@ -176,7 +176,7 @@ namespace TPFramework.Core
             return sum;
         }
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Sum(this float[] floatings)
         {
             float sum = 0;
@@ -186,7 +186,7 @@ namespace TPFramework.Core
             return sum;
         }
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Sum(this int[] integers, int length)
         {
             int sum = 0;
@@ -195,7 +195,7 @@ namespace TPFramework.Core
             return sum;
         }
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Sum(this float[] floatings, int length)
         {
             float sum = 0;
@@ -204,7 +204,7 @@ namespace TPFramework.Core
             return sum;
         }
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Sum(this List<int> integers)
         {
             int sum = 0;
@@ -214,7 +214,7 @@ namespace TPFramework.Core
             return sum;
         }
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Sum(this List<float> floatings)
         {
             float sum = 0;
@@ -224,7 +224,7 @@ namespace TPFramework.Core
             return sum;
         }
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Sum(this List<int> integers, int length)
         {
             int sum = 0;
@@ -233,7 +233,7 @@ namespace TPFramework.Core
             return sum;
         }
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Sum(this List<float> floatings, int length)
         {
             float sum = 0;
@@ -244,13 +244,13 @@ namespace TPFramework.Core
 
         /* --------------------------------------------------------------- Reflection --------------------------------------------------------------- */
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool HasNamespace(this Type type, string nameSpace)
         {
             return type.IsClass && type.Namespace != null && type.Namespace.Contains(nameSpace);
         }
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T GetSingleCustomAttribute<T>(this FieldInfo fieldInfo, bool inherited = false) where T : Attribute
         {
             Type type = typeof(T);
@@ -261,7 +261,7 @@ namespace TPFramework.Core
             return null;
         }
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryGetCustomAttribute<T>(this FieldInfo fieldInfo, out T attribute, bool inherited = false) where T : Attribute
         {
             Type type = typeof(T);

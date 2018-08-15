@@ -10,72 +10,44 @@ using System.Runtime.CompilerServices;
 
 namespace TPFramework.Core
 {
-    /* ---------------------------------------------------------------- Core ---------------------------------------------------------------- */
-
-    /// <summary> Struct holds probability of int and element of T which can be returned in PickWithProbability </summary>
-    /// <typeparam name="T"> Element can be returned if selected in Pick </typeparam>
-    [Serializable]
-    public struct ProbabilityElementInt<T>
-    {
-        public T Element;
-        public int Probability;
-
-        public ProbabilityElementInt(T element, int probability)
-        {
-            Element = element;
-            Probability = probability;
-        }
-    }
-
-    /// <summary> Struct holds probability of float and element of T which can be returned in PickWithProbability </summary>
-    /// <typeparam name="T"> Element can be returned if selected in Pick </typeparam>
-    [Serializable]
-    public struct ProbabilityElementFloat<T>
-    {
-        public T Element;
-        public float Probability;
-
-        public ProbabilityElementFloat(T element, float probability)
-        {
-            Element = element;
-            Probability = probability;
-        }
-    }
-
-
     public static class TPRandom
     {
         private static Random random = new Random();
 
         /// <summary> Select between min [inclusive] and max [exclusive] </summary>
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Range(float min, float max)
         {
             return (float)(random.NextDouble() * (max - min)) + min;
         }
 
         /// <summary> Select between min [inclusive] and max [exclusive] </summary>
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Range(int min, int max)
         {
             return random.Next(min, max);
         }
 
-        // Example chances PickWithProbability(..)
-        // [0] - 65
-        // [1] - 15
-        // [2] - 10
-        // [3] - 10
-        // x = dice from 0 to 100
-        //              x < 65
-        //           x-65 < 15
-        //      (x-65)-10 < 10
-        // ((x-65)-10)-10 < 10
-        // dice e.g = 65 - select [1]
-        // dice e.g = 43 - select [0]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool RandomBool(float probability = 0.5f)
+        {
+            return Range(0f, 1f) < probability;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T RandomElement<T>(List<T> collection)
+        {
+            return collection[Range(0, collection.Count)];
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T RandomElement<T>(T[] collection)
+        {
+            return collection[Range(0, collection.Length)];
+        }
 
         /// <summary> Returns selected element of probability </summary>
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T PickWithProbability<T>(params ProbabilityElementInt<T>[] elements)
         {
             int length = elements.Length;
@@ -93,7 +65,7 @@ namespace TPFramework.Core
         }
 
         /// <summary> Returns selected element of probability </summary>
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T PickWithProbability<T>(params ProbabilityElementFloat<T>[] elements)
         {
             int length = elements.Length;
@@ -110,8 +82,8 @@ namespace TPFramework.Core
             return elements[length - 1].Element;
         }
 
-        /// <summary> Returns selected index of probability </summary>
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        /// <summary> Returns selected index of probabilities </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int PickWithProbability(params int[] probabilities)
         {
             int length = probabilities.Length;
@@ -128,8 +100,8 @@ namespace TPFramework.Core
             return length - 1;
         }
 
-        /// <summary> Returns selected index of probability </summary>
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        /// <summary> Returns selected index of probabilities </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int PickWithProbability(params float[] probabilities)
         {
             int length = probabilities.Length;
@@ -147,7 +119,7 @@ namespace TPFramework.Core
         }
 
         /// <summary> Returns int array of random probabilities sorted from high to low </summary>
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int[] RandomProbabilitiesDescent(int length, int total, int min, int max)
         {
             int[] chances = RandomProbabilitiesAscent(length, total, min, max);
@@ -156,7 +128,7 @@ namespace TPFramework.Core
         }
 
         /// <summary> Returns int array of random probabilities sorted from low to high </summary>
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int[] RandomProbabilitiesAscent(int length, int total, int min, int max)
         {
             int[] chances = RandomProbabilities(length, total, min, max);
@@ -165,7 +137,7 @@ namespace TPFramework.Core
         }
 
         /// <summary> Returns int array of random probabilities sorted from low to high </summary>
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int[] RandomProbabilitiesAscent(int length, int min, int max)
         {
             int[] chances = new int[length];
@@ -176,7 +148,7 @@ namespace TPFramework.Core
         }
 
         /// <summary> Returns int array of random probabilities sorted from high to low </summary>
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int[] RandomProbabilitiesDescent(int length, int min, int max)
         {
             int[] chances = RandomProbabilitiesAscent(length, min, max);
@@ -184,7 +156,8 @@ namespace TPFramework.Core
             return chances;
         }
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        /// <summary> Returns int array of random total probabilities from min to max </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int[] RandomProbabilities(int length, int total = 100, int min = 1, int max = 100)
         {
             if ((max * length) < total)
@@ -212,25 +185,7 @@ namespace TPFramework.Core
             return chances;
         }
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static bool RandomBool(float probability = 0.5f)
-        {
-            return Range(0f, 1f) < probability;
-        }
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static T RandomElement<T>(List<T> collection)
-        {
-            return collection[Range(0, collection.Count)];
-        }
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
-        public static T RandomElement<T>(T[] collection)
-        {
-            return collection[Range(0, collection.Length)];
-        }
-
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int Sum<T>(ProbabilityElementInt<T>[] elements, int length)
         {
             int sum = 0;
@@ -239,7 +194,7 @@ namespace TPFramework.Core
             return sum;
         }
 
-        [MethodImpl((MethodImplOptions)0x100)] // agressive inline
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static float Sum<T>(ProbabilityElementFloat<T>[] elements, int length)
         {
             float sum = 0;
