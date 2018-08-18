@@ -1,52 +1,60 @@
 ﻿/**
 *   Authored by Tomasz Piowczyk
 *   License: https://github.com/Prastiwar/TPFramework/blob/master/LICENSE
-*   Repository: https://github.com/Prastiwar/TPFramework 
+*   Repository: https://github.com/Prastiwar/TPFramework
 */
 
 using System;
+using System.Runtime.CompilerServices;
 
 namespace TPFramework.Core
 {
+    [Serializable]
     public class TPItemSlot : ITPItemSlot
     {
         public int Type { get; protected set; }
         public ITPItem HoldItem { get; protected set; }
-        public bool IsEquipSlot { get; protected set; }
 
-        public bool TryMoveItem(ITPItemSlot targetSlot)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public virtual bool TryMoveItem(ITPItemSlot targetSlot)
         {
-            throw new NotImplementedException();
+            if (targetSlot.CanHoldItem(HoldItem))
+            {
+                HoldItem = targetSlot.SwitchItem(HoldItem);
+                HoldItem?.OnMoved?.Invoke();
+                return true;
+            }
+            HoldItem?.OnFailMoved?.Invoke();
+            return false;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public virtual ITPItem SwitchItem(ITPItem item)
+        {
+            ITPItem returnItem = HoldItem ?? null;
+            HoldItem = item;
+            HoldItem?.OnMoved?.Invoke();
+            return returnItem;
+        }
+
+        /// <summary> Checks for place in stack and type match </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool CanHoldItem(ITPItem item)
         {
-            if (HoldItem == null && TypeMatch(item))
-                return true;
-            else if (HoldItem == null && !TypeMatch(item))
-                return false;
-            //return HoldItem.MaxStack;
-            return true;
+            return !IsFull() && TypeMatch(item);
         }
 
+        /// <summary> Is type of item same as slot type? </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TypeMatch(ITPItem item)
         {
             return item.Type == Type;
         }
 
-        public bool IsOverloaded()
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsFull()
         {
-            return true;
-        }
-
-        public static bool operator ==(TPItemSlot v1, TPItemSlot v2)
-        {
-            return v1.Type == v2.Type && v1.IsEquipSlot && v2.IsEquipSlot;
-        }
-
-        public static bool operator !=(TPItemSlot v1, TPItemSlot v2)
-        {
-            return !(v1 == v2);
+            return HoldItem != null && HoldItem.AmountStack >= HoldItem.MaxStack;
         }
     }
 }

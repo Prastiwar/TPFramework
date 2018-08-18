@@ -13,19 +13,19 @@ namespace TPFramework.Core
     [Serializable]
     public class TPModifierList<T> : ITPModifierList<T> where T : ITPModifier
     {
+        private readonly Action onChanged;
         private readonly ReusableList<T> reusableModifiers;
         protected virtual List<T> Modifiers { get; set; }
 
         public float Count { get { return Modifiers.Count; } }
-        public ITPAttribute<T> Attribute { get; protected set; }
 
         public T this[int index] { get { return Modifiers[index]; } }
 
-        public TPModifierList(ITPAttribute<T> attribute, int capacity = 10)
+        public TPModifierList(Action onChanged, int capacity = 10)
         {
             Modifiers = new List<T>(capacity);
             reusableModifiers = new ReusableList<T>(4);
-            Attribute = attribute;
+            this.onChanged = onChanged;
         }
 
         /// <summary> Adds modifier and recalculates Value </summary>
@@ -33,7 +33,7 @@ namespace TPFramework.Core
         public void Add(T modifier)
         {
             Modifiers.Add(modifier);
-            Attribute.Recalculate();
+            onChanged();
         }
 
         /// <summary> If modifier exist - remove it and recalculate Value </summary>
@@ -42,7 +42,7 @@ namespace TPFramework.Core
         {
             if (Modifiers.Remove(modifier))
             {
-                Attribute.Recalculate();
+                onChanged();
                 return true;
             }
             return false;
@@ -53,7 +53,7 @@ namespace TPFramework.Core
         public void RemoveModifiers()
         {
             Modifiers.Clear();
-            Attribute.Recalculate();
+            onChanged();
         }
 
         /// <summary> Removes all modifiers from source, recalculates Value </summary>
@@ -68,7 +68,7 @@ namespace TPFramework.Core
                     i--;
                 }
             }
-            Attribute.Recalculate();
+            onChanged();
         }
 
         /// <summary> Get first modifier from source </summary>
@@ -123,6 +123,7 @@ namespace TPFramework.Core
             if (index >= 0)
             {
                 Modifiers[index] = newModifier;
+                onChanged();
                 return true;
             }
             return false;

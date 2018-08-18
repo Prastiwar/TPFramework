@@ -11,7 +11,14 @@ namespace TPFramework.Core
 {
     /// <summary> Wrapper for TPAttribute<TPModifierList<TPModifier>, TPModifier> </summary>
     [Serializable]
-    public class TPAttribute : TPAttribute<TPModifierList<TPModifier>, TPModifier> { }
+    public class TPAttribute : TPAttribute<TPModifierList<TPModifier>, TPModifier>
+    {
+        public TPAttribute()
+        {
+            Modifiers = Modifiers ?? new TPModifierList<TPModifier>(Recalculate);
+            OnChanged = OnChanged ?? delegate { };
+        }
+    }
 
     [Serializable]
     public class TPAttribute<TModList, TModfifier> : ITPAttribute<TModfifier>

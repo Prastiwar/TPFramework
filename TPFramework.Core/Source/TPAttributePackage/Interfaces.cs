@@ -34,7 +34,6 @@ namespace TPFramework.Core
 
     public interface ITPModifierList<T> where T : ITPModifier
     {
-        ITPAttribute<T> Attribute { get; }
         T this[int index] { get; }
         float Count { get; }
         void Add(T modifier);
