@@ -23,6 +23,7 @@ namespace TPFramework.Core
             return false;
         }
 
+        /// <summary> Holds given item and returns the old one </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override ITPItem SwitchItem(ITPItem item)
         {
@@ -30,6 +31,21 @@ namespace TPFramework.Core
             HoldItem = item;
             HoldItem?.OnEquipped?.Invoke();
             return returnItem;
+        }
+
+        /// <summary> Returns opposite Slot (ItemSlot-EquipSlot) that can hold HoldItem </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override ITPItemSlot FindFreeOppositeSlot(ITPItemSlot[] slots)
+        {
+            int length = slots.Length;
+            for (int i = 0; i < length; i++)
+            {
+                if (slots[i].CanHoldItem(HoldItem) && !(slots[i] is ITPEquipSlot))
+                {
+                    return slots[i];
+                }
+            }
+            return null;
         }
     }
 }

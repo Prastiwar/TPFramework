@@ -5,6 +5,7 @@
 */
 
 using System;
+using System.Runtime.CompilerServices;
 
 namespace TPFramework.Core
 {
@@ -29,6 +30,7 @@ namespace TPFramework.Core
         public Action OnEquipped { get; protected set; }
         public Action OnUnEquipped { get; protected set; }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void Use()
         {
             AmountStack--;
