@@ -41,5 +41,22 @@ namespace TPFramework.Core
             }
             OnUsed();
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public virtual bool Stack(int count = 1)
+        {
+            if (CanStack(count))
+            {
+                AmountStack += count;
+                return true;
+            }
+            return false;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public virtual bool CanStack(int count = 1)
+        {
+            return AmountStack + count <= MaxStack;
+        }
     }
 }

@@ -11,7 +11,7 @@ namespace TPFramework.Core
     public class TPItemEquipSlot : TPItemSlot, ITPEquipSlot
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override bool TryMoveItem(ITPItemSlot targetSlot)
+        public override bool MoveItem(ITPItemSlot targetSlot)
         {
             if (targetSlot.CanHoldItem(HoldItem))
             {

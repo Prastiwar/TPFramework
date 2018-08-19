@@ -25,7 +25,7 @@ namespace TPFramework.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual bool TryMoveItem(ITPItemSlot targetSlot)
+        public virtual bool MoveItem(ITPItemSlot targetSlot)
         {
             if (targetSlot.CanHoldItem(HoldItem))
             {

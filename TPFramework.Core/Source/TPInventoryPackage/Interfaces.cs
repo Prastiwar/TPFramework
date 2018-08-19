@@ -8,7 +8,7 @@ using System;
 
 namespace TPFramework.Core
 {
-    public interface IItemCallbacks
+    public interface ITPItemCallbacks
     {
         Action OnUsed { get; }
         Action OnMoved { get; }
@@ -17,7 +17,7 @@ namespace TPFramework.Core
         Action OnUnEquipped { get; }
     }
 
-    public interface ITPItem : IItemCallbacks
+    public interface ITPItemData
     {
         int ID { get; }
         int Type { get; }
@@ -29,8 +29,12 @@ namespace TPFramework.Core
         float Weight { get; }
         ITPModifier[] Modifiers { get; }
         ITPItemSlot OnSlot { get; }
+    }
 
+    public interface ITPItem : ITPItemCallbacks, ITPItemData
+    {
         void Use();
+        bool Stack(int count = 1);
     }
 
     public interface ITPItemSlot
@@ -39,7 +43,7 @@ namespace TPFramework.Core
         ITPItem HoldItem { get; }
 
         ITPItem SwitchItem(ITPItem item);
-        bool TryMoveItem(ITPItemSlot targetSlot);
+        bool MoveItem(ITPItemSlot targetSlot);
         bool CanHoldItem(ITPItem item);
         bool TypeMatch(ITPItem item);
         bool IsFull();
@@ -53,7 +57,8 @@ namespace TPFramework.Core
         ITPItemSlot[] ItemSlots { get; }
         bool IsFull { get; }
 
+        bool AddItem(ITPItem item);
         bool HasEmptySlot(int type = 0);
-        bool HasItem(ITPItem item)
+        bool HasItem(int itemID);
     }
 }
