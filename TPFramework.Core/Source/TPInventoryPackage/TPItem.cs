@@ -11,6 +11,12 @@ namespace TPFramework.Core
 {
     public class TPItem : ITPItem
     {
+        public Action OnUsed { get; protected set; }
+        public Action OnMoved { get; protected set; }
+        public Action OnFailMoved { get; protected set; }
+        public Action OnEquipped { get; protected set; }
+        public Action OnUnEquipped { get; protected set; }
+
         public int ID { get; protected set; }
         public int Type { get; protected set; }
 
@@ -20,15 +26,10 @@ namespace TPFramework.Core
 
         public int AmountStack { get; protected set; }
         public int MaxStack { get; protected set; }
+        public float Weight { get; protected set; }
 
         public ITPModifier[] Modifiers { get; protected set; }
         public ITPItemSlot OnSlot { get; protected set; }
-
-        public Action OnUsed { get; protected set; }
-        public Action OnMoved { get; protected set; }
-        public Action OnFailMoved { get; protected set; }
-        public Action OnEquipped { get; protected set; }
-        public Action OnUnEquipped { get; protected set; }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void Use()

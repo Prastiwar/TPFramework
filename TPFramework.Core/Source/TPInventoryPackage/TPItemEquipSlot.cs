@@ -17,35 +17,18 @@ namespace TPFramework.Core
             {
                 HoldItem.OnUnEquipped?.Invoke();
                 HoldItem = targetSlot.SwitchItem(HoldItem);
+                HoldItem?.OnEquipped?.Invoke();
                 return true;
             }
             HoldItem?.OnFailMoved?.Invoke();
             return false;
         }
 
-        /// <summary> Holds given item and returns the old one </summary>
+        /// <summary> Checks if given slot is opposite of this slot </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override ITPItem SwitchItem(ITPItem item)
+        public override bool IsSlotOpposite(ITPItemSlot slot)
         {
-            ITPItem returnItem = HoldItem ?? null;
-            HoldItem = item;
-            HoldItem?.OnEquipped?.Invoke();
-            return returnItem;
-        }
-
-        /// <summary> Returns opposite Slot (ItemSlot-EquipSlot) that can hold HoldItem </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override ITPItemSlot FindFreeOppositeSlot(ITPItemSlot[] slots)
-        {
-            int length = slots.Length;
-            for (int i = 0; i < length; i++)
-            {
-                if (slots[i].CanHoldItem(HoldItem) && !(slots[i] is ITPEquipSlot))
-                {
-                    return slots[i];
-                }
-            }
-            return null;
+            return !(slot is ITPEquipSlot);
         }
     }
 }

@@ -36,9 +36,49 @@ namespace TPFramework.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Last<T>(this T[] list)
+        public static T Last<T>(this T[] array)
         {
-            return list[list.Length - 1];
+            return array[array.Length - 1];
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T Find<T>(this T[] array, Predicate<T> match)
+        {
+            int length = array.Length;
+            for (int i = 0; i < length; i++)
+            {
+                if (match(array[i]))
+                {
+                    return array[i];
+                }
+            }
+            return default(T);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int FindIndex<T>(this T[] array, int startIndex, int count, Predicate<T> match)
+        {
+            int endIndex = startIndex + count;
+            for (int i = startIndex; i < endIndex; i++)
+            {
+                if (match(array[i]))
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int FindIndex<T>(this T[] array, int startIndex, Predicate<T> match)
+        {
+            return FindIndex(array, startIndex, array.Length - startIndex, match);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int FindIndex<T>(this T[] array, Predicate<T> match)
+        {
+            return FindIndex(array, 0, array.Length, match);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

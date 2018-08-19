@@ -26,8 +26,11 @@ namespace TPFramework.Core
         double Worth { get; }
         int AmountStack { get; }
         int MaxStack { get; }
+        float Weight { get; }
         ITPModifier[] Modifiers { get; }
         ITPItemSlot OnSlot { get; }
+
+        void Use();
     }
 
     public interface ITPItemSlot
@@ -35,12 +38,22 @@ namespace TPFramework.Core
         int Type { get; }
         ITPItem HoldItem { get; }
 
+        ITPItem SwitchItem(ITPItem item);
         bool TryMoveItem(ITPItemSlot targetSlot);
         bool CanHoldItem(ITPItem item);
-        ITPItem SwitchItem(ITPItem item);
+        bool TypeMatch(ITPItem item);
+        bool IsFull();
+        bool IsEmpty();
     }
 
-    public interface ITPEquipSlot : ITPItemSlot
+    public interface ITPEquipSlot : ITPItemSlot { }
+
+    public interface ITPInventory
     {
+        ITPItemSlot[] ItemSlots { get; }
+        bool IsFull { get; }
+
+        bool HasEmptySlot(int type = 0);
+        bool HasItem(ITPItem item)
     }
 }
