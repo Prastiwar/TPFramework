@@ -18,7 +18,7 @@ namespace TPFramework.Core
         public int Priority { get; private set; }
 
         public TPModifier(ModifierType type, float value, object source) : this(type, value, (int)type, source) { }
-        public TPModifier(ModifierType tye, float value, int priority) : this(tye, value, priority, null) { }
+        public TPModifier(ModifierType type, float value, int priority) : this(type, value, priority, null) { }
         public TPModifier(ModifierType type, float value) : this(type, value, (int)type, null) { }
         public TPModifier(ModifierType type, float value, int priority, object source)
         {

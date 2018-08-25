@@ -20,7 +20,7 @@ namespace TPFramework.Core
 
         /// <summary> Returns if integer is out of min(exclusive) and max(inclusive) </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsOutOfBounds<T>(this int integer, int min, int max)
+        public static bool IsOutOfBounds(this int integer, int min, int max)
         {
             return integer < min || integer >= max;
         }

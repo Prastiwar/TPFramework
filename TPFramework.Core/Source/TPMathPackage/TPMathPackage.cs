@@ -28,7 +28,7 @@ namespace TPFramework.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float MoveTowards(float value, float targetValue, float maxStep)
+        public static float StepTowards(float value, float targetValue, float maxStep)
         {
             float direction = targetValue - value;
             if (Math.Abs(direction) <= maxStep)
@@ -37,13 +37,13 @@ namespace TPFramework.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float MoveTowardsAngle(float value, float targetValue, float maxDelta)
+        public static float StepTowardsAngle(float value, float targetValue, float maxDelta)
         {
             float deltaAngle = DeltaAngle(value, targetValue);
             if (-maxDelta < deltaAngle && deltaAngle < maxDelta)
                 return targetValue;
             targetValue = value + deltaAngle;
-            return MoveTowards(value, targetValue, maxDelta);
+            return StepTowards(value, targetValue, maxDelta);
         }
 
         /// <summary> Returns the shortest difference between two angles </summary>
@@ -99,7 +99,7 @@ namespace TPFramework.Core
             return Clamp(value, 0f, 1f);
         }
 
-        /// <summary> Normalizes value to 0f-1f range </summary>
+        /// <summary> Normalizes value between 0 and maxValue to 0f-1f range </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Normalize(float value, float maxValue)
         {
@@ -111,6 +111,14 @@ namespace TPFramework.Core
         public static float Normalize(float value, float minValue, float maxValue)
         {
             return (value - minValue) / (maxValue - minValue);
+        }
+
+        /// <summary> Normalizes value between 0 and maxValue to minNormalize - maxNormalize range </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Normalize(float value, float maxValue, float minNormalize, float maxNormalize)
+        {
+            float nomalizedNormalize = maxNormalize - minNormalize;
+            return ((nomalizedNormalize * value) / maxValue) + minNormalize;
         }
 
         /// <summary> Normalizes value between minValue to maxValue to minNormalize - maxNormalize range </summary>

@@ -35,9 +35,14 @@ namespace TPFramework.Core
     public interface ITPModifierList<T> where T : ITPModifier
     {
         T this[int index] { get; }
-        float Count { get; }
+        int Count { get; }
         void Add(T modifier);
+
         bool Remove(T modifier);
+        void RemoveModifiers();
+        void RemoveModifiers(object source);
+
+        bool ChangeModifier(T modifier, T newModifier);
         bool HasModifier(T modifier);
         int Compare(T mod1, T mod2);
         void Sort();

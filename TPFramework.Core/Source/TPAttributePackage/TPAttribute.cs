@@ -20,6 +20,12 @@ namespace TPFramework.Core
                 Modifiers = new TPModifierList<TPModifier>(Recalculate);
             }
         }
+
+        public TPAttribute(int baseValue) : this()
+        {
+            BaseValue = baseValue;
+            Value = BaseValue;
+        }
     }
 
     [Serializable]
@@ -27,17 +33,27 @@ namespace TPFramework.Core
         where TModList : ITPModifierList<TModfifier>
         where TModfifier : ITPModifier
     {
-        /// <summary> Base value without any modifier </summary>
-        public float BaseValue { get; set; }
+        private float baseValue;
 
         /// <summary> Calculated value with all modifiers </summary>
         public float Value { get; protected set; }
 
         /// <summary> List collection of modifiers </summary>
-        public ITPModifierList<TModfifier> Modifiers { get; protected set; }
+        public TModList Modifiers { get; protected set; }
 
         /// <summary> Called after Recalculate </summary>
         public Action<float> OnChanged { get; protected set; }
+
+        /// <summary> Base value without any modifier </summary>
+        public float BaseValue {
+            get { return baseValue; }
+            set {
+                baseValue = value;
+                Recalculate();
+            }
+        }
+
+        ITPModifierList<TModfifier> ITPAttribute<TModfifier>.Modifiers { get { return Modifiers; } }
 
         /// <summary> Request recalculating Value with modifiers </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -46,7 +62,8 @@ namespace TPFramework.Core
             Value = BaseValue;
             Modifiers.Sort();
 
-            for (int i = 0; i < Modifiers.Count; i++)
+            int length = Modifiers.Count;
+            for (int i = 0; i < length; i++)
             {
                 switch (Modifiers[i].Type)
                 {

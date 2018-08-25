@@ -11,14 +11,14 @@ using System.Runtime.CompilerServices;
 namespace TPFramework.Core
 {
     [Serializable]
-    public class Queue<T, U> : Queue<KeyValuePair<T, U>>
+    public class Stack<T, U> : Stack<KeyValuePair<T, U>>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Enqueue(T key, U value)
+        public void Push(T key, U value)
         {
-            Enqueue(new KeyValuePair<T, U>(key, value));
+            Push(new KeyValuePair<T, U>(key, value));
         }
-
+        
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Contains(T key, U value)
         {

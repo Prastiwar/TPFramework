@@ -18,7 +18,7 @@ namespace TPFramework.Core
         
         protected List<T> Modifiers { get; set; }
 
-        public float Count { get { return Modifiers.Count; } }
+        public int Count { get { return Modifiers.Count; } }
 
         public T this[int index] { get { return Modifiers[index]; } }
 
