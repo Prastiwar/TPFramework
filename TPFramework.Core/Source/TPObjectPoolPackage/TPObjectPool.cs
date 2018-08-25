@@ -14,9 +14,9 @@ namespace TPFramework.Core
 
         public int Length { get; protected set; }
 
-        public TPObjectPool(int initialSize = 4)
+        public TPObjectPool(int capacity = 4)
         {
-            pool = new Queue<T>(initialSize);
+            pool = new Queue<T>(capacity);
             Length = 0;
         }
 
