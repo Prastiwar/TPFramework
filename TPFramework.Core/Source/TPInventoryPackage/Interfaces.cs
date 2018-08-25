@@ -40,7 +40,7 @@ namespace TPFramework.Core
     public interface ITPItemSlot
     {
         int Type { get; }
-        ITPItem HoldItem { get; }
+        ITPItem StoredItem { get; }
 
         ITPItem SwitchItem(ITPItem item);
         bool MoveItem(ITPItemSlot targetSlot);

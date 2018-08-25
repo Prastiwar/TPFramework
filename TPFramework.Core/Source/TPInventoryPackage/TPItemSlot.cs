@@ -13,61 +13,29 @@ namespace TPFramework.Core
     public class TPItemSlot : ITPItemSlot
     {
         public int Type { get; protected set; }
-        public ITPItem HoldItem { get; protected set; }
+        public ITPItem StoredItem { get; protected set; }
 
         /// <summary> Holds given item and returns the old one </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITPItem SwitchItem(ITPItem item)
         {
-            ITPItem returnItem = HoldItem ?? null;
-            HoldItem = item;
+            ITPItem returnItem = StoredItem ?? null;
+            StoredItem = item;
             return returnItem;
         }
 
+        /// <summary> Is type of item same as slot type? </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual bool MoveItem(ITPItemSlot targetSlot)
+        public bool TypeMatch(ITPItem item)
         {
-            if (targetSlot.CanHoldItem(HoldItem))
-            {
-                HoldItem.OnMoved?.Invoke();
-                HoldItem = targetSlot.SwitchItem(HoldItem);
-                HoldItem?.OnMoved?.Invoke();
-                return true;
-            }
-            HoldItem?.OnFailMoved?.Invoke();
-            return false;
+            return item.Type == Type || Type == 0;
         }
 
-        ///// <summary> Returns opposite Slot (ItemSlot-EquipSlot) that can hold HoldItem </summary>
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //public ITPItemSlot FindEmptyOppositeSlot(ITPItemSlot[] slots)
-        //{
-        //    int length = slots.Length;
-        //    for (int i = 0; i < length; i++)
-        //    {
-        //        if (slots[i].CanHoldItem(HoldItem) && IsSlotOpposite(slots[i]))
-        //        {
-        //            return slots[i];
-        //        }
-        //    }
-        //    return null;
-        //}
-
-        ///// <summary> If there is slot matching to HoldItem with opposite Slot (ItemSlot-EquipSlot), call TryMoveItem(..) </summary>
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //public virtual bool TryMoveItemToEmptyOppositeSlot(ITPItemSlot[] slots)
-        //{
-        //    if (HoldItem == null)
-        //        return false;
-
-        //    ITPItemSlot slot = FindEmptyOppositeSlot(slots);
-        //    if (slot != null)
-        //    {
-        //        return TryMoveItem(slot);
-        //    }
-        //    HoldItem.OnFailMoved?.Invoke();
-        //    return false;
-        //}
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsFull()
+        {
+            return StoredItem != null && StoredItem.AmountStack >= StoredItem.MaxStack;
+        }
 
         /// <summary> Checks if given slot is opposite of this slot </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -83,23 +51,24 @@ namespace TPFramework.Core
             return !IsFull() && TypeMatch(item);
         }
 
-        /// <summary> Is type of item same as slot type? </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual bool TypeMatch(ITPItem item)
-        {
-            return item.Type == Type || Type == 0;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual bool IsFull()
-        {
-            return HoldItem != null && HoldItem.AmountStack >= HoldItem.MaxStack;
-        }
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual bool IsEmpty()
         { 
-            return HoldItem == null;
+            return StoredItem == null;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public virtual bool MoveItem(ITPItemSlot targetSlot)
+        {
+            if (targetSlot.CanHoldItem(StoredItem))
+            {
+                StoredItem.OnMoved?.Invoke();
+                StoredItem = targetSlot.SwitchItem(StoredItem);
+                StoredItem?.OnMoved?.Invoke();
+                return true;
+            }
+            StoredItem?.OnFailMoved?.Invoke();
+            return false;
         }
     }
 }

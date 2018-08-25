@@ -12,18 +12,18 @@ namespace TPFramework.Core
     [Serializable]
     public class ReusableList<T>
     {
-        private readonly List<T> _list;
+        private readonly List<T> list;
 
         public List<T> CleanList {
             get {
-                _list.Clear();
-                return _list;
+                list.Clear();
+                return list;
             }
         }
 
         public ReusableList(int capacity = 10)
         {
-            _list = new List<T>(capacity);
+            list = new List<T>(capacity);
         }
     }
 }

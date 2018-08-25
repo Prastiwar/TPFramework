@@ -12,16 +12,11 @@ namespace TPFramework.Internal
 {
     internal class TPPackageManager
     {
-        public ITPDefineManager DefineManager { get; protected set; }
-        public TPPackage[] Packages { get; protected set; }
-
         protected int packagesLength;
 
-        public TPPackageManager()
-        {
-            InitializePackages(TPFrameworkInfo.GetExistingPackagePaths);
-        }
-
+        public ITPDefineManager DefineManager { get; protected set; }
+        public TPPackage[] Packages { get; protected set; }
+        
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ReloadPackages()
         {
@@ -45,7 +40,7 @@ namespace TPFramework.Internal
             return unloadedPackages.ToArray();
         }
 
-        protected virtual void InitializePackages(string[] packagesPaths, bool reload = true)
+        protected void InitializePackages(string[] packagesPaths, bool reload = true)
         {
             List<TPPackage> packages = new List<TPPackage>(TPFrameworkInfo.PackagesLength);
 
@@ -63,7 +58,9 @@ namespace TPFramework.Internal
             packagesLength = Packages.Length;
 
             if (reload)
+            {
                 ReloadPackages();
+            }
         }
     }
 }

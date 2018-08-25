@@ -15,21 +15,27 @@ namespace TPFramework.Core
         public static void SafeInvoke(this Action action)
         {
             if (action != null)
+            {
                 action();
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SafeInvoke<T>(this Action<T> action, T obj)
         {
             if (action != null)
+            {
                 action(obj);
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SafeInvoke<T1, T2>(this Action<T1, T2> action, T1 obj, T2 obj2)
         {
             if (action != null)
+            {
                 action(obj, obj2);
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

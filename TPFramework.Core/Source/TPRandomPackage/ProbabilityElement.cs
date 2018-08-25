@@ -26,12 +26,12 @@ namespace TPFramework.Core
     /// <summary> Struct holds probability of float and element of T which can be returned in PickWithProbability </summary>
     /// <typeparam name="T"> Element can be returned if selected in Pick </typeparam>
     [Serializable]
-    public struct ProbabilityElementFloat<T>
+    public struct ProbabilityElement<T>
     {
         public T Element;
         public float Probability;
 
-        public ProbabilityElementFloat(T element, float probability)
+        public ProbabilityElement(T element, float probability)
         {
             Element = element;
             Probability = probability;

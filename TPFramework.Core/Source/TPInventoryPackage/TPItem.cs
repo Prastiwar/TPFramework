@@ -9,13 +9,14 @@ using System.Runtime.CompilerServices;
 
 namespace TPFramework.Core
 {
+    [Serializable]
     public class TPItem : ITPItem
     {
-        public Action OnUsed { get; protected set; }
-        public Action OnMoved { get; protected set; }
-        public Action OnFailMoved { get; protected set; }
-        public Action OnEquipped { get; protected set; }
-        public Action OnUnEquipped { get; protected set; }
+        public Action OnUsed { get; set; }
+        public Action OnMoved { get; set; }
+        public Action OnFailMoved { get; set; }
+        public Action OnEquipped { get; set; }
+        public Action OnUnEquipped { get; set; }
 
         public int ID { get; protected set; }
         public int Type { get; protected set; }

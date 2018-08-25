@@ -12,7 +12,6 @@ namespace TPFramework.Core
 {
     public static partial class TPExtensions
     {
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int[] SortReverse(this int[] integers)
         {
@@ -82,12 +81,44 @@ namespace TPFramework.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int Count<T>(this T[] array, Predicate<T> match)
+        {
+            int count = 0;
+            int length = array.Length;
+            for (int i = 0; i < length; i++)
+            {
+                if (match(array[i]))
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int Count<T>(this List<T> list, Predicate<T> match)
+        {
+            int count = 0;
+            int length = list.Count;
+            for (int i = 0; i < length; i++)
+            {
+                if (match(list[i]))
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Sum(this int[] integers)
         {
             int sum = 0;
             int length = integers.Length;
             for (int i = 0; i < length; i++)
+            {
                 sum += integers[i];
+            }
             return sum;
         }
 
@@ -97,7 +128,9 @@ namespace TPFramework.Core
             float sum = 0;
             int length = floatings.Length;
             for (int i = 0; i < length; i++)
+            {
                 sum += floatings[i];
+            }
             return sum;
         }
 
@@ -106,7 +139,9 @@ namespace TPFramework.Core
         {
             int sum = 0;
             for (int i = 0; i < length; i++)
+            {
                 sum += integers[i];
+            }
             return sum;
         }
 
@@ -115,7 +150,9 @@ namespace TPFramework.Core
         {
             float sum = 0;
             for (int i = 0; i < length; i++)
+            {
                 sum += floatings[i];
+            }
             return sum;
         }
 
@@ -125,7 +162,9 @@ namespace TPFramework.Core
             int sum = 0;
             int length = integers.Count;
             for (int i = 0; i < length; i++)
+            {
                 sum += integers[i];
+            }
             return sum;
         }
 
@@ -135,7 +174,9 @@ namespace TPFramework.Core
             float sum = 0;
             int length = floatings.Count;
             for (int i = 0; i < length; i++)
+            {
                 sum += floatings[i];
+            }
             return sum;
         }
 
@@ -144,7 +185,9 @@ namespace TPFramework.Core
         {
             int sum = 0;
             for (int i = 0; i < length; i++)
+            {
                 sum += integers[i];
+            }
             return sum;
         }
 
@@ -153,7 +196,9 @@ namespace TPFramework.Core
         {
             float sum = 0;
             for (int i = 0; i < length; i++)
+            {
                 sum += floatings[i];
+            }
             return sum;
         }
     }

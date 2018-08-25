@@ -15,18 +15,14 @@ namespace TPFramework.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsOutOfBounds<T>(this int integer, IEnumerable<T> collection)
         {
-            if (integer < 0 || integer >= collection.Count())
-                return true;
-            return false;
+            return integer < 0 || integer >= collection.Count();
         }
 
         /// <summary> Returns if integer is out of min(exclusive) and max(inclusive) </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsOutOfBounds<T>(this int integer, int min, int max)
         {
-            if (integer < min || integer >= max)
-                return true;
-            return false;
+            return integer < min || integer >= max;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

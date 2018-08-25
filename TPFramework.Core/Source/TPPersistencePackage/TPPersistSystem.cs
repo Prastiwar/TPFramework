@@ -13,25 +13,13 @@ namespace TPFramework.Core
 {
     public abstract class TPPersistSystem : ITPPersistSystem
     {
-        public HashSet<Type> SupportedTypes { get { return GetSupportedTypes(); } }
-
         protected Type PersistantAttType { get { return typeof(PersistantAttribute); } }
 
         /// <summary> Instance of script that static Save/Load methods should get Values from </summary>
         protected static TPPersistSystem Instance { get; set; }
 
-        /// <summary> Called on Save() for field with PersistantAttribute </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected abstract void SaveValue(PersistantAttribute attribute, object saveValue);
-
-        /// <summary> Called on Load() for field with PersistantAttribute </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected abstract object LoadValue(PersistantAttribute attribute, object objectValue);
-
-        /// <summary> Returns Types that can be persistant </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected abstract HashSet<Type> GetSupportedTypes();
-
+        public HashSet<Type> SupportedTypes { get { return GetSupportedTypes(); } }
+        
         /// <summary> Looks for fields in sources with PersistantAttribute and saves them </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SaveSources(params object[] sources)
@@ -162,6 +150,18 @@ namespace TPFramework.Core
             }
             return false;
         }
+
+        /// <summary> Called on Save() for field with PersistantAttribute </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected abstract void SaveValue(PersistantAttribute attribute, object saveValue);
+
+        /// <summary> Called on Load() for field with PersistantAttribute </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected abstract object LoadValue(PersistantAttribute attribute, object objectValue);
+
+        /// <summary> Returns Types that can be persistant </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected abstract HashSet<Type> GetSupportedTypes();
     }
 
 }

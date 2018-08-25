@@ -12,18 +12,18 @@ namespace TPFramework.Core
     [Serializable]
     public class ReusableDictionary<TKey, TValue>
     {
-        private readonly Dictionary<TKey, TValue> _dictionary;
+        private readonly Dictionary<TKey, TValue> dictionary;
 
         public Dictionary<TKey, TValue> CleanDictionary {
             get {
-                _dictionary.Clear();
-                return _dictionary;
+                dictionary.Clear();
+                return dictionary;
             }
         }
 
         public ReusableDictionary(int capacity = 10)
         {
-            _dictionary = new Dictionary<TKey, TValue>(capacity);
+            dictionary = new Dictionary<TKey, TValue>(capacity);
         }
     }
 }

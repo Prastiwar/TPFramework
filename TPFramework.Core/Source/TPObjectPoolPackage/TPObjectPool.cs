@@ -39,6 +39,7 @@ namespace TPFramework.Core
         public void Clear()
         {
             pool.Clear();
+            Length = 0;
         }
 
         protected abstract T CreateNewObject();

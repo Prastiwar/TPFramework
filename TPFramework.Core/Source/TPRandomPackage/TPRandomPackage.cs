@@ -74,7 +74,7 @@ namespace TPFramework.Core
 
         /// <summary> Returns selected element of probability </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T PickWithProbability<T>(params ProbabilityElementFloat<T>[] elements)
+        public static T PickWithProbability<T>(params ProbabilityElement<T>[] elements)
         {
             int length = elements.Length;
             float dice = Range(0, Sum(elements, length));
@@ -203,7 +203,7 @@ namespace TPFramework.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static float Sum<T>(ProbabilityElementFloat<T>[] elements, int length)
+        private static float Sum<T>(ProbabilityElement<T>[] elements, int length)
         {
             float sum = 0;
             for (int i = 0; i < length; i++)

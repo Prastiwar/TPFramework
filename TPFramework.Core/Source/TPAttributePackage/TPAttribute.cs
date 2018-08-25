@@ -15,8 +15,10 @@ namespace TPFramework.Core
     {
         public TPAttribute()
         {
-            Modifiers = Modifiers ?? new TPModifierList<TPModifier>(Recalculate);
-            OnChanged = OnChanged ?? delegate { };
+            if (Modifiers == null)
+            {
+                Modifiers = new TPModifierList<TPModifier>(Recalculate);
+            }
         }
     }
 
@@ -25,23 +27,17 @@ namespace TPFramework.Core
         where TModList : ITPModifierList<TModfifier>
         where TModfifier : ITPModifier
     {
-        /// <summary> List collection of modifiers </summary>
-        public virtual ITPModifierList<TModfifier> Modifiers { get; protected set; }
-
         /// <summary> Base value without any modifier </summary>
-        public virtual float BaseValue { get; set; }
+        public float BaseValue { get; set; }
 
         /// <summary> Calculated value with all modifiers </summary>
-        public virtual float Value { get; protected set; }
+        public float Value { get; protected set; }
+
+        /// <summary> List collection of modifiers </summary>
+        public ITPModifierList<TModfifier> Modifiers { get; protected set; }
 
         /// <summary> Called after Recalculate </summary>
-        public virtual Action<float> OnChanged { get; protected set; }
-
-        public TPAttribute()
-        {
-            Modifiers = Modifiers ?? default(TModList);
-            OnChanged = OnChanged ?? delegate { };
-        }
+        public Action<float> OnChanged { get; protected set; }
 
         /// <summary> Request recalculating Value with modifiers </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -67,7 +63,7 @@ namespace TPFramework.Core
                         break;
                 }
             }
-            OnChanged(Value);
+            OnChanged?.Invoke(Value);
         }
     }
 }

@@ -15,7 +15,8 @@ namespace TPFramework.Core
     {
         private readonly Action onChanged;
         private readonly ReusableList<T> reusableModifiers;
-        protected virtual List<T> Modifiers { get; set; }
+        
+        protected List<T> Modifiers { get; set; }
 
         public float Count { get { return Modifiers.Count; } }
 

@@ -4,23 +4,25 @@
 *   Repository: https://github.com/Prastiwar/TPFramework
 */
 
+using System;
 using System.Runtime.CompilerServices;
 
 namespace TPFramework.Core
 {
+    [Serializable]
     public class TPItemEquipSlot : TPItemSlot, ITPEquipSlot
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override bool MoveItem(ITPItemSlot targetSlot)
         {
-            if (targetSlot.CanHoldItem(HoldItem))
+            if (targetSlot.CanHoldItem(StoredItem))
             {
-                HoldItem.OnUnEquipped?.Invoke();
-                HoldItem = targetSlot.SwitchItem(HoldItem);
-                HoldItem?.OnEquipped?.Invoke();
+                StoredItem.OnUnEquipped?.Invoke();
+                StoredItem = targetSlot.SwitchItem(StoredItem);
+                StoredItem?.OnEquipped?.Invoke();
                 return true;
             }
-            HoldItem?.OnFailMoved?.Invoke();
+            StoredItem?.OnFailMoved?.Invoke();
             return false;
         }
 
