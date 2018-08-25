@@ -9,7 +9,7 @@ using System;
 namespace TPFramework.Core
 {
     [Serializable]
-    public struct TPAchievementData : ITPAchievementData
+    public class TPAchievementData : ITPAchievementData
     {
         public string Title       { get; set; }
         public string Description { get; set; }

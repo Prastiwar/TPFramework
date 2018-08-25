@@ -12,18 +12,19 @@ namespace TPFramework.Core
     {
         string Title { get; }
         string Description { get; }
-        float Points { get; }
         float ReachPoints { get; }
-        bool IsCompleted { get; }
+        float Points { get; set; }
+        bool IsCompleted { get; set; }
     }
 
-    public interface ITPAchievement
+    public interface ITPAchievement<TData>
+        where TData : class, ITPAchievementData
     {
-        ITPAchievementData Data { get; }
+        TData Data { get; }
 
-        Action OnComplete { get; }
+        Action OnCompleted { get; }
 
-        void AddPoints(float points);
+        void AddPoints(float points = 1);
         void Complete();
     }
 }
