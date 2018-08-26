@@ -19,7 +19,9 @@ namespace TPFramework.Core
         protected ITPItemSlot[] ItemSlots { get; set; }
         protected ITPEquipSlot[] EquipSlots { get; set; }
 
-        public virtual bool IsFull { get { return HasEmptySlot(); } }
+        public int ItemCount { get { return Items.Count; } }
+
+        public virtual bool IsFull { get { return !HasEmptySlot(); } }
         public virtual int SlotCount { get { return ItemSlots.Length + EquipSlots.Length; } }
         public virtual int EmptySlotsCount { get { return ItemSlots.Count(isEmptyMatch) + EquipSlots.Count(isEmptyMatch); } }
 
@@ -53,21 +55,7 @@ namespace TPFramework.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool HasEmptySlot(int type = 0)
         {
-            int length = ItemSlots.Length;
-            for (int i = 0; i < length; i++)
-            {
-                if (ItemSlots[i].Type == type && ItemSlots[i].IsEmpty())
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool StackItem(int itemID)
-        {
-            return Items[itemID].Stack();
+            return FindAnySlot(x => x.Type == type && x.IsEmpty()) != null;
         }
 
         /// <summary> Does item exist in any of slot? </summary>
@@ -81,8 +69,12 @@ namespace TPFramework.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual bool AddItem(ITPItem item)
         {
-            ITPItemSlot slot = FindAnySlot(x => x.CanHoldItem(item));
-            return slot != null ? AddItem(item, slot) : false;
+            if (!HasItem(item.ID))
+            {
+                ITPItemSlot slot = FindAnySlot(x => x.CanHoldItem(item));
+                return slot != null ? AddItem(item, slot) : false;
+            }
+            return Items[item.ID].Stack();
         }
 
         /// <summary> Returns false if slot doesn't match item or item exist and can't be more stacked </summary>
@@ -99,7 +91,7 @@ namespace TPFramework.Core
                 }
                 return false;
             }
-            return StackItem(item.ID);
+            return Items[item.ID].Stack();
         }
     }
 }

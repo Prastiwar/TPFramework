@@ -10,11 +10,14 @@ namespace TPFramework.Core
 {
     public interface ITPItemCallbacks
     {
-        Action OnUsed { get; }
-        Action OnMoved { get; }
-        Action OnFailMoved { get; }
-        Action OnEquipped { get; }
-        Action OnUnEquipped { get; }
+        Action OnUsed { get; set; }
+        Action OnFailUsed { get; set; }
+
+        Action OnMoved { get; set; }
+        Action OnFailMoved { get; set; }
+
+        Action OnEquipped { get; set; }
+        Action OnUnEquipped { get; set; }
     }
 
     public interface ITPItemData
@@ -28,19 +31,18 @@ namespace TPFramework.Core
         int MaxStack { get; }
         float Weight { get; }
         ITPModifier[] Modifiers { get; }
-        ITPItemSlot OnSlot { get; }
     }
 
     public interface ITPItem : ITPItemCallbacks, ITPItemData
     {
-        void Use();
+        bool Use();
         bool Stack(int count = 1);
     }
 
     public interface ITPItemSlot
     {
         int Type { get; }
-        ITPItem StoredItem { get; }
+        ITPItem StoredItem { get; set; }
 
         ITPItem SwitchItem(ITPItem item);
         bool MoveItem(ITPItemSlot targetSlot);

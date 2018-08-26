@@ -12,16 +12,57 @@ namespace TPFramework.Core
     [Serializable]
     public class TPItemSlot : ITPItemSlot
     {
+        private ITPItem storedItem;
+
+        protected ITPItem StoredItem {
+            get { return storedItem; }
+            set {
+                storedItem?.OnUsed.Remove(ShouldRemove);
+                storedItem = value;
+                storedItem?.OnUsed.Add(ShouldRemove);
+            }
+        }
+
         public int Type { get; protected set; }
-        public ITPItem StoredItem { get; protected set; }
+
+        ITPItem ITPItemSlot.StoredItem {
+            get { return StoredItem; }
+            set { StoredItem = value; }
+        }
+
+        private void ShouldRemove()
+        {
+            if (StoredItem.AmountStack <= 0)
+            {
+                StoredItem = null;
+            }
+        }
 
         /// <summary> Holds given item and returns the old one </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITPItem SwitchItem(ITPItem item)
         {
-            ITPItem returnItem = StoredItem ?? null;
+            ITPItem returnItem = storedItem ?? null;
             StoredItem = item;
             return returnItem;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool UseItem()
+        {
+            return StoredItem != null ? StoredItem.Use() : false;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool StackItem(int count = 1)
+        {
+            return StoredItem != null ? StoredItem.Stack(count) : false;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsFull()
+        {
+            return StoredItem != null && StoredItem.AmountStack >= StoredItem.MaxStack;
         }
 
         /// <summary> Is type of item same as slot type? </summary>
@@ -29,12 +70,6 @@ namespace TPFramework.Core
         public bool TypeMatch(ITPItem item)
         {
             return item.Type == Type || Type == 0;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsFull()
-        {
-            return StoredItem != null && StoredItem.AmountStack >= StoredItem.MaxStack;
         }
 
         /// <summary> Checks if given slot is opposite of this slot </summary>
@@ -53,7 +88,7 @@ namespace TPFramework.Core
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual bool IsEmpty()
-        { 
+        {
             return StoredItem == null;
         }
 

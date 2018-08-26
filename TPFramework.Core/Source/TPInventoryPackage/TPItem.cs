@@ -13,8 +13,11 @@ namespace TPFramework.Core
     public class TPItem : ITPItem
     {
         public Action OnUsed { get; set; }
+        public Action OnFailUsed { get; set; }
+
         public Action OnMoved { get; set; }
         public Action OnFailMoved { get; set; }
+
         public Action OnEquipped { get; set; }
         public Action OnUnEquipped { get; set; }
 
@@ -30,21 +33,41 @@ namespace TPFramework.Core
         public float Weight { get; protected set; }
 
         public ITPModifier[] Modifiers { get; protected set; }
-        public ITPItemSlot OnSlot { get; protected set; }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Use()
+        public TPItem(int id, int maxStack = 1)
         {
-            AmountStack--;
-            if (AmountStack <= 0)
-            {
-                OnSlot.SwitchItem(null);
-            }
-            OnUsed();
+            ID = id;
+            AmountStack = 1;
+            MaxStack = maxStack;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual bool Stack(int count = 1)
+        bool ITPItem.Use()
+        {
+            return Use();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        bool ITPItem.Stack(int count)
+        {
+            return Stack(count);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected virtual bool Use()
+        {
+            if (CanUse())
+            {
+                AmountStack--;
+                OnUsed?.Invoke();
+                return true;
+            }
+            OnFailUsed?.Invoke();
+            return false;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected virtual bool Stack(int count = 1)
         {
             if (CanStack(count))
             {
@@ -55,7 +78,13 @@ namespace TPFramework.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual bool CanStack(int count = 1)
+        protected virtual bool CanUse()
+        {
+            return AmountStack > 0;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected virtual bool CanStack(int count = 1)
         {
             return AmountStack + count <= MaxStack;
         }
