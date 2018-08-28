@@ -62,6 +62,13 @@ namespace TPFramework.Core
             return Clamp(repeatValue, 0.0f, length);
         }
 
+        /// <summary> Checks if two floating numbers are similiar </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Approximately(float a, float b)
+        {
+            return Math.Abs(b - a) < Math.Max(0.000001f * Math.Max(Math.Abs(a), Math.Abs(b)), Epsilon * 8);
+        }
+
         /// <summary> PingPongs value between 0 and length </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float PingPong(float value, float length)
@@ -129,6 +136,38 @@ namespace TPFramework.Core
             float normalizedMax = maxValue - minValue;
             float nomalizedNormalize = maxNormalize - minNormalize;
             return ((nomalizedNormalize * normalizedValue) / normalizedMax) + minNormalize;
+        }
+
+        /// <summary> Returns reversed value - in: 1, out: 0 - in: 0.8f, out 0.2f </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Reverse(float value, float maxValue = 1)
+        {
+            return maxValue - value;
+        }
+
+        ///// <summary> todo </summary>
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //public static float Reflect(float value, float reflectPoint, float maxValue)
+        //{
+        //    return value <= reflectPoint
+        //            ? (2 * value)         // grow from 0 to 1 when evaluate is from 0 to 0.5f 
+        //            : (2 - (2 * value));  // decrease from 1 to 0 when evaluate is from 0.5f to 1f
+        //}
+
+        /// <summary> Returns count of digits in value </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int DigitCount(float value)
+        {
+            return value != 0.0f 
+                ? Math.Abs(FloorToInt(Log10(value) + 1)) 
+                : 1;
+        }
+
+        /// <summary> Returns the base 10 logarithm of value </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Log10(float value)
+        {
+            return (float)Math.Log10(value);
         }
 
         /// <summary> Returns smallest integral value </summary>
