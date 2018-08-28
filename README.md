@@ -1,6 +1,6 @@
 # TPFramework
 
-***TPFramework allows you to easily start with your new project in Unity***
+***TPFramework allows you to easily start writing game in C# ***
 
 [![GitHub last commit](https://img.shields.io/github/last-commit/Prastiwar/TPFramework.svg?label=Updated&style=flat-square&longCache=true)](https://github.com/Prastiwar/TPFramework/commits/master)
 [![license](https://img.shields.io/github/license/Prastiwar/TPFramework.svg?style=flat-square&longCache=true)](https://github.com/Prastiwar/TPFramework/blob/master/LICENSE)
@@ -26,20 +26,13 @@
 * ***TPObjectPool*** - *Increase performance with object pooling*
 * ***TPInventory*** - *Implement an Inventory system in your game fast*
 * ***TPAttribute*** - *Create attributes and modify them freely*
-* ***TPSettings*** - *Convenient library to create an options menu*
-* ***TPToolTip*** - *Implement in-game tooltips*
 * ***TPRandom*** - *Probability, random functions*
-* ***TPEditor*** - *Helpful library for extending editor*
-* ***TPAudio*** - *Manage your audio bundles easily*
-* ***TPAnim*** - *Animate whatever you want*
-* ***TPFade*** - *Fade between scenes*
 * ***TPMath*** - *Math library*
-* ***TPUI*** - *Generic UI Layout and much more*
 
 
 ## Before start
 
-- [x] Make sure you have **Unity 2017+** (Lower versions weren't tested)
+- [x] Make sure you use at least **.NET Framework 4.6**
 
 
 ## Getting Started

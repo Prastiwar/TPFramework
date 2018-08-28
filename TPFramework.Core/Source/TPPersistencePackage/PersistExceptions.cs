@@ -2,6 +2,7 @@
 
 namespace TPFramework.Core
 {
+    [Serializable]
     public class PersistDefaultValueTypeMismatch : Exception
     {
         public PersistDefaultValueTypeMismatch(Type type, Type shouldType)
@@ -9,6 +10,7 @@ namespace TPFramework.Core
         { }
     }
 
+    [Serializable]
     public class PersistNotSupportedType : Exception
     {
         public PersistNotSupportedType(Type type) : base("Type " + type + " is not supported to be persistant!") { }

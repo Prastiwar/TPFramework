@@ -9,7 +9,7 @@ using System.Collections.Generic;
 namespace TPFramework.Core
 {
     public abstract class TPObjectPool<T>
-    { 
+    {
         protected readonly Queue<T> pool;
 
         public int Length { get; protected set; }
@@ -40,6 +40,14 @@ namespace TPFramework.Core
         {
             pool.Clear();
             Length = 0;
+        }
+
+        public virtual void Grow(int size)
+        {
+            for (int i = 0; i < size; i++)
+            {
+                pool.Enqueue(CreateNewObject());
+            }
         }
 
         protected abstract T CreateNewObject();
