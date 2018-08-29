@@ -4,19 +4,26 @@
 *   Repository: https://github.com/Prastiwar/TPFramework
 */
 
-using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace TPFramework.Internal
 {
-    internal class TPPackageManager
+    public class TPPackageManager
     {
         protected int packagesLength;
 
+        public static TPPackageManager Manager { get; protected set; }
         public ITPDefineManager DefineManager { get; protected set; }
         public TPPackage[] Packages { get; protected set; }
-        
+
+        public TPPackageManager(ITPDefineManager defineManager = null, TPPackage[] packages = null)
+        {
+            Manager = this;
+            DefineManager = defineManager;
+            Packages = packages;
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ReloadPackages()
         {
@@ -40,22 +47,19 @@ namespace TPFramework.Internal
             return unloadedPackages.ToArray();
         }
 
-        protected void InitializePackages(string[] packagesPaths, bool reload = true)
+        public void InitializePackages(string[] packagesPaths, bool reload = true)
         {
-            List<TPPackage> packages = new List<TPPackage>(TPFrameworkInfo.PackagesLength);
-
             int length = packagesPaths.Length;
+            List<TPPackage> packages = new List<TPPackage>(length);
+
             for (int i = 0; i < length; i++)
             {
-                TPPackage package = new TPPackage(packagesPaths[i], () => {
-                    Console.WriteLine(packagesPaths[i]);
-                    return true;
-                });
+                TPPackage package = new TPPackage(packagesPaths[i], () => { return true; });
                 packages.Add(package);
             }
 
             Packages = packages.ToArray();
-            packagesLength = Packages.Length;
+            packagesLength = length;
 
             if (reload)
             {

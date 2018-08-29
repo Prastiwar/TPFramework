@@ -9,7 +9,7 @@ using System.IO;
 
 namespace TPFramework.Internal
 {
-    internal struct TPFrameworkInfo
+    public struct TPFrameworkInfo
     {
         public const int PackagesLength = 9;
         public const string TPCoreNamespace = "TPFramework.Core";

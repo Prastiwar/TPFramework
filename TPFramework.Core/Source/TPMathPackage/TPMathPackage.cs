@@ -17,7 +17,7 @@ namespace TPFramework.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Lerp(float from, float to, float percentage)
         {
-            return from + (to - from) * Clamp01(percentage);
+            return from + (to - from) * Clamp(percentage);
         }
 
         /// <summary> Interpolates between from and to by percentage as angle - Clamp it between 0 and 1 </summary>
@@ -54,12 +54,12 @@ namespace TPFramework.Core
             return delta <= 180.0f ? delta : delta - 360.0f;
         }
 
-        /// <summary> Loops value between 0 and length(exclusive) </summary>
+        /// <summary> Loops value between 0 and maxValue(exclusive) </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float Repeat(float value, float length)
+        public static float Repeat(float value, float maxValue)
         {
-            float repeatValue = value - Floor(value / length) * length;
-            return Clamp(repeatValue, 0.0f, length);
+            float repeatValue = value - Floor(value / maxValue) * maxValue;
+            return Clamp(repeatValue, 0.0f, maxValue);
         }
 
         /// <summary> Checks if two floating numbers are similiar </summary>
@@ -69,17 +69,17 @@ namespace TPFramework.Core
             return Math.Abs(b - a) < Math.Max(0.000001f * Math.Max(Math.Abs(a), Math.Abs(b)), Epsilon * 8);
         }
 
-        /// <summary> PingPongs value between 0 and length </summary>
+        /// <summary> PingPongs value between 0 and maxValue </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float PingPong(float value, float length)
+        public static float PingPong(float value, float maxValue)
         {
-            value = Repeat(value, length * 2);
-            return length - Math.Abs(value - length);
+            value = Repeat(value, maxValue * 2);
+            return maxValue - Math.Abs(value - maxValue);
         }
 
         /// <summary> Returns clamped value between min and max </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float Clamp(float value, float minValue, float maxValue)
+        public static float Clamp(float value, float minValue = 0.0f, float maxValue = 1.0f)
         {
             if (value < minValue)
                 return minValue;
@@ -97,13 +97,6 @@ namespace TPFramework.Core
             else if (value > maxValue)
                 return maxValue;
             return value;
-        }
-
-        /// <summary> Shorthand to clamp normalized float value between 0 to 1 </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float Clamp01(float value)
-        {
-            return Clamp(value, 0f, 1f);
         }
 
         /// <summary> Normalizes value between 0 and maxValue to 0f-1f range </summary>
@@ -144,15 +137,6 @@ namespace TPFramework.Core
         {
             return maxValue - value;
         }
-
-        ///// <summary> todo </summary>
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //public static float Reflect(float value, float reflectPoint, float maxValue)
-        //{
-        //    return value <= reflectPoint
-        //            ? (2 * value)         // grow from 0 to 1 when evaluate is from 0 to 0.5f 
-        //            : (2 - (2 * value));  // decrease from 1 to 0 when evaluate is from 0.5f to 1f
-        //}
 
         /// <summary> Returns count of digits in value </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

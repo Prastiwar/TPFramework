@@ -24,25 +24,6 @@ namespace TPFramework.Tests
             Assert.AreEqual(1, val);
         }
 
-        //[TestMethod]
-        //public void ReflectValue()
-        //{
-        //    Assert.AreEqual(0, TPMath.PingPong(0, 0.5f));
-        //    Assert.AreEqual(0, TPMath.PingPong(1, 0.5f));
-        //    Assert.AreEqual(0, TPMath.PingPong(2, 0.5f));
-
-        //    //Assert.AreEqual(0, TPMath.Reflect(0, 0.5f, 1));
-        //    //Assert.AreEqual(1, TPMath.Reflect(0.5f, 0.5f, 1));
-        //    //Assert.AreEqual(0, TPMath.Reflect(1, 0.5f, 1));
-
-        //    //Assert.AreEqual(0, TPMath.Reflect(0, 1, 2));
-        //    //Assert.AreEqual(2, TPMath.Reflect(1, 1, 2));
-        //    //Assert.AreEqual(0, TPMath.Reflect(2, 1, 2));
-
-        //    // grow from 0 to 1 when evaluate is from 0 to 0.5f 
-        //    // decrease from 1 to 0 when evaluate is from 0.5f to 1f
-        //}
-
         [TestMethod]
         public void PingPong()
         {
@@ -131,7 +112,14 @@ namespace TPFramework.Tests
             }
             catch (Exception)
             {
-                Assert.IsTrue(TPMath.Approximately(a, b));
+                try
+                {
+                    Assert.IsTrue(TPMath.Approximately(a, b));
+                }
+                catch (Exception)
+                {
+                    throw new AssertFailedException($"Expected: {a} Actual: {b} are not equal/similiar");
+                }
             }
         }
     }

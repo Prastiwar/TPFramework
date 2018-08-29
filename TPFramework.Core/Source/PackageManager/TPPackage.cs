@@ -8,7 +8,7 @@ using System;
 
 namespace TPFramework.Internal
 {
-    internal sealed class TPPackage
+    public sealed class TPPackage
     {
         private readonly Func<bool> func;
 
