@@ -32,9 +32,11 @@ namespace TPFramework.Core
 
         public void Push(T obj)
         {
+            OnPush(obj);
             pool.Enqueue(obj);
             Length++;
         }
+
 
         public void Clear()
         {
@@ -50,6 +52,7 @@ namespace TPFramework.Core
             }
         }
 
+        protected virtual void OnPush(T obj) { }
         protected abstract T CreateNewObject();
     }
 }

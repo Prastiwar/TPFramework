@@ -7,11 +7,53 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace TPFramework.Core
 {
+    public enum EncodingType
+    {
+        ASCII,
+        UTF7,
+        UTF8,
+        UTF32,
+        Unicode,
+        BigEndianUnicode,
+        Default,
+    }
+
     public static partial class TPExtensions
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string ToText(this char[] chars)
+        {
+            return new string(chars);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string ToText(this byte[] bytes, EncodingType type)
+        {
+            switch (type)
+            {
+                case EncodingType.UTF8:
+                    return Encoding.UTF8.GetString(bytes);
+                case EncodingType.ASCII:
+                    return Encoding.ASCII.GetString(bytes);
+                case EncodingType.Unicode:
+                    return Encoding.Unicode.GetString(bytes);
+                case EncodingType.UTF7:
+                    return Encoding.UTF7.GetString(bytes);
+                case EncodingType.UTF32:
+                    return Encoding.UTF32.GetString(bytes);
+                case EncodingType.BigEndianUnicode:
+                    return Encoding.BigEndianUnicode.GetString(bytes);
+                case EncodingType.Default:
+                    return Encoding.Default.GetString(bytes);
+                default:
+                    return string.Empty;
+            }
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int[] SortReverse(this int[] integers)
         {

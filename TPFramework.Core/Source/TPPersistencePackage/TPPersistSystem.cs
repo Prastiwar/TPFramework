@@ -86,7 +86,7 @@ namespace TPFramework.Core
 
                 PersistantAttribute att = (PersistantAttribute)fields[i].GetCustomAttribute(PersistantAttType, false);
                 object fieldValue = fields[i].GetValue(source);
-                
+
                 if (!CanSetValue(att.DefaultValue, fieldValue))
                 {
                     continue;
@@ -110,12 +110,13 @@ namespace TPFramework.Core
 
                 PersistantAttribute att = (PersistantAttribute)fields[i].GetCustomAttribute(PersistantAttType, false);
                 object fieldValue = fields[i].GetValue(source);
-                
+
                 if (!CanSetValue(att.DefaultValue, fieldValue))
                 {
                     continue;
                 }
-                fields[i].SetValueDirect(__makeref(source), LoadValue(att, fieldValue.GetType()));
+                fields[i].SetValue(source, LoadValue(att, fieldValue.GetType()));
+                //fields[i].SetValueDirect(__makeref(source), LoadValue(att, fieldValue.GetType())); // doesn't work in unity 2017.3
             }
             return source;
         }
