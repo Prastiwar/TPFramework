@@ -18,7 +18,7 @@ namespace TPFramework.Core
     }
 
     public interface ITPAchievement<TData>
-        where TData : class, ITPAchievementData
+        where TData : struct, ITPAchievementData
     {
         TData Data { get; }
 

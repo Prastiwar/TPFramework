@@ -20,7 +20,7 @@ namespace TPFramework.Tests
                 EquipSlots = new ITPEquipSlot[0];
             }
 
-            public Inventory(TPItemEquipSlot[] eqSlots, TPItemSlot[] slots) : this()
+            public Inventory(TPEquipSlot[] eqSlots, TPItemSlot[] slots) : this()
             {
                 EquipSlots = eqSlots;
                 ItemSlots = slots;
@@ -35,8 +35,10 @@ namespace TPFramework.Tests
 
         private void Reset()
         {
-            item1 = new TPItem(0);
-            item2 = new TPItem(1, 2);
+            item1 = new TPItem(0, 0);
+            item2 = new TPItem(1, 0) {
+                MaxStack = 2
+            };
             slot1 = new TPItemSlot();
             slot2 = new TPItemSlot();
             inv = new Inventory(slot1, slot2);

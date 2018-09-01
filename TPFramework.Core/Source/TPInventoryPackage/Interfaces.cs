@@ -39,27 +39,31 @@ namespace TPFramework.Core
         bool Stack(int count = 1);
     }
 
-    public interface ITPItemSlot
+    public interface ITPItemSlot<TItem>
+        where TItem : ITPItem
     {
         int Type { get; }
-        ITPItem StoredItem { get; set; }
+        TItem StoredItem { get; set; }
 
-        ITPItem SwitchItem(ITPItem item);
-        bool MoveItem(ITPItemSlot targetSlot);
-        bool CanHoldItem(ITPItem item);
-        bool TypeMatch(ITPItem item);
+        TItem SwitchItem(TItem item);
+        bool MoveItem(ITPItemSlot<TItem> targetSlot);
+        bool CanHoldItem(TItem item);
+        bool TypeMatch(TItem item);
         bool IsFull();
         bool IsEmpty();
     }
 
-    public interface ITPEquipSlot : ITPItemSlot { }
+    public interface ITPEquipSlot<TItem> : ITPItemSlot<TItem> where TItem : ITPItem { }
 
-    public interface ITPInventory
+    public interface ITPInventory<TItemSlot, TEquipSlot, TItem>
+        where TItemSlot : ITPItemSlot<TItem>
+        where TEquipSlot : ITPEquipSlot<TItem>
+        where TItem : ITPItem
     {
-        ITPItemSlot[] ItemSlots { get; }
+        TItemSlot[] ItemSlots { get; }
         bool IsFull { get; }
 
-        bool AddItem(ITPItem item);
+        bool AddItem(TItem item);
         bool HasEmptySlot(int type = 0);
         bool HasItem(int itemID);
     }

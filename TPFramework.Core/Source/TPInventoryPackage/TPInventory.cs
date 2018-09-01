@@ -11,51 +11,60 @@ using System.Runtime.CompilerServices;
 namespace TPFramework.Core
 {
     [Serializable]
-    public abstract class TPInventory : ITPInventory
+    public abstract class TPInventory<TItemSlot, TEquipSlot, TItem> : ITPInventory<TItemSlot, TEquipSlot, TItem>
+        where TItemSlot : ITPItemSlot<TItem>
+        where TEquipSlot : ITPEquipSlot<TItem>
+        where TItem : ITPItem
     {
-        private readonly Predicate<ITPItemSlot> isEmptyMatch = new Predicate<ITPItemSlot>(x => x.IsEmpty());
+        private readonly Predicate<TItemSlot> isEmptyMatch = new Predicate<TItemSlot>(x => x.IsEmpty());
+        private readonly Predicate<TEquipSlot> isEquipEmptyMatch = new Predicate<TEquipSlot>(x => x.IsEmpty());
 
         protected Dictionary<int, ITPItem> Items { get; set; }
-        protected ITPItemSlot[] ItemSlots { get; set; }
-        protected ITPEquipSlot[] EquipSlots { get; set; }
+        protected TItemSlot[] ItemSlots { get; set; }
+        protected TEquipSlot[] EquipSlots { get; set; }
 
         public int ItemCount { get { return Items.Count; } }
 
         public virtual bool IsFull { get { return !HasEmptySlot(); } }
         public virtual int SlotCount { get { return ItemSlots.Length + EquipSlots.Length; } }
-        public virtual int EmptySlotsCount { get { return ItemSlots.Count(isEmptyMatch) + EquipSlots.Count(isEmptyMatch); } }
+        public virtual int EmptySlotsCount { get { return ItemSlots.Count(isEmptyMatch) + EquipSlots.Count(isEquipEmptyMatch); } }
 
-        ITPItemSlot[] ITPInventory.ItemSlots { get { return ItemSlots; } }
+        TItemSlot[] ITPInventory<TItemSlot, TEquipSlot, TItem>.ItemSlots { get { return ItemSlots; } }
 
-        /// <summary> Finds first matches slot from ItemSlots OR EquipSlots (can return null) </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ITPItemSlot FindAnySlot(Predicate<ITPItemSlot> match)
+        public void SetItemSlots(TItemSlot[] slots)
         {
-            ITPItemSlot slot = FindItemSlot(match);
-            return slot ?? FindEquipSlot(match);
+            ItemSlots = slots;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void SetEquipSlots(TEquipSlot[] slots)
+        {
+            EquipSlots = slots;
         }
 
         /// <summary> Finds first matches slot from ItemSlots (can return null) </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ITPItemSlot FindItemSlot(Predicate<ITPItemSlot> match)
+        public TItemSlot FindItemSlot(Predicate<TItemSlot> match)
         {
             int index = ItemSlots.FindIndex(match);
-            return index > -1 ? ItemSlots[index] : null;
+            return index > -1 ? ItemSlots[index] : default(TItemSlot);
         }
 
         /// <summary> Finds first matches slot from EquipSlots (can return null) </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ITPEquipSlot FindEquipSlot(Predicate<ITPEquipSlot> match)
+        public TEquipSlot FindEquipSlot(Predicate<TEquipSlot> match)
         {
             int index = EquipSlots.FindIndex(match);
-            return index > -1 ? EquipSlots[index] : null;
+            return index > -1 ? EquipSlots[index] : default(TEquipSlot);
         }
 
         /// <summary> Has inventory a slot with type which is empty? </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool HasEmptySlot(int type = 0)
         {
-            return FindAnySlot(x => x.Type == type && x.IsEmpty()) != null;
+            return FindItemSlot(x => x.Type == type && x.IsEmpty()) != null
+                || FindEquipSlot(x => x.Type == type && x.IsEmpty()) != null;
         }
 
         /// <summary> Does item exist in any of slot? </summary>
@@ -67,11 +76,16 @@ namespace TPFramework.Core
 
         /// <summary> Returns false if inventory is full or item exist and can't be more stacked </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual bool AddItem(ITPItem item)
+        public virtual bool AddItem(TItem item)
         {
             if (!HasItem(item.ID))
             {
-                ITPItemSlot slot = FindAnySlot(x => x.CanHoldItem(item));
+                TItemSlot slot = FindItemSlot(x => x.CanHoldItem(item));
+                if (slot == null)
+                {
+                    TEquipSlot equipSlot = FindEquipSlot(x => x.CanHoldItem(item));
+                    return equipSlot != null ? AddItem(item, slot) : false;
+                }
                 return slot != null ? AddItem(item, slot) : false;
             }
             return Items[item.ID].Stack();
@@ -79,7 +93,7 @@ namespace TPFramework.Core
 
         /// <summary> Returns false if slot doesn't match item or item exist and can't be more stacked </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual bool AddItem(ITPItem item, ITPItemSlot slot)
+        public virtual bool AddItem(TItem item, TItemSlot slot)
         {
             if (!HasItem(item.ID))
             {

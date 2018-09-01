@@ -14,8 +14,8 @@ namespace TPFramework.Internal
         public const int PackagesLength = 9;
         public const string TPCoreNamespace = "TPFramework.Core";
 
-        public static string[] GetExistingPackagePaths {
-            get { return Directory.GetDirectories(Environment.CurrentDirectory, "TP*Package.cs", SearchOption.AllDirectories); }
+        internal static string[] GetExistingPackagePaths {
+            get { return Directory.GetDirectories(Environment.CurrentDirectory, "TP*Package", SearchOption.AllDirectories); }
         }
 
         public static string[] GetTPPackageNames {

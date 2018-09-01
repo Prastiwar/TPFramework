@@ -10,7 +10,7 @@ namespace TPFramework.Core
 {
     [Serializable]
     public class TPAchievement<TData> : ITPAchievement<TData>
-        where TData : class, ITPAchievementData
+        where TData : struct, ITPAchievementData
     {
         public Action OnCompleted { get; set; }
         public TData Data { get; private set; }
@@ -22,14 +22,18 @@ namespace TPFramework.Core
 
         public void Complete()
         {
-            Data.Points = Data.ReachPoints;
-            Data.IsCompleted = true;
+            TData data = Data;
+            data.Points = Data.ReachPoints;
+            data.IsCompleted = true;
+            Data = data;
             OnCompleted?.Invoke();
         }
 
         public void AddPoints(float points = 1)
         {
-            Data.Points += points;
+            TData data = Data;
+            data.Points += points;
+            Data = data;
             if (Data.Points >= Data.ReachPoints)
             {
                 Complete();

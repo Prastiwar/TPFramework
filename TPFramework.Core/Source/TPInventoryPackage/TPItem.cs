@@ -24,37 +24,37 @@ namespace TPFramework.Core
         public int ID { get; protected set; }
         public int Type { get; protected set; }
 
-        public string Name { get; protected set; }
-        public string Description { get; protected set; }
-        public double Worth { get; protected set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public double Worth { get; set; }
 
-        public int AmountStack { get; protected set; }
-        public int MaxStack { get; protected set; }
-        public float Weight { get; protected set; }
+        public int AmountStack { get; set; }
+        public int MaxStack { get; set; }
+        public float Weight { get; set; }
 
-        public ITPModifier[] Modifiers { get; protected set; }
+        public ITPModifier[] Modifiers { get; set; }
 
-        public TPItem(int id, int maxStack = 1)
+        public TPItem(int id, int type)
         {
             ID = id;
+            Type = type;
             AmountStack = 1;
-            MaxStack = maxStack;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        bool ITPItem.Use()
+        public bool Use()
         {
-            return Use();
+            return UseItem();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        bool ITPItem.Stack(int count)
+        public bool Stack(int count)
         {
-            return Stack(count);
+            return StackItem(count);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected virtual bool Use()
+        protected virtual bool UseItem()
         {
             if (CanUse())
             {
@@ -67,7 +67,7 @@ namespace TPFramework.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected virtual bool Stack(int count = 1)
+        protected virtual bool StackItem(int count = 1)
         {
             if (CanStack(count))
             {

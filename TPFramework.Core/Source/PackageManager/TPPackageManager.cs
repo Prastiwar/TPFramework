@@ -47,14 +47,14 @@ namespace TPFramework.Internal
             return unloadedPackages.ToArray();
         }
 
-        public void InitializePackages(string[] packagesPaths, bool reload = true)
+        public void InitializePackages(string[] packageNames, bool reload = true)
         {
-            int length = packagesPaths.Length;
+            int length = packageNames.Length;
             List<TPPackage> packages = new List<TPPackage>(length);
 
             for (int i = 0; i < length; i++)
             {
-                TPPackage package = new TPPackage(packagesPaths[i], () => { return true; });
+                TPPackage package = new TPPackage(packageNames[i], () => { return true; });
                 packages.Add(package);
             }
 
@@ -65,6 +65,11 @@ namespace TPFramework.Internal
             {
                 ReloadPackages();
             }
+        }
+
+        public void SetPackages(TPPackage[] packages)
+        {
+            Packages = packages;
         }
     }
 }

@@ -10,11 +10,11 @@ using System.Runtime.CompilerServices;
 namespace TPFramework.Core
 {
     [Serializable]
-    public class TPItemSlot : ITPItemSlot
+    public class TPItemSlot : ITPItemSlot<TPItem>
     {
-        private ITPItem storedItem;
+        private TPItem storedItem;
 
-        protected ITPItem StoredItem {
+        protected TPItem StoredItem {
             get { return storedItem; }
             set {
                 storedItem?.OnUsed.Remove(ShouldRemove);
@@ -25,7 +25,7 @@ namespace TPFramework.Core
 
         public int Type { get; protected set; }
 
-        ITPItem ITPItemSlot.StoredItem {
+        TPItem ITPItemSlot<TPItem>.StoredItem {
             get { return StoredItem; }
             set { StoredItem = value; }
         }
@@ -38,11 +38,17 @@ namespace TPFramework.Core
             }
         }
 
+        public TPItemSlot(int type, TPItem storeItem = null)
+        {
+            Type = type;
+            StoredItem = storeItem;
+        }
+
         /// <summary> Holds given item and returns the old one </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ITPItem SwitchItem(ITPItem item)
+        public TPItem SwitchItem(TPItem item)
         {
-            ITPItem returnItem = storedItem ?? null;
+            TPItem returnItem = storedItem ?? null;
             StoredItem = item;
             return returnItem;
         }
@@ -67,21 +73,21 @@ namespace TPFramework.Core
 
         /// <summary> Is type of item same as slot type? </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool TypeMatch(ITPItem item)
+        public bool TypeMatch(TPItem item)
         {
             return item.Type == Type || Type == 0;
         }
 
         /// <summary> Checks if given slot is opposite of this slot </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual bool IsSlotOpposite(ITPItemSlot slot)
+        public virtual bool IsSlotOpposite(ITPItemSlot<TPItem> slot)
         {
-            return slot is ITPEquipSlot;
+            return slot is ITPEquipSlot<TPItem>;
         }
 
         /// <summary> Checks for place in stack and type match </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual bool CanHoldItem(ITPItem item)
+        public virtual bool CanHoldItem(TPItem item)
         {
             return !IsFull() && TypeMatch(item);
         }
@@ -93,7 +99,7 @@ namespace TPFramework.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual bool MoveItem(ITPItemSlot targetSlot)
+        public virtual bool MoveItem(ITPItemSlot<TPItem> targetSlot)
         {
             if (targetSlot.CanHoldItem(StoredItem))
             {

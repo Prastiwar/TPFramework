@@ -26,5 +26,10 @@ namespace TPFramework.Internal
             IsLoaded = func();
             return IsLoaded;
         }
+
+        public override string ToString()
+        {
+            return "TPPackage: " + FileName;
+        }
     }
 }
