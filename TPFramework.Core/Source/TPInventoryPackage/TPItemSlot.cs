@@ -30,6 +30,8 @@ namespace TPFramework.Core
             set { StoredItem = value; }
         }
 
+        public Action OnItemChanged { get; set; }
+
         private void ShouldRemove()
         {
             if (StoredItem.AmountStack <= 0)
@@ -51,6 +53,12 @@ namespace TPFramework.Core
             TPItem returnItem = storedItem ?? null;
             StoredItem = item;
             return returnItem;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool HasItem()
+        {
+            return !(StoredItem is null);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

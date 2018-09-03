@@ -22,7 +22,7 @@ namespace TPFramework.Core
         private TItemSlot[] itemSlots;
         private TEquipSlot[] equipSlots;
 
-        protected Dictionary<int, ITPItem> Items { get; set; }
+        protected Dictionary<int, TItem> Items { get; set; }
         protected TItemSlot[] ItemSlots { get { return itemSlots; } set { itemSlots = value; } }
         protected TEquipSlot[] EquipSlots { get { return equipSlots; } set { equipSlots = value; } }
 
@@ -34,6 +34,11 @@ namespace TPFramework.Core
 
         TItemSlot[] ITPInventory<TItemSlot, TEquipSlot, TItem>.ItemSlots { get { return ItemSlots; } }
         TEquipSlot[] ITPInventory<TItemSlot, TEquipSlot, TItem>.EquipSlots { get { return EquipSlots; } }
+
+        public TPInventory()
+        {
+            Items = new Dictionary<int, TItem>();
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetItemSlots(TItemSlot[] slots)

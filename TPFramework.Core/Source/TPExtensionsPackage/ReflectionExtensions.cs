@@ -5,6 +5,7 @@
 */
 
 using System;
+using System.Collections;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -12,7 +13,7 @@ namespace TPFramework.Core
 {
     public static partial class TPExtensions
     {
-        private static BindingFlags findBinding = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
+        public static readonly BindingFlags PublicOrNotInstance = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool HasNamespace(this Type type, string nameSpace)
@@ -44,7 +45,7 @@ namespace TPFramework.Core
             string[] nameParts = propName.Split('.');
             if (nameParts.Length == 1)
             {
-                return obj.GetType().GetProperty(propName, findBinding).GetValue(obj, null);
+                return obj.GetType().GetProperty(propName, PublicOrNotInstance).GetValue(obj, null);
             }
 
             foreach (string part in nameParts)
@@ -71,10 +72,11 @@ namespace TPFramework.Core
             string[] nameParts = fieldName.Split('.');
             if (nameParts.Length == 1)
             {
-                return obj.GetType().GetField(fieldName, findBinding).GetValue(obj);
+                return obj.GetType().GetField(fieldName, PublicOrNotInstance).GetValue(obj);
             }
 
-            foreach (string part in nameParts)
+            int length = nameParts.Length;
+            for (int i = 0; i < length; i++)
             {
                 if (obj == null)
                 {
@@ -82,7 +84,7 @@ namespace TPFramework.Core
                 }
 
                 Type type = obj.GetType();
-                FieldInfo info = type.GetField(part);
+                FieldInfo info = type.GetField(nameParts[i]);
                 if (info == null)
                 {
                     return null;
@@ -90,6 +92,52 @@ namespace TPFramework.Core
                 obj = info.GetValue(obj);
             }
             return obj;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static object GetValue(object source, string name)
+        {
+            if (source == null)
+            {
+                return null;
+            }
+
+            Type type = source.GetType();
+            while (type != null)
+            {
+                FieldInfo f = type.GetField(name, PublicOrNotInstance);
+                if (f != null)
+                {
+                    return f.GetValue(source);
+                }
+
+                PropertyInfo p = type.GetProperty(name, PublicOrNotInstance | BindingFlags.IgnoreCase);
+                if (p != null)
+                {
+                    return p.GetValue(source, null);
+                }
+                type = type.BaseType;
+            }
+            return null;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static object GetValue(object source, string name, int index)
+        {
+            if (!(GetValue(source, name) is IEnumerable enumerable))
+            {
+                return null;
+            }
+
+            IEnumerator enm = enumerable.GetEnumerator();
+            for (int i = 0; i <= index; i++)
+            {
+                if (!enm.MoveNext())
+                {
+                    return null;
+                }
+            }
+            return enm.Current;
         }
     }
 }

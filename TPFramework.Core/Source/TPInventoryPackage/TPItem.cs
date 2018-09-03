@@ -49,19 +49,7 @@ namespace TPFramework.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Use()
-        {
-            return UseItem();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Stack(int count)
-        {
-            return StackItem(count);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected virtual bool UseItem()
+        public virtual bool Use()
         {
             if (CanUse())
             {
@@ -74,7 +62,7 @@ namespace TPFramework.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected virtual bool StackItem(int count = 1)
+        public virtual bool Stack(int count = 1)
         {
             if (CanStack(count))
             {

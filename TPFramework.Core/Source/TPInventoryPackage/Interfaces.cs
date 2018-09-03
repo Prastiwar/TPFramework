@@ -51,6 +51,7 @@ namespace TPFramework.Core
     {
         int Type { get; }
         TItem StoredItem { get; set; }
+        Action OnItemChanged { get; set; }
 
         TItem SwitchItem(TItem item);
         bool MoveItem(ITPItemSlot<TItem> targetSlot);
