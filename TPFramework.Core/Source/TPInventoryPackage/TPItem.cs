@@ -12,6 +12,16 @@ namespace TPFramework.Core
     [Serializable]
     public class TPItem : ITPItem
     {
+        private int id;
+        private int type;
+        private string name;
+        private string description;
+        private double worth;
+        private int amountStack;
+        private int maxStack;
+        private float weight;
+        private ITPModifier[] modifiers;
+
         public Action OnUsed { get; set; }
         public Action OnFailUsed { get; set; }
 
@@ -21,18 +31,15 @@ namespace TPFramework.Core
         public Action OnEquipped { get; set; }
         public Action OnUnEquipped { get; set; }
 
-        public int ID { get; protected set; }
-        public int Type { get; protected set; }
-
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public double Worth { get; set; }
-
-        public int AmountStack { get; set; }
-        public int MaxStack { get; set; }
-        public float Weight { get; set; }
-
-        public ITPModifier[] Modifiers { get; set; }
+        public int ID { get { return id; } protected set { id = value; } }
+        public int Type { get { return type; } protected set { type = value; } }
+        public string Name { get { return name; } set { name = value; } }
+        public string Description { get { return description; } set { description = value; } }
+        public double Worth { get { return worth; } set { worth = value; } }
+        public int AmountStack { get { return amountStack; } set { amountStack = value; } }
+        public int MaxStack { get { return maxStack; } set { maxStack = value; } }
+        public float Weight { get { return weight; } set { weight = value; } }
+        public ITPModifier[] Modifiers { get { return modifiers; } set { modifiers = value; } }
 
         public TPItem(int id, int type)
         {

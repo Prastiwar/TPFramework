@@ -13,7 +13,6 @@ namespace TPFramework.Core
     public class TPItemSlot : ITPItemSlot<TPItem>
     {
         private TPItem storedItem;
-
         protected TPItem StoredItem {
             get { return storedItem; }
             set {
@@ -23,7 +22,8 @@ namespace TPFramework.Core
             }
         }
 
-        public int Type { get; protected set; }
+        private int type;
+        public int Type { get { return type; } protected set { type = value; } }
 
         TPItem ITPItemSlot<TPItem>.StoredItem {
             get { return StoredItem; }

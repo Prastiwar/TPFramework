@@ -8,6 +8,8 @@ using System;
 
 namespace TPFramework.Core
 {
+    // ----- Item ----- //
+
     public interface ITPItemCallbacks
     {
         Action OnUsed { get; set; }
@@ -39,7 +41,12 @@ namespace TPFramework.Core
         bool Stack(int count = 1);
     }
 
-    public interface ITPItemSlot<TItem>
+    // ----- Slots ----- //
+
+    public interface ITPItemSlot { }
+    public interface ITPEquipSlot : ITPItemSlot { }
+
+    public interface ITPItemSlot<TItem> : ITPItemSlot
         where TItem : ITPItem
     {
         int Type { get; }
@@ -53,7 +60,11 @@ namespace TPFramework.Core
         bool IsEmpty();
     }
 
-    public interface ITPEquipSlot<TItem> : ITPItemSlot<TItem> where TItem : ITPItem { }
+    public interface ITPEquipSlot<TItem> : ITPItemSlot<TItem>, ITPEquipSlot
+        where TItem : ITPItem
+    { }
+
+    // ----- Inventory ----- //
 
     public interface ITPInventory<TItemSlot, TEquipSlot, TItem>
         where TItemSlot : ITPItemSlot<TItem>
@@ -61,6 +72,7 @@ namespace TPFramework.Core
         where TItem : ITPItem
     {
         TItemSlot[] ItemSlots { get; }
+        TEquipSlot[] EquipSlots { get; }
         bool IsFull { get; }
 
         bool AddItem(TItem item);

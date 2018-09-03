@@ -7,7 +7,7 @@ namespace TPFramework.Tests
     [TestClass]
     public class TPInventoryPackageTests
     {
-        private class Inventory : TPInventory
+        private class Inventory : TPInventory<TPItemSlot, TPEquipSlot, TPItem>
         {
             public Inventory()
             {
@@ -17,7 +17,7 @@ namespace TPFramework.Tests
             public Inventory(params TPItemSlot[] slots) : this()
             {
                 ItemSlots = slots;
-                EquipSlots = new ITPEquipSlot[0];
+                EquipSlots = new TPEquipSlot[0];
             }
 
             public Inventory(TPEquipSlot[] eqSlots, TPItemSlot[] slots) : this()
@@ -39,8 +39,8 @@ namespace TPFramework.Tests
             item2 = new TPItem(1, 0) {
                 MaxStack = 2
             };
-            slot1 = new TPItemSlot();
-            slot2 = new TPItemSlot();
+            slot1 = new TPItemSlot(0);
+            slot2 = new TPItemSlot(0);
             inv = new Inventory(slot1, slot2);
         }
 
