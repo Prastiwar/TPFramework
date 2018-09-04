@@ -131,6 +131,13 @@ namespace TPFramework.Core
             return ((nomalizedNormalize * normalizedValue) / normalizedMax) + minNormalize;
         }
 
+        /// <summary> Returns normalized percentage </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float GetPercentage(float current, float start, float end)
+        {
+            return (current - start) / (end - start);
+        }
+
         /// <summary> Returns reversed value - in: 1, out: 0 - in: 0.8f, out 0.2f </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Reverse(float value, float maxValue = 1)

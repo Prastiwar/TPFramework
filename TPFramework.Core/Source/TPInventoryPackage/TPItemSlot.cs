@@ -13,24 +13,23 @@ namespace TPFramework.Core
     public class TPItemSlot : ITPItemSlot<TPItem>
     {
         private TPItem storedItem;
-        protected TPItem StoredItem {
+        private int type;
+
+        public TPItem StoredItem {
             get { return storedItem; }
-            set {
+            protected set {
                 storedItem?.OnUsed.Remove(ShouldRemove);
                 storedItem = value;
                 storedItem?.OnUsed.Add(ShouldRemove);
+                OnItemChanged?.Invoke();
             }
         }
 
-        private int type;
         public int Type { get { return type; } protected set { type = value; } }
 
-        TPItem ITPItemSlot<TPItem>.StoredItem {
-            get { return StoredItem; }
-            set { StoredItem = value; }
-        }
-
         public Action OnItemChanged { get; set; }
+
+        TPItem ITPItemSlot<TPItem>.StoredItem { get { return StoredItem; } set { StoredItem = value; } }
 
         private void ShouldRemove()
         {

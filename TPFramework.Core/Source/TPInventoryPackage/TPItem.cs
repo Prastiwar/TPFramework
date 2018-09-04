@@ -81,7 +81,7 @@ namespace TPFramework.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected virtual bool CanStack(int count = 1)
         {
-            return AmountStack + count <= MaxStack;
+            return AmountStack + count < MaxStack;
         }
     }
 }

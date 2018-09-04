@@ -109,6 +109,10 @@ namespace TPFramework.Core
             {
                 if (slot.CanHoldItem(item))
                 {
+                    if(item.AmountStack == 0)
+                    {
+                        item.Stack();
+                    }
                     Items[item.ID] = item;
                     slot.SwitchItem(item);
                     return true;
