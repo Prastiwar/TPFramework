@@ -55,12 +55,6 @@ namespace TPFramework.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool HasItem()
-        {
-            return !(StoredItem is null);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool UseItem()
         {
             return StoredItem != null ? StoredItem.Use() : false;
@@ -75,40 +69,48 @@ namespace TPFramework.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsFull()
         {
-            return StoredItem != null && StoredItem.AmountStack >= StoredItem.MaxStack;
+            return HasItem() && StoredItem.AmountStack >= StoredItem.MaxStack;
         }
 
-        /// <summary> Is type of item same as slot type? </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool HasItem()
+        {
+            return !(StoredItem is null);
+        }
+
+        /// <summary> Is type of item same as slot type? (or slot can hold anything (Type of 0)) </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TypeMatch(TPItem item)
         {
             return item.Type == Type || Type == 0;
         }
-
-        /// <summary> Checks if given slot is opposite of this slot </summary>
+        
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual bool IsSlotOpposite(ITPItemSlot<TPItem> slot)
         {
             return slot is ITPEquipSlot<TPItem>;
         }
 
-        /// <summary> Checks for place in stack and type match </summary>
+        /// <summary> Checks if types match and there is a place in stack </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual bool CanHoldItem(TPItem item)
         {
-            return !IsFull() && TypeMatch(item);
+            return TypeMatch(item) && !IsFull();
         }
 
+        /// <summary> If targetSlot has item will check types match else check if CanHoldItem </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual bool IsEmpty()
+        public virtual bool CanMoveItem(ITPItemSlot<TPItem> targetSlot)
         {
-            return StoredItem == null;
+            return targetSlot.StoredItem != null
+                   ? TypeMatch(targetSlot.StoredItem) && targetSlot.TypeMatch(StoredItem)
+                   : targetSlot.CanHoldItem(StoredItem);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual bool MoveItem(ITPItemSlot<TPItem> targetSlot)
         {
-            if (targetSlot.CanHoldItem(StoredItem))
+            if (CanMoveItem(targetSlot))
             {
                 StoredItem.OnMoved?.Invoke();
                 StoredItem = targetSlot.SwitchItem(StoredItem);

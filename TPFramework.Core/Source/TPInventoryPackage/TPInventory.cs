@@ -16,8 +16,8 @@ namespace TPFramework.Core
         where TEquipSlot : ITPEquipSlot<TItem>
         where TItem : ITPItem
     {
-        private readonly Predicate<TItemSlot> isEmptyMatch = new Predicate<TItemSlot>(x => x.IsEmpty());
-        private readonly Predicate<TEquipSlot> isEquipEmptyMatch = new Predicate<TEquipSlot>(x => x.IsEmpty());
+        private readonly Predicate<TItemSlot> isEmptyMatch = new Predicate<TItemSlot>(x => !x.HasItem());
+        private readonly Predicate<TEquipSlot> isEquipEmptyMatch = new Predicate<TEquipSlot>(x => !x.HasItem());
 
         private TItemSlot[] itemSlots;
         private TEquipSlot[] equipSlots;
@@ -78,8 +78,8 @@ namespace TPFramework.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool HasEmptySlot(int type = 0)
         {
-            return FindItemSlot(x => x.Type == type && x.IsEmpty()) != null
-                || FindEquipSlot(x => x.Type == type && x.IsEmpty()) != null;
+            return FindItemSlot(x => x.Type == type && !x.HasItem()) != null
+                || FindEquipSlot(x => x.Type == type && !x.HasItem()) != null;
         }
 
         /// <summary> Does item exist in any of slot? </summary>

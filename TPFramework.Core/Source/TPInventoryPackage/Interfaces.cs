@@ -57,8 +57,8 @@ namespace TPFramework.Core
         bool MoveItem(ITPItemSlot<TItem> targetSlot);
         bool CanHoldItem(TItem item);
         bool TypeMatch(TItem item);
+        bool HasItem();
         bool IsFull();
-        bool IsEmpty();
     }
 
     public interface ITPEquipSlot<TItem> : ITPItemSlot<TItem>, ITPEquipSlot
