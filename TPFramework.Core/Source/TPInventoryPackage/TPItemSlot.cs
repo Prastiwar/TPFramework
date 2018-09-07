@@ -12,15 +12,16 @@ namespace TPFramework.Core
     [Serializable]
     public class TPItemSlot : ITPItemSlot<TPItem>
     {
+        private Action onRemove;
         private TPItem storedItem;
         private int type;
 
         public TPItem StoredItem {
             get { return storedItem; }
             protected set {
-                storedItem?.OnUsed.Remove(ShouldRemove);
+                storedItem?.OnUsed.Remove(onRemove);
                 storedItem = value;
-                storedItem?.OnUsed.Add(ShouldRemove);
+                storedItem?.OnUsed.Add(onRemove);
                 OnItemChanged?.Invoke();
             }
         }
@@ -43,6 +44,7 @@ namespace TPFramework.Core
         {
             Type = type;
             StoredItem = storeItem;
+            onRemove = ShouldRemove;
         }
 
         /// <summary> Holds given item and returns the old one </summary>

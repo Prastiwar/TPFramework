@@ -58,6 +58,30 @@ namespace TPFramework.Tests
         }
 
         [TestMethod]
+        public void GetSequence()
+        {
+            int length = 10;
+            float[] floats = TPMath.GetSequence(length);
+            for (int i = 0; i < length; i++)
+            {
+                Assert.AreEqual(i, floats[i]);
+            }
+            
+        }
+
+        [TestMethod]
+        public void GetReversedSequence()
+        {
+            int length = 10;
+            float[] floats = TPMath.GetReversedSequence(length);
+            float value = 0;
+            for (int i = 0; i < length; i++)
+            {
+                Assert.AreEqual(value - i, floats[i]);
+            }
+        }
+
+        [TestMethod]
         public void ReverseValue()
         {
             Assert.AreEqual(1, TPMath.Reverse(0));

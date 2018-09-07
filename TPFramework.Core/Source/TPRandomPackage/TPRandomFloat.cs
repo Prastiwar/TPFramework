@@ -102,9 +102,9 @@ namespace TPFramework.Core
         public static float[] RandomTotalProbabilities(int length, float total, float minValue = 1, float maxValue = 100)
         {
             if ((maxValue * length) < total)
-                throw new Exception("Max (" + maxValue + ") value can't be smaller than " + ((total / length) + 1));
+                throw new Exception($"Max ({maxValue}) value can't be smaller than ({(total / length) + 1})");
             else if ((minValue * length) > total)
-                throw new Exception("Min (" + minValue + ") value can't be larger than " + total / length);
+                throw new Exception($"Min ({minValue}) value can't be larger than {total / length}");
             else if (maxValue < minValue)
                 throw new Exception("Max value can't be smaller than min!");
 

@@ -11,7 +11,7 @@ namespace TPFramework.Tests
         {
             public Inventory()
             {
-                Items = new Dictionary<int, ITPItem>();
+                Items = new Dictionary<int, TPItem>();
             }
 
             public Inventory(params TPItemSlot[] slots) : this()
@@ -119,7 +119,7 @@ namespace TPFramework.Tests
         {
             Reset();
 
-            Assert.AreEqual(1, item1.AmountStack);
+            Assert.AreEqual(0, item1.AmountStack);
             inv.AddItem(item1, slot1);
             Assert.AreEqual(1, item1.AmountStack);
             bool stack = inv.AddItem(item1);
@@ -132,8 +132,8 @@ namespace TPFramework.Tests
         {
             Reset();
 
-            Assert.AreEqual(1, item2.AmountStack);
-            inv.AddItem(item2, slot2);
+            Assert.AreEqual(0, item2.AmountStack);
+            Assert.IsTrue(inv.AddItem(item2, slot2));
 
             Assert.AreEqual(1, item2.AmountStack);
             Assert.IsTrue(inv.AddItem(item2));

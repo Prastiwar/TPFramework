@@ -149,8 +149,8 @@ namespace TPFramework.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int DigitCount(float value)
         {
-            return value != 0.0f 
-                ? Math.Abs(FloorToInt(Log10(value) + 1)) 
+            return value != 0.0f
+                ? Math.Abs(FloorToInt(Log10(value) + 1))
                 : 1;
         }
 
@@ -215,6 +215,46 @@ namespace TPFramework.Core
         public static float Sqrt(float value)
         {
             return (float)Math.Sqrt(value);
+        }
+
+        /// <summary> Returns array of values in sequence with gap between them (starts from 0) </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float[] GetSequence(int length, float gap = 1)
+        {
+            return GetSequence(length, 0, gap);
+        }
+
+        /// <summary> Returns array of values in sequence with gap between them (starts from 0) </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float[] GetReversedSequence(int length, float gap = 1)
+        {
+            return GetReversedSequence(length, 0, gap);
+        }
+
+        /// <summary> Returns array of values in sequence with gap between them (starts from startValue) </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float[] GetSequence(int length, float startValue, float gap)
+        {
+            float[] sequence = new float[length];
+            sequence[0] = startValue;
+            for (int i = 1; i < length; i++)
+            {
+                sequence[i] = sequence[i - 1] + gap;
+            }
+            return sequence;
+        }
+
+        /// <summary> Returns array of values in reversed sequence with gap between them (starts from startValue) </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float[] GetReversedSequence(int length, float startValue, float gap)
+        {
+            float[] sequence = new float[length];
+            sequence[0] = startValue;
+            for (int i = 1; i < length; i++)
+            {
+                sequence[i] = sequence[i - 1] - gap;
+            }
+            return sequence;
         }
     }
 }
