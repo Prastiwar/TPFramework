@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TPFramework.Core
+namespace TP.Framework
 {
     [Serializable]
     public class PersistDefaultValueTypeMismatch : Exception

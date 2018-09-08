@@ -1,7 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TPFramework.Core;
 
-namespace TPFramework.Tests
+namespace TP.Framework.Tests
 {
     [TestClass]
     public class TPObjectPoolPackageTests

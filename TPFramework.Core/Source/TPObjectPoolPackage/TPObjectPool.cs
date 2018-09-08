@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 
-namespace TPFramework.Core
+namespace TP.Framework
 {
     public abstract class TPObjectPool<T>
     {

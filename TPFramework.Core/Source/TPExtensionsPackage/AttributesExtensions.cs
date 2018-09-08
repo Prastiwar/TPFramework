@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Reflection;
 
-namespace TPFramework.Core
+namespace TP.Framework
 {
     public static partial class TPExtensions
     {
+        /// <summary> Gets string from enum value that has StringValueAttribute </summary>
         public static string GetStringValue(Enum value)
         {
             Type type = value.GetType();

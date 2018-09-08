@@ -7,8 +7,9 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using TP.Framework.Collections;
 
-namespace TPFramework.Core
+namespace TP.Framework
 {
     [Serializable]
     public class TPModifierList<T> : ITPModifierList<T> where T : ITPModifier

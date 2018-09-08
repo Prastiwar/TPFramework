@@ -7,7 +7,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace TPFramework.Core
+namespace TP.Framework.Collections
 {
     [Serializable]
     public class ReusableList<T>

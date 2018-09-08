@@ -1,8 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
-using TPFramework.Core;
 
-namespace TPFramework.Tests
+namespace TP.Framework.Tests
 {
     [TestClass]
     public class TPInventoryPackageTests

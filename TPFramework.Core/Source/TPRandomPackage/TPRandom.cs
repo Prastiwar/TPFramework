@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace TPFramework.Core
+namespace TP.Framework
 {
     public static partial class TPRandom
     {

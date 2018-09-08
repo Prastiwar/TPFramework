@@ -6,7 +6,7 @@
 
 using System;
 
-namespace TPFramework.Core
+namespace TP.Framework
 {
     /// <summary> Struct holds probability of int and element of T which can be returned in PickWithProbability </summary>
     /// <typeparam name="T"> Element can be returned if selected in Pick </typeparam>

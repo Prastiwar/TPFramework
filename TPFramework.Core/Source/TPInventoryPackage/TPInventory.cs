@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace TPFramework.Core
+namespace TP.Framework
 {
     [Serializable]
     public abstract class TPInventory<TItemSlot, TEquipSlot, TItem> : ITPInventory<TItemSlot, TEquipSlot, TItem>

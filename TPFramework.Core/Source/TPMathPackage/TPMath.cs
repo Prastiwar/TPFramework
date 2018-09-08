@@ -7,7 +7,7 @@
 using System;
 using System.Runtime.CompilerServices;
 
-namespace TPFramework.Core
+namespace TP.Framework
 {
     public static class TPMath
     {

@@ -7,7 +7,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace TPFramework.Core
+namespace TP.Framework
 {
     public interface ITPPersistSystem
     {

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-namespace TPFramework.Core
+namespace TP.Framework
 {
     public static partial class TPExtensions
     {

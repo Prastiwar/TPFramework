@@ -1,8 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using TPFramework.Core;
 
-namespace TPFramework.Tests
+namespace TP.Framework.Tests
 {
     [TestClass]
     public class TPMathPackageTests
@@ -27,11 +26,11 @@ namespace TPFramework.Tests
         [TestMethod]
         public void PingPong()
         {
-            CompareFloats(0   , TPMath.PingPong(0, 1));
+            CompareFloats(0, TPMath.PingPong(0, 1));
             CompareFloats(0.1f, TPMath.PingPong(0.1f, 1));
             CompareFloats(0.5f, TPMath.PingPong(0.5f, 1));
             CompareFloats(0.9f, TPMath.PingPong(0.9f, 1));
-            CompareFloats(1   , TPMath.PingPong(1, 1));
+            CompareFloats(1, TPMath.PingPong(1, 1));
             CompareFloats(0.9f, TPMath.PingPong(1.1f, 1));
             CompareFloats(0.8f, TPMath.PingPong(1.2f, 1));
             CompareFloats(0.7f, TPMath.PingPong(1.3f, 1));
@@ -66,7 +65,7 @@ namespace TPFramework.Tests
             {
                 Assert.AreEqual(i, floats[i]);
             }
-            
+
         }
 
         [TestMethod]

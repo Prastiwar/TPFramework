@@ -6,7 +6,7 @@
 
 using System;
 
-namespace TPFramework.Internal
+namespace TP.Framework.Internal
 {
     public sealed class TPPackage
     {

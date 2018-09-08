@@ -6,7 +6,7 @@
 
 using System;
 
-namespace TPFramework.Core
+namespace TP.Framework
 {
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
     public sealed class PersistantAttribute : Attribute

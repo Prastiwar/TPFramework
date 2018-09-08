@@ -6,7 +6,7 @@
 
 using System;
 
-namespace TPFramework.Core
+namespace TP.Framework
 {
     public enum ModifierType
     {

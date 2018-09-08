@@ -7,7 +7,7 @@
 using System;
 using System.IO;
 
-namespace TPFramework.Internal
+namespace TP.Framework.Internal
 {
     public struct TPFrameworkInfo
     {

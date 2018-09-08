@@ -7,7 +7,7 @@
 using System.IO;
 using System.Runtime.CompilerServices;
 
-namespace TPFramework.Core
+namespace TP.Framework.Internal
 {
     public class TPProjectManager
     {

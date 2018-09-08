@@ -7,7 +7,7 @@
 using System;
 using System.Runtime.CompilerServices;
 
-namespace TPFramework.Core
+namespace TP.Framework
 {
     /// <summary> Wrapper for TPAttribute<TPModifierList<TPModifier>, TPModifier> </summary>
     [Serializable]

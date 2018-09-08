@@ -9,7 +9,7 @@ using System.Collections;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace TPFramework.Core
+namespace TP.Framework
 {
     public static partial class TPExtensions
     {
@@ -40,7 +40,7 @@ namespace TPFramework.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Object GetRelativePropertyValue(this Object obj, string propName)
+        public static object GetRelativePropertyValue(this object obj, string propName)
         {
             string[] nameParts = propName.Split('.');
             if (nameParts.Length == 1)

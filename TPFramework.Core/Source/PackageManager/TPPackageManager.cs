@@ -7,7 +7,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace TPFramework.Internal
+namespace TP.Framework.Internal
 {
     public class TPPackageManager
     {

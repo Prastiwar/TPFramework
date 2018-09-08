@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace TPFramework.Core
+namespace TP.Framework.Collections
 {
     [Serializable]
     public class Stack<T, U> : Stack<KeyValuePair<T, U>>

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace TPFramework.Core
+namespace TP.Framework
 {
     public enum EncodingType
     {

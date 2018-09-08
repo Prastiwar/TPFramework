@@ -7,7 +7,7 @@
 using System;
 using System.Text;
 
-namespace TPFramework.Core
+namespace TP.Framework
 {
     [Serializable]
     public struct TPModifier : ITPModifier

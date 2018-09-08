@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace TPFramework.Core
+namespace TP.Framework
 {
     public abstract class TPPersistSystem<TInstance> : ITPPersistSystem
         where TInstance : TPPersistSystem<TInstance>
