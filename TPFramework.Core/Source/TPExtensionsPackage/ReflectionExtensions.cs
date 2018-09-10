@@ -24,12 +24,7 @@ namespace TP.Framework
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T GetSingleCustomAttribute<T>(this FieldInfo fieldInfo, bool inherited = false) where T : Attribute
         {
-            Type type = typeof(T);
-            if (fieldInfo.IsDefined(type, inherited))
-            {
-                return (T)fieldInfo.GetCustomAttributes(type, inherited)[0];
-            }
-            return null;
+            return (T)fieldInfo.GetCustomAttribute(typeof(T), inherited);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

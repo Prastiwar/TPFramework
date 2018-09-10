@@ -23,15 +23,6 @@ namespace TP.Framework
         int Priority { get; }
     }
 
-    public interface ITPAttribute<T> where T : ITPModifier
-    {
-        ITPModifierList<T> Modifiers { get; }
-        float BaseValue { get; }
-        float Value { get; }
-        void Recalculate();
-        Action<float> OnChanged { get; }
-    }
-
     public interface ITPModifierList<T> where T : ITPModifier
     {
         T this[int index] { get; }
@@ -46,5 +37,14 @@ namespace TP.Framework
         bool HasModifier(T modifier);
         int Compare(T mod1, T mod2);
         void Sort();
+    }
+
+    public interface ITPAttribute<T> where T : ITPModifier
+    {
+        ITPModifierList<T> Modifiers { get; }
+        float BaseValue { get; }
+        float Value { get; }
+        void Recalculate();
+        Action<float> OnChanged { get; }
     }
 }

@@ -11,7 +11,7 @@ namespace TP.Framework
 {
     public static class TPMath
     {
-        public const float Epsilon = 0.00000001f;
+        public const float Epsilon = 0.000001f;
 
         /// <summary> Interpolates between from and to by percentage - Clamp it between 0 and 1 </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -66,7 +66,7 @@ namespace TP.Framework
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Approximately(float a, float b)
         {
-            return Math.Abs(b - a) < Math.Max(0.000001f * Math.Max(Math.Abs(a), Math.Abs(b)), Epsilon * 8);
+            return Math.Abs(b - a) < Math.Max(Epsilon * Math.Max(Math.Abs(a), Math.Abs(b)), Epsilon * 8);
         }
 
         /// <summary> PingPongs value between 0 and maxValue </summary>

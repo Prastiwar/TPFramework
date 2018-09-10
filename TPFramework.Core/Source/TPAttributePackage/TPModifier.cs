@@ -5,6 +5,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace TP.Framework
@@ -40,12 +41,16 @@ namespace TP.Framework
 
         public override bool Equals(object obj)
         {
-            return base.Equals(obj);
+            return obj is TPModifier mod ? mod == this : false;
         }
 
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            var hashCode = 328636640;
+            hashCode = hashCode * -1521134295 + EqualityComparer<object>.Default.GetHashCode(Source);
+            hashCode = hashCode * -1521134295 + Value.GetHashCode();
+            hashCode = hashCode * -1521134295 + Priority.GetHashCode();
+            return hashCode;
         }
 
         public override string ToString()

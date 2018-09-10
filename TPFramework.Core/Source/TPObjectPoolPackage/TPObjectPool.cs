@@ -5,6 +5,7 @@
 */
 
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace TP.Framework
 {
@@ -20,6 +21,7 @@ namespace TP.Framework
             Length = 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Get()
         {
             if (Length > 0)
@@ -30,6 +32,7 @@ namespace TP.Framework
             return CreateNewObject();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Push(T obj)
         {
             OnPush(obj);
@@ -37,13 +40,20 @@ namespace TP.Framework
             Length++;
         }
 
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Clear()
         {
             pool.Clear();
             Length = 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void TrimExcess()
+        {
+            pool.TrimExcess();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void Grow(int size)
         {
             for (int i = 0; i < size; i++)
@@ -51,7 +61,7 @@ namespace TP.Framework
                 pool.Enqueue(CreateNewObject());
             }
         }
-
+        
         protected virtual void OnPush(T obj) { }
         protected abstract T CreateNewObject();
     }
