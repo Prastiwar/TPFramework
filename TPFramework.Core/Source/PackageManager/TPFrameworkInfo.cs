@@ -12,7 +12,7 @@ namespace TP.Framework.Internal
     public struct TPFrameworkInfo
     {
         public const int PackagesLength = 9;
-        public const string TPCoreNamespace = "TPFramework.Core";
+        public const string TPCoreNamespace = "TP.Framework.Core";
 
         internal static string[] GetExistingPackagePaths {
             get { return Directory.GetDirectories(Environment.CurrentDirectory, "TP*Package", SearchOption.AllDirectories); }

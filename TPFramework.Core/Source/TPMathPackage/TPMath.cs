@@ -12,6 +12,7 @@ namespace TP.Framework
     public static class TPMath
     {
         public const float Epsilon = 0.000001f;
+        public const float PI = (float)Math.PI;
 
         /// <summary> Interpolates between from and to by percentage - Clamp it between 0 and 1 </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -24,7 +25,7 @@ namespace TP.Framework
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float LerpAngle(float from, float to, float percentage)
         {
-            return Lerp(from, DeltaAngle(from, to), percentage);
+            return from + (DeltaAngle(from, to) - from) * Clamp(percentage);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -138,9 +139,9 @@ namespace TP.Framework
             return (current - start) / (end - start);
         }
 
-        /// <summary> Returns reversed value - in: 1, out: 0 - in: 0.8f, out 0.2f </summary>
+        /// <summary> Returns flipped value - in: 1, out: 0 - in: 0.8f, out 0.2f </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float Reverse(float value, float maxValue = 1)
+        public static float Flip(float value, float maxValue = 1)
         {
             return maxValue - value;
         }
@@ -215,6 +216,20 @@ namespace TP.Framework
         public static float Sqrt(float value)
         {
             return (float)Math.Sqrt(value);
+        }
+
+        /// <summary> Returns the square root of value </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Sin(float value)
+        {
+            return (float)Math.Sin(value);
+        }
+
+        /// <summary> Returns the square root of value </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Cos(float value)
+        {
+            return (float)Math.Cos(value);
         }
 
         /// <summary> Returns array of values in sequence with gap between them (starts from 0) </summary>

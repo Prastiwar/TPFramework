@@ -83,17 +83,17 @@ namespace TP.Framework.Tests
         [TestMethod]
         public void ReverseValue()
         {
-            Assert.AreEqual(1, TPMath.Reverse(0));
-            Assert.AreEqual(10, TPMath.Reverse(0, 10));
+            Assert.AreEqual(1, TPMath.Flip(0));
+            Assert.AreEqual(10, TPMath.Flip(0, 10));
 
-            Assert.AreEqual(0.5f, TPMath.Reverse(0.5f));
-            Assert.AreEqual(5, TPMath.Reverse(5, 10));
+            Assert.AreEqual(0.5f, TPMath.Flip(0.5f));
+            Assert.AreEqual(5, TPMath.Flip(5, 10));
 
-            Assert.AreEqual(0.8f, TPMath.Reverse(0.2f));
-            Assert.AreEqual(8, TPMath.Reverse(2, 10));
+            Assert.AreEqual(0.8f, TPMath.Flip(0.2f));
+            Assert.AreEqual(8, TPMath.Flip(2, 10));
 
-            Assert.AreEqual(4.8f, TPMath.Reverse(0.2f, 5));
-            Assert.AreEqual(3, TPMath.Reverse(2, 5));
+            Assert.AreEqual(4.8f, TPMath.Flip(0.2f, 5));
+            Assert.AreEqual(3, TPMath.Flip(2, 5));
         }
 
         [TestMethod]
