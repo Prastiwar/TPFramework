@@ -190,13 +190,6 @@ namespace TP.Framework
             return (int)Math.Floor(value);
         }
 
-        /// <summary> Returns value raised to power of powValue </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float Pow(float value, float powValue)
-        {
-            return (float)Math.Pow(value, powValue);
-        }
-
         /// <summary> Returns value to nearest integral value </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Round(float value)
@@ -230,6 +223,69 @@ namespace TP.Framework
         public static float Cos(float value)
         {
             return (float)Math.Cos(value);
+        }
+
+        /// <summary> Returns value raised to power of exp </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Pow(float value, int exp)
+        {
+            float result = 1.0f;
+            while (exp > 0)
+            {
+                if (exp % 2 == 1)
+                    result *= value;
+                exp >>= 1;
+                value *= value;
+            }
+            return result;
+        }
+
+        /// <summary> Returns value raised to power of exp </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double Pow(double value, int exp)
+        {
+            double result = 1.0;
+            while (exp > 0)
+            {
+                if (exp % 2 == 1)
+                    result *= value;
+                exp >>= 1;
+                value *= value;
+            }
+            return result;
+        }
+
+        /// <summary> Returns value raised to power of exp </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Pow(float value, float exp)
+        {
+            return (float)Math.Pow(value, exp);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Factorial(float n)
+        {
+            float val = n;
+            while (n > 2)
+            {
+                val *= n - 1;
+                n -= 1;
+            }
+            return val;
+        }
+
+        /// <summary> Converts degrees to radians </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double DegreesToRadians(double degrees)
+        {
+            return degrees * PI / 180.0;
+        }
+
+        /// <summary> Converts degrees to radians </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float DegreesToRadians(float degrees)
+        {
+            return degrees * PI / 180.0f;
         }
 
         /// <summary> Returns array of values in sequence with gap between them (starts from 0) </summary>

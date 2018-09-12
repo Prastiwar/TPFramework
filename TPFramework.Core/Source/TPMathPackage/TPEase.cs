@@ -151,11 +151,5 @@ namespace TP.Framework
                 ? to / 2 * (1 - TPMath.Sqrt(1 - time * time)) + from
                 : to / 2 * (TPMath.Sqrt(1 - (time -= 2) * time) + 1) + from;
         }
-
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //public static float Spike(float t)
-        //{
-        //    return t <= 0.5f ? EaseIn(t / .5f) : EaseIn(TPTPMath.Flip(t) / .5f);
-        //}
     }
 }
