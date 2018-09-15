@@ -22,15 +22,54 @@ namespace TP.Framework
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T GetSingleCustomAttribute<T>(this FieldInfo fieldInfo, bool inherited = false) where T : Attribute
+        public static T GetSingleCustomAttribute<T>(this FieldInfo info, bool inherited = false) where T : Attribute
         {
-            return (T)fieldInfo.GetCustomAttribute(typeof(T), inherited);
+            return info.GetCustomAttribute(typeof(T), inherited) as T;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryGetCustomAttribute<T>(this FieldInfo fieldInfo, out T attribute, bool inherited = false) where T : Attribute
+        public static bool TryGetCustomAttribute<T>(this FieldInfo info, out T attribute, bool inherited = false) where T : Attribute
         {
-            attribute = GetSingleCustomAttribute<T>(fieldInfo, inherited);
+            attribute = GetSingleCustomAttribute<T>(info, inherited) as T;
+            return attribute != null;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T GetSingleCustomAttribute<T>(this MethodInfo info, bool inherited = false) where T : Attribute
+        {
+            return info.GetCustomAttribute(typeof(T), inherited) as T;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool TryGetCustomAttribute<T>(this MethodInfo info, out T attribute, bool inherited = false) where T : Attribute
+        {
+            attribute = GetSingleCustomAttribute<T>(info, inherited) as T;
+            return attribute != null;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T GetSingleCustomAttribute<T>(this MemberInfo info, bool inherited = false) where T : Attribute
+        {
+            return info.GetCustomAttribute(typeof(T), inherited) as T;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool TryGetCustomAttribute<T>(this MemberInfo info, out T attribute, bool inherited = false) where T : Attribute
+        {
+            attribute = GetSingleCustomAttribute<T>(info, inherited) as T;
+            return attribute != null;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T GetSingleCustomAttribute<T>(this PropertyInfo info, bool inherited = false) where T : Attribute
+        {
+            return info.GetCustomAttribute(typeof(T), inherited) as T;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool TryGetCustomAttribute<T>(this PropertyInfo info, out T attribute, bool inherited = false) where T : Attribute
+        {
+            attribute = GetSingleCustomAttribute<T>(info, inherited) as T;
             return attribute != null;
         }
 
