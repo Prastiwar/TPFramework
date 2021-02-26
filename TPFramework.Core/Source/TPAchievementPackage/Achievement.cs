@@ -9,13 +9,13 @@ using System;
 namespace TP.Framework
 {
     [Serializable]
-    public class TPAchievement<TData> : ITPAchievement<TData>
-        where TData : struct, ITPAchievementData
+    public class Achievement<TData> : IAchievement<TData>
+        where TData : struct, IAchievementData
     {
         public Action OnCompleted { get; set; }
         public TData Data { get; private set; }
 
-        public TPAchievement(TData data)
+        public Achievement(TData data)
         {
             Data = data;
         }

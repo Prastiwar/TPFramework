@@ -11,10 +11,10 @@ using System.Runtime.CompilerServices;
 namespace TP.Framework
 {
     [Serializable]
-    public abstract class TPInventory<TItemSlot, TEquipSlot, TItem> : ITPInventory<TItemSlot, TEquipSlot, TItem>
-        where TItemSlot : ITPItemSlot<TItem>
-        where TEquipSlot : ITPEquipSlot<TItem>
-        where TItem : ITPItem
+    public abstract class Inventory<TItemSlot, TEquipSlot, TItem> : IInventory<TItemSlot, TEquipSlot, TItem>
+        where TItemSlot : IItemSlot<TItem>
+        where TEquipSlot : IEquipSlot<TItem>
+        where TItem : IItem
     {
         private readonly Predicate<TItemSlot> isEmptyMatch = new Predicate<TItemSlot>(x => !x.HasItem());
         private readonly Predicate<TEquipSlot> isEquipEmptyMatch = new Predicate<TEquipSlot>(x => !x.HasItem());
@@ -32,10 +32,10 @@ namespace TP.Framework
         public virtual int SlotCount { get { return ItemSlots.Length + EquipSlots.Length; } }
         public virtual int EmptySlotsCount { get { return ItemSlots.Count(isEmptyMatch) + EquipSlots.Count(isEquipEmptyMatch); } }
 
-        TItemSlot[] ITPInventory<TItemSlot, TEquipSlot, TItem>.ItemSlots { get { return ItemSlots; } }
-        TEquipSlot[] ITPInventory<TItemSlot, TEquipSlot, TItem>.EquipSlots { get { return EquipSlots; } }
+        TItemSlot[] IInventory<TItemSlot, TEquipSlot, TItem>.ItemSlots { get { return ItemSlots; } }
+        TEquipSlot[] IInventory<TItemSlot, TEquipSlot, TItem>.EquipSlots { get { return EquipSlots; } }
 
-        public TPInventory()
+        public Inventory()
         {
             Items = new Dictionary<int, TItem>();
         }
@@ -52,25 +52,25 @@ namespace TP.Framework
             EquipSlots = slots;
         }
 
-        public ITPItemSlot<TItem> FindAnySlot(Predicate<ITPItemSlot<TItem>> match)
+        public IItemSlot<TItem> FindAnySlot(Predicate<IItemSlot<TItem>> match)
         {
-            ITPItemSlot<TItem> slot = FindItemSlot(match);
+            IItemSlot<TItem> slot = FindItemSlot(match);
             return slot ?? FindEquipSlot(match);
         }
 
         /// <summary> Finds first matches slot from ItemSlots (can return null) </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TItemSlot FindItemSlot(Predicate<ITPItemSlot<TItem>> match)
+        public TItemSlot FindItemSlot(Predicate<IItemSlot<TItem>> match)
         {
-            int index = (ItemSlots as ITPItemSlot<TItem>[]).FindIndex(match);
+            int index = (ItemSlots as IItemSlot<TItem>[]).FindIndex(match);
             return index > -1 ? ItemSlots[index] : default(TItemSlot);
         }
 
         /// <summary> Finds first matches slot from EquipSlots (can return null) </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TEquipSlot FindEquipSlot(Predicate<ITPItemSlot<TItem>> match)
+        public TEquipSlot FindEquipSlot(Predicate<IItemSlot<TItem>> match)
         {
-            int index = (EquipSlots as ITPItemSlot<TItem>[]).FindIndex(match);
+            int index = (EquipSlots as IItemSlot<TItem>[]).FindIndex(match);
             return index > -1 ? EquipSlots[index] : default(TEquipSlot);
         }
 
@@ -95,7 +95,7 @@ namespace TP.Framework
         {
             if (!HasItem(item.ID))
             {
-                ITPItemSlot<TItem> slot = FindAnySlot(x => x.CanHoldItem(item));
+                IItemSlot<TItem> slot = FindAnySlot(x => x.CanHoldItem(item));
                 return slot != null ? AddItem(item, slot) : false;
             }
             return Items[item.ID].Stack();
@@ -103,7 +103,7 @@ namespace TP.Framework
 
         /// <summary> Returns false if slot doesn't match item or item exist and can't be more stacked </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual bool AddItem(TItem item, ITPItemSlot<TItem> slot)
+        public virtual bool AddItem(TItem item, IItemSlot<TItem> slot)
         {
             if (!HasItem(item.ID))
             {

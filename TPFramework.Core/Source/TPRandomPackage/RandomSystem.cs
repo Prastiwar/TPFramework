@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 
 namespace TP.Framework
 {
-    public static partial class TPRandom
+    public static partial class RandomSystem
     {
         private static Random random = new Random();
         private static readonly int[] signs = new int[3] { 0, 1, -1 };

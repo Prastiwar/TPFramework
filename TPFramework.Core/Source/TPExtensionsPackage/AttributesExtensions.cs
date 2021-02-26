@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 
 namespace TP.Framework
 {
-    public static partial class TPExtensions
+    public static partial class Extensions
     {
         /// <summary> Gets string from enum value that has StringValueAttribute </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -6,7 +6,7 @@
 
 namespace TP.Framework.Internal
 {
-    public interface ITPDefineManager
+    public interface IDefineManager
     {
         void ToggleDefine(string define);
         void SetDefine(string define, bool enabled);

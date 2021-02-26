@@ -10,13 +10,13 @@ using System.Runtime.CompilerServices;
 namespace TP.Framework
 {
     [Serializable]
-    public class TPItemSlot : ITPItemSlot<TPItem>
+    public class ItemSlot : IItemSlot<ItemModel>
     {
         private Action onRemove;
-        private TPItem storedItem;
+        private ItemModel storedItem;
         private int type;
 
-        public TPItem StoredItem {
+        public ItemModel StoredItem {
             get { return storedItem; }
             protected set {
                 storedItem?.OnUsed.Remove(onRemove);
@@ -30,7 +30,7 @@ namespace TP.Framework
 
         public Action OnItemChanged { get; set; }
 
-        TPItem ITPItemSlot<TPItem>.StoredItem { get { return StoredItem; } set { StoredItem = value; } }
+        ItemModel IItemSlot<ItemModel>.StoredItem { get { return StoredItem; } set { StoredItem = value; } }
 
         private void ShouldRemove()
         {
@@ -40,7 +40,7 @@ namespace TP.Framework
             }
         }
 
-        public TPItemSlot(int type, TPItem storeItem = null)
+        public ItemSlot(int type, ItemModel storeItem = null)
         {
             Type = type;
             StoredItem = storeItem;
@@ -49,9 +49,9 @@ namespace TP.Framework
 
         /// <summary> Holds given item and returns the old one </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TPItem SwitchItem(TPItem item)
+        public ItemModel SwitchItem(ItemModel item)
         {
-            TPItem returnItem = storedItem ?? null;
+            ItemModel returnItem = storedItem ?? null;
             StoredItem = item;
             return returnItem;
         }
@@ -82,27 +82,27 @@ namespace TP.Framework
 
         /// <summary> Is type of item same as slot type? (or slot can hold anything (Type of 0)) </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool TypeMatch(TPItem item)
+        public bool TypeMatch(ItemModel item)
         {
             return item.Type == Type || Type == 0;
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual bool IsSlotOpposite(ITPItemSlot<TPItem> slot)
+        public virtual bool IsSlotOpposite(IItemSlot<ItemModel> slot)
         {
-            return slot is ITPEquipSlot<TPItem>;
+            return slot is IEquipSlot<ItemModel>;
         }
 
         /// <summary> Checks if types match and there is a place in stack </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual bool CanHoldItem(TPItem item)
+        public virtual bool CanHoldItem(ItemModel item)
         {
             return TypeMatch(item) && !IsFull();
         }
 
         /// <summary> If targetSlot has item will check types match else check if CanHoldItem </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual bool CanMoveItem(ITPItemSlot<TPItem> targetSlot)
+        public virtual bool CanMoveItem(IItemSlot<ItemModel> targetSlot)
         {
             return targetSlot.StoredItem != null
                    ? TypeMatch(targetSlot.StoredItem) && targetSlot.TypeMatch(StoredItem)
@@ -110,7 +110,7 @@ namespace TP.Framework
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual bool MoveItem(ITPItemSlot<TPItem> targetSlot)
+        public virtual bool MoveItem(IItemSlot<ItemModel> targetSlot)
         {
             if (CanMoveItem(targetSlot))
             {

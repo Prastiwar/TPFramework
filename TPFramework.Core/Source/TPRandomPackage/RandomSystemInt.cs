@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 
 namespace TP.Framework
 {
-    public static partial class TPRandom
+    public static partial class RandomSystem
     {        
         /// <summary> Get randomly value between min [inclusive] and max [exclusive] </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

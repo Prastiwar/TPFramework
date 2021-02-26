@@ -10,12 +10,12 @@ using System.Runtime.CompilerServices;
 namespace TP.Framework
 {
     [Serializable]
-    public class TPEquipSlot : TPItemSlot, ITPEquipSlot<TPItem>
+    public class EquipSlot : ItemSlot, IEquipSlot<ItemModel>
     {
-        public TPEquipSlot(int type, TPItem storeItem = null) : base(type, storeItem) { }
+        public EquipSlot(int type, ItemModel storeItem = null) : base(type, storeItem) { }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override bool MoveItem(ITPItemSlot<TPItem> targetSlot)
+        public override bool MoveItem(IItemSlot<ItemModel> targetSlot)
         {
             if (targetSlot.CanHoldItem(StoredItem))
             {
@@ -30,9 +30,9 @@ namespace TP.Framework
 
         /// <summary> Checks if given slot is opposite of this slot </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override bool IsSlotOpposite(ITPItemSlot<TPItem> slot)
+        public override bool IsSlotOpposite(IItemSlot<ItemModel> slot)
         {
-            return !(slot is ITPEquipSlot<TPItem>);
+            return !(slot is IEquipSlot<ItemModel>);
         }
     }
 }

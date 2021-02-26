@@ -8,17 +8,8 @@ using System;
 
 namespace TP.Framework
 {
-    public interface ITPAchievementData
-    {
-        string Title { get; }
-        string Description { get; }
-        float ReachPoints { get; }
-        float Points { get; set; }
-        bool IsCompleted { get; set; }
-    }
-
-    public interface ITPAchievement<TData>
-        where TData : struct, ITPAchievementData
+    public interface IAchievement<TData>
+        where TData : struct, IAchievementData
     {
         TData Data { get; }
 

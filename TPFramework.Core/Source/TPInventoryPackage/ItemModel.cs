@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 namespace TP.Framework
 {
     [Serializable]
-    public class TPItem : ITPItem<TPModifier>
+    public class ItemModel : IItem<AttributeModifier>
     {
         private int id;
         private int type;
@@ -20,7 +20,7 @@ namespace TP.Framework
         private int amountStack;
         private int maxStack;
         private float weight;
-        private TPModifier[] modifiers;
+        private AttributeModifier[] modifiers;
 
         public Action OnUsed { get; set; }
         public Action OnFailUsed { get; set; }
@@ -39,9 +39,9 @@ namespace TP.Framework
         public int AmountStack { get { return amountStack; } set { amountStack = value; } }
         public int MaxStack { get { return maxStack; } set { maxStack = value; } }
         public float Weight { get { return weight; } set { weight = value; } }
-        public TPModifier[] Modifiers { get { return modifiers; } set { modifiers = value; } }
+        public AttributeModifier[] Modifiers { get { return modifiers; } set { modifiers = value; } }
 
-        public TPItem(int id, int type)
+        public ItemModel(int id, int type)
         {
             ID = id;
             Type = type;

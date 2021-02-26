@@ -8,26 +8,26 @@ using System;
 
 namespace TP.Framework
 {
-    public interface ITPItemSlot { }
+    public interface IItemSlot { }
 
-    public interface ITPItemSlot<TItem> : ITPItemSlot
-        where TItem : ITPItem
+    public interface IItemSlot<TItem> : IItemSlot
+        where TItem : IItem
     {
         int Type { get; }
         TItem StoredItem { get; set; }
         Action OnItemChanged { get; set; }
 
         TItem SwitchItem(TItem item);
-        bool MoveItem(ITPItemSlot<TItem> targetSlot);
+        bool MoveItem(IItemSlot<TItem> targetSlot);
         bool CanHoldItem(TItem item);
         bool TypeMatch(TItem item);
         bool HasItem();
         bool IsFull();
     }
 
-    public interface ITPEquipSlot : ITPItemSlot { }
+    public interface IEquipSlot : IItemSlot { }
 
-    public interface ITPEquipSlot<TItem> : ITPItemSlot<TItem>, ITPEquipSlot
-        where TItem : ITPItem
+    public interface IEquipSlot<TItem> : IItemSlot<TItem>, IEquipSlot
+        where TItem : IItem
     { }
 }

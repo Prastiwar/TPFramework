@@ -14,12 +14,12 @@ using System.Threading.Tasks;
 namespace TP.Framework.Internal
 {
     [Serializable]
-    public class TPProjectFolder
+    public class ProjectFolder
     {
         public string RootName;
         public List<string> ChildNames;
 
-        public TPProjectFolder(string rootName, params string[] childNames)
+        public ProjectFolder(string rootName, params string[] childNames)
         {
             RootName = rootName;
             ChildNames = childNames != null ? childNames.ToList() : new List<string>();

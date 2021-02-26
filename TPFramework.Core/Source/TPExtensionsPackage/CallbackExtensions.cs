@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 
 namespace TP.Framework
 {
-    public static partial class TPExtensions
+    public static partial class Extensions
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Remove(this Action action, Action action2)

@@ -9,13 +9,13 @@ using System.Runtime.CompilerServices;
 
 namespace TP.Framework
 {
-    public abstract class TPObjectPool<T>
+    public abstract class ObjectPool<T>
     {
         protected readonly Queue<T> pool;
 
         public int Length { get; protected set; }
 
-        public TPObjectPool(int capacity = 4)
+        public ObjectPool(int capacity = 4)
         {
             pool = new Queue<T>(capacity);
             Length = 0;

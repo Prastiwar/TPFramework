@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 
 namespace TP.Framework
 {
-    public static class TPEase
+    public static class EaseSystem
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float EaseIn(float from, float to, float time, float duration)

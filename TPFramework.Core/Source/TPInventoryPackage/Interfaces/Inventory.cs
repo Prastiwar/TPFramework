@@ -6,10 +6,10 @@
 
 namespace TP.Framework
 {
-    public interface ITPInventory<TItemSlot, TEquipSlot, TItem>
-        where TItemSlot : ITPItemSlot<TItem>
-        where TEquipSlot : ITPEquipSlot<TItem>
-        where TItem : ITPItem
+    public interface IInventory<TItemSlot, TEquipSlot, TItem>
+        where TItemSlot : IItemSlot<TItem>
+        where TEquipSlot : IEquipSlot<TItem>
+        where TItem : IItem
     {
         TItemSlot[] ItemSlots { get; }
         TEquipSlot[] EquipSlots { get; }

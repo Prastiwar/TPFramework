@@ -12,7 +12,7 @@ using TP.Framework.Collections;
 namespace TP.Framework
 {
     [Serializable]
-    public class TPModifierList<T> : ITPModifierList<T> where T : ITPModifier
+    public class AttributeModifierList<T> : IAttributeModifierList<T> where T : IAttributeModifier
     {
         private readonly Action onChanged;
         private readonly ReusableList<T> reusableModifiers;
@@ -23,7 +23,7 @@ namespace TP.Framework
 
         public T this[int index] { get { return Modifiers[index]; } }
 
-        public TPModifierList(Action onChanged, int capacity = 10)
+        public AttributeModifierList(Action onChanged, int capacity = 10)
         {
             Modifiers = new List<T>(capacity);
             reusableModifiers = new ReusableList<T>(4);

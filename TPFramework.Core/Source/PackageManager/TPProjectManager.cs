@@ -11,15 +11,15 @@ namespace TP.Framework.Internal
 {
     public class TPProjectManager
     {
-        public static TPProjectFolder[] DefaultFolders {
+        public static ProjectFolder[] DefaultFolders {
             get {
-                return new TPProjectFolder[] {
-                    new TPProjectFolder("Art", "Icon", "Character", "Environment", "Material", "VFX", "UI"),
-                    new TPProjectFolder("GameCode", "Editor", "Common", "Utilities"),
-                    new TPProjectFolder("Audio", "SFX", "Theme"),
-                    new TPProjectFolder("Animation", null),
-                    new TPProjectFolder("Plugins", null),
-                    new TPProjectFolder("Scene", null),
+                return new ProjectFolder[] {
+                    new ProjectFolder("Art", "Icon", "Character", "Environment", "Material", "VFX", "UI"),
+                    new ProjectFolder("GameCode", "Editor", "Common", "Utilities"),
+                    new ProjectFolder("Audio", "SFX", "Theme"),
+                    new ProjectFolder("Animation", null),
+                    new ProjectFolder("Plugins", null),
+                    new ProjectFolder("Scene", null),
                 };
             }
         }
@@ -33,7 +33,7 @@ namespace TP.Framework.Internal
 
         /// <summary> Generates generic folders in RootDirectory to easier manage project </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CreateProjectStructure<T>(T[] folders, string projectName, string rootDirectory) where T : TPProjectFolder
+        public static void CreateProjectStructure<T>(T[] folders, string projectName, string rootDirectory) where T : ProjectFolder
         {
             string projectPath = Path.Combine(rootDirectory, projectName);
             int length = folders.Length;

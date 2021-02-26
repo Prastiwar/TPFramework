@@ -14,10 +14,10 @@ namespace TP.Framework.Internal
         protected int packagesLength;
 
         public static TPPackageManager Manager { get; protected set; }
-        public ITPDefineManager DefineManager { get; protected set; }
+        public IDefineManager DefineManager { get; protected set; }
         public TPPackage[] Packages { get; protected set; }
 
-        public TPPackageManager(ITPDefineManager defineManager = null, TPPackage[] packages = null)
+        public TPPackageManager(IDefineManager defineManager = null, TPPackage[] packages = null)
         {
             Manager = this;
             DefineManager = defineManager;

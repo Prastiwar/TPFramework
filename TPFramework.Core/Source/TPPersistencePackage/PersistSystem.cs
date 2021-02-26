@@ -11,8 +11,8 @@ using System.Runtime.CompilerServices;
 
 namespace TP.Framework
 {
-    public abstract class TPPersistSystem<TInstance> : ITPPersistSystem
-        where TInstance : TPPersistSystem<TInstance>
+    public abstract class PersistSystem<TInstance> : IPersistSystem
+        where TInstance : PersistSystem<TInstance>
     {
         private static TInstance instance = (TInstance)Activator.CreateInstance(typeof(TInstance));
         private readonly BindingFlags findFieldFlags = BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;

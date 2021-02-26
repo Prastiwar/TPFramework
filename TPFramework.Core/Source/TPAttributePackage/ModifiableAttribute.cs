@@ -11,17 +11,17 @@ namespace TP.Framework
 {
     /// <summary> Wrapper for TPAttribute<TPModifierList<TPModifier>, TPModifier> </summary>
     [Serializable]
-    public class TPAttribute : TPAttribute<TPModifierList<TPModifier>, TPModifier>
+    public class ModifiableAttribute : ModifiableAttribute<AttributeModifierList<AttributeModifier>, AttributeModifier>
     {
-        public TPAttribute()
+        public ModifiableAttribute()
         {
             if (Modifiers == null)
             {
-                Modifiers = new TPModifierList<TPModifier>(Recalculate);
+                Modifiers = new AttributeModifierList<AttributeModifier>(Recalculate);
             }
         }
 
-        public TPAttribute(int baseValue) : this()
+        public ModifiableAttribute(int baseValue) : this()
         {
             BaseValue = baseValue;
             Value = BaseValue;
@@ -29,9 +29,9 @@ namespace TP.Framework
     }
 
     [Serializable]
-    public class TPAttribute<TModList, TModfifier> : ITPAttribute<TModfifier>
-        where TModList : ITPModifierList<TModfifier>
-        where TModfifier : ITPModifier
+    public class ModifiableAttribute<TModList, TModfifier> : IModifiableAttribute<TModfifier>
+        where TModList : IAttributeModifierList<TModfifier>
+        where TModfifier : IAttributeModifier
     {
         private float baseValue;
 
@@ -53,7 +53,7 @@ namespace TP.Framework
             }
         }
 
-        ITPModifierList<TModfifier> ITPAttribute<TModfifier>.Modifiers { get { return Modifiers; } }
+        IAttributeModifierList<TModfifier> IModifiableAttribute<TModfifier>.Modifiers { get { return Modifiers; } }
 
         /// <summary> Request recalculating Value with modifiers </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

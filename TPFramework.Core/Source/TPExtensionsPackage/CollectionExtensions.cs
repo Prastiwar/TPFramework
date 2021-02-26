@@ -22,7 +22,7 @@ namespace TP.Framework
         Default,
     }
 
-    public static partial class TPExtensions
+    public static partial class Extensions
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string ToText(this char[] chars)

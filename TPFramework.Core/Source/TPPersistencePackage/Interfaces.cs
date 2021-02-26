@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace TP.Framework
 {
-    public interface ITPPersistSystem
+    public interface IPersistSystem
     {
         HashSet<Type> SupportedTypes { get; }
 

@@ -11,7 +11,7 @@ using System.Runtime.CompilerServices;
 
 namespace TP.Framework
 {
-    public static partial class TPExtensions
+    public static partial class Extensions
     {
         public static readonly BindingFlags PublicOrNotInstance = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
 
